@@ -9,3 +9,6 @@
 ###Prerequisites
 * Microsoft XNA Redistributable 4.0: http://www.microsoft.com/en-us/download/details.aspx?id=20914
 * Microsoft .NET Framework 4.0 (Or Higher): http://www.microsoft.com/en-us/download/details.aspx?id=24872
+
+###Trello
+https://trello.com/b/rhgNd8Ia/bricklayer
