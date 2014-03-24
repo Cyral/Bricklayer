@@ -7,8 +7,10 @@
 `Coming soon...`
 
 ###Prerequisites
+These are needed to run a local build
 * Microsoft XNA Redistributable 4.0: http://www.microsoft.com/en-us/download/details.aspx?id=20914
 * Microsoft .NET Framework 4.0 (Or Higher): http://www.microsoft.com/en-us/download/details.aspx?id=24872
 
 ###Trello
+Our planning page
 https://trello.com/b/rhgNd8Ia/bricklayer
