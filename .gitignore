@@ -6,6 +6,9 @@
 *.user
 *.sln.docstates
 
+#Don't upload cachefiles
+*.cachefile
+
 # Build results
 [Dd]ebug/
 [Bb]uild/
