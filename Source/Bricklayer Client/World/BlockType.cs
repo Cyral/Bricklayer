@@ -53,7 +53,7 @@ namespace Bricklayer.Client.World
         /// The total amount of frames in an animation, for animated tiles
         /// </summary>
         public float TotalFrames { get; set; }
-        public static BlockType Empty, Default, Stone, Dirt, Grass, Wood, Brick, Slab, Glass, UpArrow;
+        public static BlockType Empty, Default, Stone, Dirt, Grass, Wood, Brick, Slab, Glass, UpArrow, RightArrow, DownArrow, LeftArrow;
 
         /// <summary>
         /// Creates a new instance of a blocktype
@@ -87,9 +87,12 @@ namespace Bricklayer.Client.World
             Grass = new BlockType("Grass", Layer.Foreground, new Rectangle(Tile.DrawWidth * 3, 0, Tile.DrawWidth, Tile.DrawHeight), BlockCollision.Impassable);
             Wood = new BlockType("Wood", Layer.Foreground, new Rectangle(Tile.DrawWidth * 4, 0, Tile.DrawWidth, Tile.DrawHeight), BlockCollision.Impassable);
             Brick = new BlockType("Brick", Layer.Foreground, new Rectangle(Tile.DrawWidth * 5, 0, Tile.DrawWidth, Tile.DrawHeight), BlockCollision.Impassable);
-            Slab = new BlockType("Slab", Layer.Foreground, new Rectangle(Tile.DrawWidth * 6, 0, Tile.DrawWidth, Tile.DrawHeight), BlockCollision.Impassable);
-            Glass = new BlockType("Glass", Layer.Foreground, new Rectangle(Tile.DrawWidth * 7, 0, Tile.DrawWidth, Tile.DrawHeight), BlockCollision.Impassable);
-            UpArrow = new BlockType("Up Arrow", Layer.Foreground, new Rectangle(Tile.DrawWidth * 8, 0, Tile.DrawWidth, Tile.DrawHeight), BlockCollision.Passable, TileType.Animated) { FrameTime = .03f, TotalFrames = 20 };
+            //Slab = new BlockType("Slab", Layer.Foreground, new Rectangle(Tile.DrawWidth * 6, 0, Tile.DrawWidth, Tile.DrawHeight), BlockCollision.Impassable);
+            //Glass = new BlockType("Glass", Layer.Foreground, new Rectangle(Tile.DrawWidth * 7, 0, Tile.DrawWidth, Tile.DrawHeight), BlockCollision.Impassable);
+            UpArrow = new BlockType("Up Arrow", Layer.Foreground, new Rectangle(Tile.DrawWidth * 8, 0, Tile.DrawWidth, Tile.DrawHeight), BlockCollision.Gravity);
+            LeftArrow = new BlockType("Left Arrow", Layer.Foreground, new Rectangle(Tile.DrawWidth * 9, 0, Tile.DrawWidth, Tile.DrawHeight), BlockCollision.Gravity);
+            DownArrow = new BlockType("Down Arrow", Layer.Foreground, new Rectangle(Tile.DrawWidth * 10, 0, Tile.DrawWidth, Tile.DrawHeight), BlockCollision.Gravity);
+            RightArrow = new BlockType("Right Arrow", Layer.Foreground, new Rectangle(Tile.DrawWidth * 11, 0, Tile.DrawWidth, Tile.DrawHeight), BlockCollision.Gravity);
         }
         public static BlockType FromID(byte ID)
         {

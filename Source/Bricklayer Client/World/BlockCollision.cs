@@ -10,5 +10,6 @@ namespace Bricklayer.Client.World
         Impassable,
         Passable,
         Platform,
+        Gravity,
     }
 }
