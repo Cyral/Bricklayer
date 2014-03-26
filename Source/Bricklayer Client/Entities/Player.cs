@@ -244,16 +244,19 @@ namespace Bricklayer.Client.Entities
 
                 //If jump key pressed/released or release/pressed, send message that the velocity has changed
                 //If the key is down, make sure we are jumping
-                IsJumping = Game.KeyState.IsKeyDown(Keys.W) || Game.KeyState.IsKeyDown(Keys.Space);
+                IsJumping = Game.KeyState.IsKeyDown(Keys.W) || Game.KeyState.IsKeyDown(Keys.Space) || Game.KeyState.IsKeyDown(Keys.Up);
 
                 //Move right
-                if (Game.KeyState.IsKeyDown(Keys.D))
+                if (Game.KeyState.IsKeyDown(Keys.Right) || Game.KeyState.IsKeyDown(Keys.D))
                 {
                     SimulationState.Movement = new Vector2(1, 0);
-                    if (Game.LastKeyState.IsKeyUp(Keys.D))
+                    if (Game.LastKeyState.IsKeyUp(Keys.Right) || Game.LastKeyState.IsKeyUp(Keys.D))
+                    {
                         velocityChanged = true;
+                    }
                 }
-                if (Game.KeyState.IsKeyUp(Keys.D) && Game.LastKeyState.IsKeyDown(Keys.D))
+                if ((Game.KeyState.IsKeyUp(Keys.Right) && Game.LastKeyState.IsKeyDown(Keys.Right)) ||
+                    (Game.KeyState.IsKeyUp(Keys.D) && Game.LastKeyState.IsKeyDown(Keys.D)))
                 {
                     SimulationState.Movement = new Vector2(0, SimulationState.Movement.Y);
                     velocityChanged = true;
@@ -261,13 +264,16 @@ namespace Bricklayer.Client.Entities
 
 
                 //Move left
-                if (Game.KeyState.IsKeyDown(Keys.A))
+                if (Game.KeyState.IsKeyDown(Keys.Left) || Game.KeyState.IsKeyDown(Keys.A))
                 {
                     SimulationState.Movement = new Vector2(-1, 0);
-                    if (Game.LastKeyState.IsKeyUp(Keys.A))
+                    if (Game.LastKeyState.IsKeyUp(Keys.Left) || Game.LastKeyState.IsKeyUp(Keys.A))
+                    {
                         velocityChanged = true;
+                    }
                 }
-                if (Game.KeyState.IsKeyUp(Keys.A) && Game.LastKeyState.IsKeyDown(Keys.A))
+                if ((Game.KeyState.IsKeyUp(Keys.Left) && Game.LastKeyState.IsKeyDown(Keys.Left)) ||
+                    (Game.KeyState.IsKeyUp(Keys.A) && Game.LastKeyState.IsKeyDown(Keys.A)))
                 {
                     SimulationState.Movement = new Vector2(0, SimulationState.Movement.Y);
                     velocityChanged = true;
