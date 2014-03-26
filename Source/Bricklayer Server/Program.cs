@@ -8,11 +8,11 @@ using Cyral.Extensions;
 using Cyral.Extensions.Xna;
 using Lidgren.Network;
 using Microsoft.Xna.Framework;
-using BricklayerClient.Entities;
-using BricklayerClient.Networking.Messages;
-using BricklayerClient.World;
+using Bricklayer.Client.Entities;
+using Bricklayer.Client.Networking.Messages;
+using Bricklayer.Client.World;
 
-namespace BricklayerServer
+namespace Bricklayer.Server
 {
     public class Program
     {

@@ -1,6 +1,6 @@
 ﻿using Lidgren.Network;
 
-namespace BricklayerClient.Networking.Messages
+namespace Bricklayer.Client.Networking.Messages
 {
     public interface IMessage
     {

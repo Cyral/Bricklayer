@@ -2,10 +2,10 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using BricklayerClient.Networking.Messages;
-using BricklayerClient.World;
+using Bricklayer.Client.Networking.Messages;
+using Bricklayer.Client.World;
 
-namespace BricklayerClient.Entities
+namespace Bricklayer.Client.Entities
 {
     /// <summary>
     /// Represents a player/smiley in the game map
@@ -196,7 +196,7 @@ namespace BricklayerClient.Entities
         {
             bool velocityChanged = false;
 
-            if (!(BricklayerClient.Interface.MainWindow.ScreenManager.Current as BricklayerClient.Interface.GameScreen).ChatBox.TextBox.Focused && !Game.IsMouseOnControl)
+            if (!(Bricklayer.Client.Interface.MainWindow.ScreenManager.Current as Bricklayer.Client.Interface.GameScreen).ChatBox.TextBox.Focused && !Game.IsMouseOnControl)
             {
                 //Change smilies
             if (Game.KeyState.IsKeyUp(Keys.Q) && Game.LastKeyState.IsKeyDown(Keys.Q))
@@ -225,7 +225,7 @@ namespace BricklayerClient.Entities
             if (Mode == PlayerMode.Normal)
             {
                 //If player enters chat box, stop moving!
-                if (Game.CurrentGameState == GameState.Game && ((BricklayerClient.Interface.MainWindow.ScreenManager.Current as BricklayerClient.Interface.GameScreen).ChatBox.TextBox.Focused || Game.IsMouseOnControl))
+                if (Game.CurrentGameState == GameState.Game && ((Bricklayer.Client.Interface.MainWindow.ScreenManager.Current as Bricklayer.Client.Interface.GameScreen).ChatBox.TextBox.Focused || Game.IsMouseOnControl))
                 {
                     if (SimulationState.Movement != Vector2.Zero)
                     {
@@ -283,7 +283,7 @@ namespace BricklayerClient.Entities
             else if (Mode == PlayerMode.God) //Godmode flying
             {
                 //If player enters chat box, stop moving!
-                if (Game.CurrentGameState == GameState.Game && ((BricklayerClient.Interface.MainWindow.ScreenManager.Current as BricklayerClient.Interface.GameScreen).ChatBox.TextBox.Focused || Game.IsMouseOnControl))
+                if (Game.CurrentGameState == GameState.Game && ((Bricklayer.Client.Interface.MainWindow.ScreenManager.Current as Bricklayer.Client.Interface.GameScreen).ChatBox.TextBox.Focused || Game.IsMouseOnControl))
                 {
                     if (SimulationState.Movement != Vector2.Zero)
                     {

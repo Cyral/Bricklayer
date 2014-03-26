@@ -5,10 +5,10 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using BricklayerClient.Entities;
-using BricklayerClient.Networking.Messages;
+using Bricklayer.Client.Entities;
+using Bricklayer.Client.Networking.Messages;
 
-namespace BricklayerClient.World
+namespace Bricklayer.Client.World
 {
     public class Map
     {
@@ -176,7 +176,7 @@ namespace BricklayerClient.World
 
             }
 
-            if (!(BricklayerClient.Interface.MainWindow.ScreenManager.Current as BricklayerClient.Interface.GameScreen).ChatBox.TextBox.Focused && !Game.IsMouseOnControl)
+            if (!(Bricklayer.Client.Interface.MainWindow.ScreenManager.Current as Bricklayer.Client.Interface.GameScreen).ChatBox.TextBox.Focused && !Game.IsMouseOnControl)
             {
             //Select block
             int key = -1;

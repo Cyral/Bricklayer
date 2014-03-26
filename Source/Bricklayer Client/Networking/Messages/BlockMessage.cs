@@ -1,9 +1,9 @@
 ﻿using Lidgren.Network;
-using BricklayerClient.Entities;
-using BricklayerClient.World;
-using BricklayerClient.Networking.Messages;
+using Bricklayer.Client.Entities;
+using Bricklayer.Client.World;
+using Bricklayer.Client.Networking.Messages;
 
-namespace BricklayerClient.Networking.Messages
+namespace Bricklayer.Client.Networking.Messages
 {
     public class BlockMessage : IMessage
     {

@@ -1,6 +1,6 @@
 ﻿using System.Windows.Forms;
 
-namespace BricklayerClient
+namespace Bricklayer.Client
 {
     partial class ExceptionForm : Form
     {

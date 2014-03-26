@@ -9,7 +9,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 #endregion
 
-namespace BricklayerServer
+namespace Bricklayer.Server
 {
     public class IO
     {

@@ -1,6 +1,6 @@
 ﻿using TomShane.Neoforce.Controls;
 
-namespace BricklayerClient.Interface
+namespace Bricklayer.Client.Interface
 {
     public class BaseScreen : IScreen
     {

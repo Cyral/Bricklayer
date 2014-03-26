@@ -1,5 +1,5 @@
 ﻿
-namespace BricklayerClient.Interface
+namespace Bricklayer.Client.Interface
 {
     public interface IScreen
     {

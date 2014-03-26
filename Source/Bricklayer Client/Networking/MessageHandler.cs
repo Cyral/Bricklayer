@@ -2,12 +2,12 @@
 using System.Linq;
 using Cyral.Extensions.Xna;
 using Lidgren.Network;
-using BricklayerClient.Entities;
-using BricklayerClient.Interface;
-using BricklayerClient.Networking.Messages;
-using BricklayerClient.World;
+using Bricklayer.Client.Entities;
+using Bricklayer.Client.Interface;
+using Bricklayer.Client.Networking.Messages;
+using Bricklayer.Client.World;
 
-namespace BricklayerClient.Networking
+namespace Bricklayer.Client.Networking
 {
     /// <summary>
     /// Handles processing of incoming messages

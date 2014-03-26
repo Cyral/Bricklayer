@@ -7,7 +7,7 @@ using System.Threading;
 using System.Windows.Forms;
 #endregion
 
-namespace BricklayerClient
+namespace Bricklayer.Client
 {
     /// <summary>
     /// Error report dialog which gives the user options on sending in the report.

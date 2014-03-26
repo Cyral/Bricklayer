@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace BricklayerClient.Networking
+namespace Bricklayer.Client.Networking
 {
     /// <summary>
     /// Server data such as name and host. To be used for saving/loading servers from a config file

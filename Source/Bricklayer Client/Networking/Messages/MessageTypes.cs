@@ -1,4 +1,4 @@
-﻿namespace BricklayerClient.Networking.Messages
+﻿namespace Bricklayer.Client.Networking.Messages
 {
     public enum MessageTypes : byte
     {

@@ -5,7 +5,7 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace BricklayerClient.Entities
+namespace Bricklayer.Client.Entities
 {
     /// <summary>
     /// Smiley Type

@@ -4,10 +4,10 @@ using System.Text;
 using Lidgren.Network;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
-using BricklayerClient.Entities;
+using Bricklayer.Client.Entities;
 using TomShane.Neoforce.Controls;
 
-namespace BricklayerClient.Interface
+namespace Bricklayer.Client.Interface
 {
     /// <summary>
     /// Handles the logical updating of UI elements

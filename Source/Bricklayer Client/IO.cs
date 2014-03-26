@@ -6,11 +6,11 @@ using System.IO;
 using System.Linq;
 using System.Xml;
 using Microsoft.Xna.Framework.Graphics;
-using BricklayerClient.Networking;
+using Bricklayer.Client.Networking;
 using Newtonsoft.Json;
 #endregion
 
-namespace BricklayerClient
+namespace Bricklayer.Client
 {
     public class IO
     {

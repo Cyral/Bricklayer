@@ -1,4 +1,4 @@
-﻿namespace BricklayerClient
+﻿namespace Bricklayer.Client
 {
     public enum GameState
     {

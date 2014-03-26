@@ -7,7 +7,7 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
-namespace BricklayerClient
+namespace Bricklayer.Client
 {
     public static class Extensions
     {

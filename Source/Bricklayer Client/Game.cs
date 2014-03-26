@@ -7,14 +7,14 @@ using Lidgren.Network;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using BricklayerClient.Entities;
-using BricklayerClient.Interface;
-using BricklayerClient.Networking;
-using BricklayerClient.Networking.Messages;
-using BricklayerClient.World;
+using Bricklayer.Client.Entities;
+using Bricklayer.Client.Interface;
+using Bricklayer.Client.Networking;
+using Bricklayer.Client.Networking.Messages;
+using Bricklayer.Client.World;
 using TomShane.Neoforce.Controls;
 
-namespace BricklayerClient
+namespace Bricklayer.Client
 {
     /// <summary>
     /// This is the main type for your game

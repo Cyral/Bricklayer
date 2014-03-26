@@ -5,7 +5,7 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace BricklayerClient.World
+namespace Bricklayer.Client.World
 {
     /// <summary>
     /// A camera object which can focus around a point and be used for drawing at a certain position, zoom, and rotation

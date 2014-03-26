@@ -5,7 +5,7 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using TomShane.Neoforce.Controls;
 
-namespace BricklayerClient.Interface
+namespace Bricklayer.Client.Interface
 {
     /// <summary>
     /// A listbox that can be used to create a list of any custom control, rather than simply text

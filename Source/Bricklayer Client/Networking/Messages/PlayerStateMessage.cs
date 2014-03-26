@@ -1,9 +1,9 @@
 ﻿using Cyral.Extensions.Xna;
 using Lidgren.Network;
 using Microsoft.Xna.Framework;
-using BricklayerClient.Entities;
+using Bricklayer.Client.Entities;
 
-namespace BricklayerClient.Networking.Messages
+namespace Bricklayer.Client.Networking.Messages
 {
     public class PlayerStateMessage : IMessage
     {

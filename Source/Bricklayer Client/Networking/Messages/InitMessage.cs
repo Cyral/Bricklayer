@@ -1,7 +1,7 @@
 ﻿using Lidgren.Network;
-using BricklayerClient.World;
+using Bricklayer.Client.World;
 
-namespace BricklayerClient.Networking.Messages
+namespace Bricklayer.Client.Networking.Messages
 {
     public class InitMessage : IMessage
     {

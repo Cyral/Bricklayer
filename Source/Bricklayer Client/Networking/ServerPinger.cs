@@ -4,7 +4,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Timers;
 
-namespace BricklayerClient.Networking
+namespace Bricklayer.Client.Networking
 {
     /// <summary>
     /// Queries a TCP server for data regarding players online, message of the day, etc
