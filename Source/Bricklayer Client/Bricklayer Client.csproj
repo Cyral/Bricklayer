@@ -205,8 +205,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Game.cs" />
-    <Compile Include="World\Tile.cs" />
+    <Compile Include="World\Tiles\AnimatedTile.cs" />
+    <Compile Include="World\Tiles\Tile.cs" />
     <Compile Include="TextureLoader.cs" />
+    <Compile Include="World\Tiles\TileType.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Game.ico" />

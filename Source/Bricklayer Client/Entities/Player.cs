@@ -409,14 +409,14 @@ namespace Bricklayer.Client.Entities
 
                 //Horizontal Collison, X Axis
                 Vector2 change = SimulationState.Velocity.X * Vector2.UnitX * elapsed;
-                change.X = MathHelper.Clamp(change.X, -(Tile.WIDTH), Tile.WIDTH);
+                change.X = MathHelper.Clamp(change.X, -(Tile.Width), Tile.Width);
                 SimulationState.Position += change;
                 SimulationState.Position = new Vector2((float)Math.Round(SimulationState.Position.X), SimulationState.Position.Y);
                 HandleCollisions(CollisionDirection.Horizontal, gameTime);
 
                 //Vertical Collision, Y Axis
                 change = SimulationState.Velocity.Y * Vector2.UnitY * elapsed;
-                change.Y = MathHelper.Clamp(change.Y, -(Tile.HEIGHT), Tile.HEIGHT);
+                change.Y = MathHelper.Clamp(change.Y, -(Tile.Height), Tile.Height);
                 SimulationState.Position += change;
                 SimulationState.Position = new Vector2(SimulationState.Position.X, (float)Math.Round(SimulationState.Position.Y));
                 HandleCollisions(CollisionDirection.Vertical, gameTime);
@@ -457,8 +457,8 @@ namespace Bricklayer.Client.Entities
                 SimulationState.Position = new Vector2(SimulationState.Position.X, (float)Math.Round(SimulationState.Position.Y));
 
                 //Clamp position in bounds
-                SimulationState.Position.X = MathHelper.Clamp(SimulationState.Position.X, Tile.WIDTH, (map.Width * Tile.WIDTH)- (Tile.WIDTH * 2));
-                SimulationState.Position.Y = MathHelper.Clamp(SimulationState.Position.Y, Tile.HEIGHT, (map.Height * Tile.HEIGHT) - (Tile.HEIGHT * 2));
+                SimulationState.Position.X = MathHelper.Clamp(SimulationState.Position.X, Tile.Width, (map.Width * Tile.Width)- (Tile.Width * 2));
+                SimulationState.Position.Y = MathHelper.Clamp(SimulationState.Position.Y, Tile.Height, (map.Height * Tile.Height) - (Tile.Height * 2));
             }
 
             //Set idle states
@@ -477,10 +477,10 @@ namespace Bricklayer.Client.Entities
         {
             // Get the player's bounding rectangle and find neighboring tiles.
             Rectangle bounds = Bounds;
-            int leftTile = (int)Math.Floor((float)bounds.Left / Tile.WIDTH);
-            int rightTile = (int)Math.Ceiling(((float)bounds.Right / Tile.WIDTH)) - 1;
-            int topTile = (int)Math.Floor((float)bounds.Top / Tile.HEIGHT);
-            int bottomTile = (int)Math.Ceiling(((float)bounds.Bottom / Tile.HEIGHT)) - 1;
+            int leftTile = (int)Math.Floor((float)bounds.Left / Tile.Width);
+            int rightTile = (int)Math.Ceiling(((float)bounds.Right / Tile.Width)) - 1;
+            int topTile = (int)Math.Floor((float)bounds.Top / Tile.Height);
+            int bottomTile = (int)Math.Ceiling(((float)bounds.Bottom / Tile.Height)) - 1;
 
             //Reset flag to search for ground collision.
             IsOnGround = false;

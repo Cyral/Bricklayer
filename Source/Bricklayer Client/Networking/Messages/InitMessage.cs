@@ -28,7 +28,7 @@ namespace Bricklayer.Client.Networking.Messages
         {
             map.Width = im.ReadInt16();
             map.Height = im.ReadInt16();
-            map.Tiles = new Tile[map.Width, map.Height];
+            map.Tiles = new Tile[map.Width, map.Height, 2];
             for (int z = 0; z < 2; z++)
             {
                 for (int y = 0; y < map.Height; y++)
@@ -37,9 +37,9 @@ namespace Bricklayer.Client.Networking.Messages
                     for (int x = 0; x < map.Width; x++)
                     {
                         if (z == 0)
-                            map.Tiles[x, y] = new Tile(BlockType.BlockList[b[x]]);
+                            map.Tiles[x, y, 1] = new Tile(BlockType.BlockList[b[x]]);
                         else
-                            map.Tiles[x, y].Background = BlockType.BlockList[b[x]];
+                            map.Tiles[x, y, 0] = new Tile(BlockType.BlockList[b[x]]);
                     }
                 }
             }
@@ -60,9 +60,9 @@ namespace Bricklayer.Client.Networking.Messages
                     for (int x = 0; x < map.Width; x++)
                     {
                         if (z == 0)
-                            b[x] = map.Tiles[x, y].Foreground.ID;
+                            b[x] = map.Tiles[x, y,1].Block.ID;
                         else
-                            b[x] = map.Tiles[x, y].Background.ID;
+                            b[x] = map.Tiles[x, y,0].Block.ID;
                     }
                     om.Write(b);
                 }
