@@ -7,7 +7,7 @@
     <ProjectGuid>{4C67868F-B5CA-4C57-B50B-5A52FE8DCC7E}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>BricklayerServer</RootNamespace>
+    <RootNamespace>Bricklayer.Server</RootNamespace>
     <AssemblyName>Bricklayer Server</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

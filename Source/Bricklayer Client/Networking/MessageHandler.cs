@@ -117,7 +117,7 @@ namespace BricklayerClient.Networking
                                     BlockMessage msg = new BlockMessage(im);
                                     BlockType block = BlockType.FromID(msg.BlockID);
                                     if (Map.CanPlaceBlock(msg.X, msg.Y, block))
-                                        Map.Tiles[msg.X, msg.Y].Foreground = block;
+                                        Map.Tiles[msg.X, msg.Y, 1].Block = block;
                                     break;
                                 }
                             case MessageTypes.PlayerSmiley:

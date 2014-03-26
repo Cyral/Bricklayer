@@ -205,7 +205,7 @@ namespace BricklayerServer
                         //Console.WriteLine(state.ID + ":" + sender.ID + "  " + state.Position.X + "," + state.Position.Y);
                         state.ID = sender.ID;
                         //Clamp position in bounds
-                        state.Position = new Point((int)MathHelper.Clamp(state.Position.X, Tile.WIDTH, (Map.Width * Tile.WIDTH) - (Tile.WIDTH * 2)), (int)MathHelper.Clamp(state.Position.Y, Tile.HEIGHT, (Map.Height * Tile.HEIGHT) - (Tile.HEIGHT * 2)));
+                        state.Position = new Point((int)MathHelper.Clamp(state.Position.X, Tile.Width, (Map.Width * Tile.Width) - (Tile.Width * 2)), (int)MathHelper.Clamp(state.Position.Y, Tile.Height, (Map.Height * Tile.Height) - (Tile.Height * 2)));
                         sender.SimulationState.Position = state.Position.ToVector2();
                         sender.SimulationState.Velocity = state.Velocity.ToVector2();
                         sender.SimulationState.Movement = state.Movement.ToVector2();
@@ -220,7 +220,7 @@ namespace BricklayerServer
                         //Verify Block
                         if (Map.InBounds(state.X, state.Y))
                         {
-                            Map.Tiles[state.X, state.Y].Foreground = BlockType.FromID(state.BlockID);
+                            Map.Tiles[state.X, state.Y, 1].Block = BlockType.FromID(state.BlockID);
                             NetManager.BroadcastMessage(state);
                         }
                         break;
