@@ -1,7 +1,7 @@
 ﻿using Lidgren.Network;
-using BricklayerClient.Entities;
+using Bricklayer.Client.Entities;
 
-namespace BricklayerClient.Networking.Messages
+namespace Bricklayer.Client.Networking.Messages
 {
     public class PlayerSmileyMessage : IMessage
     {

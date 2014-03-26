@@ -8,24 +8,21 @@ using Cyral.Extensions;
 using Cyral.Extensions.Xna;
 using Lidgren.Network;
 using Microsoft.Xna.Framework;
-using BricklayerClient.Entities;
-using BricklayerClient.Networking.Messages;
-using BricklayerClient.World;
+using Bricklayer.Client.Entities;
+using Bricklayer.Client.Networking.Messages;
+using Bricklayer.Client.World;
 
-namespace BricklayerServer
+namespace Bricklayer.Server
 {
     public class Program
     {
         //Config
-        private const int Sleep = 1;
+        public static Settings Config;
         
         //Networking
         public static NetworkManager NetManager;
         public static PingListener PingListener;
         public static Map Map;
-        public static string Motd;
-        public static int Port, MaxConnections;
-
         //Console Events
         static ConsoleEventDelegate consoleHandler; //Keeps it from getting garbage collected
         //PInvoke
@@ -38,9 +35,11 @@ namespace BricklayerServer
             //Setup forms stuff, to possibly be used if an error occurs and a dialog needs to be opened
             System.Windows.Forms.Application.EnableVisualStyles();
             System.Windows.Forms.Application.SetCompatibleTextRenderingDefault(false);
-#if DEBUG
-                Run();
-#else
+
+            //Only show error screen in release
+            #if DEBUG
+            Run();
+            #else
             try
             {
                 Run();
@@ -50,7 +49,7 @@ namespace BricklayerServer
                 //Open all exceptions in an error dialog
                 System.Windows.Forms.Application.Run(new BricklayerClient.ExceptionForm(e));
             }
-#endif
+            #endif
         }
         private static void Run()
         {
@@ -62,15 +61,15 @@ namespace BricklayerServer
             IO.LoadSettings();
             //Create Networkmanager to handle networking, then start the server
             NetManager = new NetworkManager();
-            NetManager.Start(Port, MaxConnections);
+            NetManager.Start(Config.Port, Config.MaxPlayers);
             //Write a welcome message
             Console.ForegroundColor = ConsoleColor.Yellow;
             Console.Write("Bricklayer ");
             Console.ForegroundColor = ConsoleColor.White;
-            Console.WriteLine("Server started on port " + Port + " with " + MaxConnections + " max players.");
+            Console.WriteLine("Server started on port " + Config.Port + " with " + Config.MaxPlayers + " max players.");
             Console.WriteLine("Waiting for new connections and updating world state...\n");
             //Create a PingListener to handle query requests from clients (to serve motd, players online, etc)
-            PingListener = new PingListener(Port);
+            PingListener = new PingListener(Config.Port);
             PingListener.Start();
 
             //Used to store messages
@@ -172,7 +171,7 @@ namespace BricklayerServer
                     }
                 }
                 //While loops run as fast as your computer lets. While(true) can lock your computer up. Even 1ms sleep, lets other programs have piece of your CPU time
-                System.Threading.Thread.Sleep(Sleep);
+                System.Threading.Thread.Sleep(Config.Sleep);
             }
         }
         /// <summary>
@@ -259,7 +258,7 @@ namespace BricklayerServer
         /// </summary>
         public static byte FindEmptyID()
         {
-            for (int i = 0; i < MaxConnections; i++)
+            for (int i = 0; i < Config.MaxPlayers; i++)
                 if (!Map.Players.Any(x => x.ID == i))
                     return (byte)i;
             Console.WriteLine("Could not find empty ID!");

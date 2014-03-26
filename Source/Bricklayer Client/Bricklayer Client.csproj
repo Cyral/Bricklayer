@@ -85,7 +85,7 @@
     <CodeAnalysisRuleSet>ManagedMinimumRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>BricklayerClient.Program</StartupObject>
+    <StartupObject>Bricklayer.Client.Program</StartupObject>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Cyral.Extensions">
@@ -194,6 +194,7 @@
     <Compile Include="Networking\ServerPingData.cs" />
     <Compile Include="Networking\ServerPinger.cs" />
     <Compile Include="Networking\ServerSaveData.cs" />
+    <Compile Include="Settings.cs" />
     <Compile Include="World\BlockCollision.cs" />
     <Compile Include="World\BlockType.cs" />
     <Compile Include="World\Camera.cs" />
@@ -245,9 +246,6 @@
       <ProductName>Microsoft XNA Framework Redistributable 4.0</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\App.config" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="ExceptionForm.resx">

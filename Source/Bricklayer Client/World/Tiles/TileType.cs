@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace BricklayerClient.World
+namespace Bricklayer.Client.World
 {
     [Flags]
     public enum TileType

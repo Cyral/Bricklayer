@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Cyral.Extensions;
 using Microsoft.Xna.Framework;
 
-namespace BricklayerClient
+namespace Bricklayer.Client
 {
     public class ContentPack
     {

@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Lidgren.Network;
-using BricklayerClient.Entities;
+using Bricklayer.Client.Entities;
 using Cyral.Extensions;
-using BricklayerClient.Networking.Messages;
+using Bricklayer.Client.Networking.Messages;
 
-namespace BricklayerClient.Networking.Messages
+namespace Bricklayer.Client.Networking.Messages
 {
     public class ChatMessage : IMessage
     {

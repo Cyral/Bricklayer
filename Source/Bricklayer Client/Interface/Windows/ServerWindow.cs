@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
-using BricklayerClient.Networking;
+using Bricklayer.Client.Networking;
 using TomShane.Neoforce.Controls;
 
-namespace BricklayerClient.Interface
+namespace Bricklayer.Client.Interface
 {
     /// <summary>
     /// A small window containing the server list and editing controls
@@ -48,7 +48,7 @@ namespace BricklayerClient.Interface
                     if ((ServerListCtrl.Items[ServerListCtrl.ItemIndex] as ServerDataControl).Ping != null && (ServerListCtrl.Items[ServerListCtrl.ItemIndex] as ServerDataControl).Ping.Error)
                         return;
                     //Create a world and connect
-                    Game.Map = new BricklayerClient.World.Map((Manager.Game) as Game, 1, 1);
+                    Game.Map = new Bricklayer.Client.World.Map((Manager.Game) as Game, 1, 1);
                     Game.NetManager.Connect(Servers[ServerListCtrl.ItemIndex].IP, Servers[ServerListCtrl.ItemIndex].Port,
                         () =>
                         {

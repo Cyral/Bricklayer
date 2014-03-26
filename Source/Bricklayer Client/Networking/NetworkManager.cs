@@ -6,10 +6,10 @@ using System.Net;
 using System.Text;
 using System.Threading;
 using Lidgren.Network;
-using BricklayerClient.Networking.Messages;
+using Bricklayer.Client.Networking.Messages;
 using Timer = System.Timers.Timer;
 
-namespace BricklayerClient.Networking
+namespace Bricklayer.Client.Networking
 {
     public class NetworkManager
     {

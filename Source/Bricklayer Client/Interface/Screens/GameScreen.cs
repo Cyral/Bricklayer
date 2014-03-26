@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using TomShane.Neoforce.Controls;
 
-namespace BricklayerClient.Interface
+namespace Bricklayer.Client.Interface
 {
     /// <summary>
     /// The main screen to be used for game functions

@@ -1,6 +1,6 @@
 using System;
 
-namespace BricklayerClient
+namespace Bricklayer.Client
 {
 #if WINDOWS || XBOX
     static class Program

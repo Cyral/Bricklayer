@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using BricklayerClient.World;
+using Bricklayer.Client.World;
 
-namespace BricklayerClient.World
+namespace Bricklayer.Client.World
 {
     /// <summary>
     /// Block Type

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace BricklayerClient.Networking
+namespace Bricklayer.Client.Networking
 {
     public class ServerPingData
     {

@@ -5,7 +5,7 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace BricklayerClient.World
+namespace Bricklayer.Client.World
 {
     /// <summary>
     /// Represents either a foreground or background tile in the map

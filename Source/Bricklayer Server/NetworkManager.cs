@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Lidgren.Network;
-using BricklayerClient.Entities;
-using BricklayerClient.Networking;
-using BricklayerClient.Networking.Messages;
+using Bricklayer.Client.Entities;
+using Bricklayer.Client.Networking;
+using Bricklayer.Client.Networking.Messages;
 
-namespace BricklayerServer
+namespace Bricklayer.Server
 {
     public class NetworkManager
     {
@@ -38,7 +38,7 @@ namespace BricklayerServer
         }
         public ServerPingData GetQuery()
         {
-            return new ServerPingData() { Online = Server.ConnectionsCount, MaxOnline = Server.Configuration.MaximumConnections, MOTD = Program.Motd };
+            return new ServerPingData() { Online = Server.ConnectionsCount, MaxOnline = Server.Configuration.MaximumConnections, MOTD = Program.Config.MOTD };
         }
         public NetOutgoingMessage CreateMessage()
         {

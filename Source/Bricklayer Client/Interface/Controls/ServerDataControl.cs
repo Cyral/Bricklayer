@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Threading;
 using Microsoft.Xna.Framework;
-using BricklayerClient.Networking;
+using Bricklayer.Client.Networking;
 using TomShane.Neoforce.Controls;
 
-namespace BricklayerClient.Interface
+namespace Bricklayer.Client.Interface
 {
     /// <summary>
     /// Used for displaying a servers name, players online, motd, etc in the serverlist

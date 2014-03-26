@@ -8,7 +8,7 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using TomShane.Neoforce.Controls;
 
-namespace BricklayerClient.Interface
+namespace Bricklayer.Client.Interface
 {
     public class LoginScreen : BaseScreen
     {

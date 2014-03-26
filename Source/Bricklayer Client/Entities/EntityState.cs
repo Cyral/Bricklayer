@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 
-namespace BricklayerClient.Entities
+namespace Bricklayer.Client.Entities
 {
     public struct EntityState
     {

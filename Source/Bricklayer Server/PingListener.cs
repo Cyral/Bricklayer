@@ -4,9 +4,9 @@ using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
-using BricklayerClient.Networking;
+using Bricklayer.Client.Networking;
 
-namespace BricklayerServer
+namespace Bricklayer.Server
 {
     /// <summary>
     /// Handles incoming ping requests for server data such as players online, motd, etc
