@@ -111,7 +111,7 @@ namespace Bricklayer.Client.Entities
             //Draw player body
             spriteBatch.Draw(map.bodyTexture, new Vector2((float)Math.Round(DisplayState.Position.X), (float)Math.Round(DisplayState.Position.Y) - 1), new Rectangle((Direction == FacingDirection.Left ? 0 : WIDTH), 0, WIDTH, HEIGHT), Tint);
             //Draw player smiley
-            spriteBatch.Draw(map.smileySheet, new Vector2((float)Math.Round(DisplayState.Position.X),(float)Math.Round(DisplayState.Position.Y) - 1), (Direction == FacingDirection.Left ? Smiley.LeftSource : Smiley.RightSource), Color.White);
+            spriteBatch.Draw(map.smileySheet, new Vector2((float)Math.Round(DisplayState.Position.X), (float)Math.Round(DisplayState.Position.Y) - 1), (Direction == FacingDirection.Left ? Smiley.LeftSource : Smiley.RightSource), Color.White);
         }
         /// <summary>
         /// Draws the players username above them
@@ -199,27 +199,27 @@ namespace Bricklayer.Client.Entities
             if (!(Bricklayer.Client.Interface.MainWindow.ScreenManager.Current as Bricklayer.Client.Interface.GameScreen).ChatBox.TextBox.Focused && !Game.IsMouseOnControl)
             {
                 //Change smilies
-            if (Game.KeyState.IsKeyUp(Keys.Q) && Game.LastKeyState.IsKeyDown(Keys.Q))
-            {
-                Smiley = SmileyType.SmileyList[((Smiley.ID == 0 ? SmileyType.SmileyList.Count : Smiley.ID) - 1) % SmileyType.SmileyList.Count];
-                Game.NetManager.SendMessage(new PlayerSmileyMessage(this, Smiley));
-            }
-            else if (Game.KeyState.IsKeyUp(Keys.E) && Game.LastKeyState.IsKeyDown(Keys.E))
-            {
-                Smiley = SmileyType.SmileyList[(Smiley.ID + 1) % SmileyType.SmileyList.Count];
-                Game.NetManager.SendMessage(new PlayerSmileyMessage(this, Smiley));
-            }
+                if (Game.KeyState.IsKeyUp(Keys.Q) && Game.LastKeyState.IsKeyDown(Keys.Q))
+                {
+                    Smiley = SmileyType.SmileyList[((Smiley.ID == 0 ? SmileyType.SmileyList.Count : Smiley.ID) - 1) % SmileyType.SmileyList.Count];
+                    Game.NetManager.SendMessage(new PlayerSmileyMessage(this, Smiley));
+                }
+                else if (Game.KeyState.IsKeyUp(Keys.E) && Game.LastKeyState.IsKeyDown(Keys.E))
+                {
+                    Smiley = SmileyType.SmileyList[(Smiley.ID + 1) % SmileyType.SmileyList.Count];
+                    Game.NetManager.SendMessage(new PlayerSmileyMessage(this, Smiley));
+                }
 
                 if (Keys.G.IsKeyToggled(Game.KeyState, Game.LastKeyState))
-            {
-                PlayerMode oldMode = Mode;
-                if (Mode == PlayerMode.God)
-                    Mode = PlayerMode.Normal;
-                else if (Mode == PlayerMode.Normal)
-                    Mode = PlayerMode.God;
-                if (oldMode != Mode)
-                    Game.NetManager.SendMessage(new PlayerModeMessage(this));
-            }
+                {
+                    PlayerMode oldMode = Mode;
+                    if (Mode == PlayerMode.God)
+                        Mode = PlayerMode.Normal;
+                    else if (Mode == PlayerMode.Normal)
+                        Mode = PlayerMode.God;
+                    if (oldMode != Mode)
+                        Game.NetManager.SendMessage(new PlayerModeMessage(this));
+                }
             }
 
             if (Mode == PlayerMode.Normal)
@@ -244,7 +244,7 @@ namespace Bricklayer.Client.Entities
 
                 //If jump key pressed/released or release/pressed, send message that the velocity has changed
                 //If the key is down, make sure we are jumping
-                IsJumping = Game.KeyState.IsKeyDown(Keys.W);
+                IsJumping = Game.KeyState.IsKeyDown(Keys.W) || Game.KeyState.IsKeyDown(Keys.Space);
 
                 //Move right
                 if (Game.KeyState.IsKeyDown(Keys.D))
@@ -377,7 +377,7 @@ namespace Bricklayer.Client.Entities
         private void ApplyPhysics(GameTime gameTime)
         {
             float elapsed = (float)gameTime.ElapsedGameTime.TotalSeconds; //Time in seconds, since last frame
-            float delta = elapsed * 60; 
+            float delta = elapsed * 60;
 
             //Face the direction the player is moving
             if (SimulationState.Movement.X > 0)
@@ -457,8 +457,8 @@ namespace Bricklayer.Client.Entities
                 SimulationState.Position = new Vector2(SimulationState.Position.X, (float)Math.Round(SimulationState.Position.Y));
 
                 //Clamp position in bounds
-                SimulationState.Position.X = MathHelper.Clamp(SimulationState.Position.X, Tile.Width, (map.Width * Tile.Width)- (Tile.Width * 2));
-                SimulationState.Position.Y = MathHelper.Clamp(SimulationState.Position.Y, Tile.Height, (map.Height * Tile.Height) - (Tile.Height * 2));
+                SimulationState.Position.X = MathHelper.Clamp(SimulationState.Position.X, Tile.WIDTH, (map.Width * Tile.WIDTH) - (Tile.WIDTH * 2));
+                SimulationState.Position.Y = MathHelper.Clamp(SimulationState.Position.Y, Tile.HEIGHT, (map.Height * Tile.HEIGHT) - (Tile.HEIGHT * 2));
             }
 
             //Set idle states
