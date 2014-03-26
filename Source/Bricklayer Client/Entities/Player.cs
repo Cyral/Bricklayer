@@ -280,7 +280,8 @@ namespace Bricklayer.Client.Entities
                 }
 
                 //Fixes a bug caused by quickly switching directions
-                if (Game.LastKeyState.IsKeyDown(Keys.A) && Game.KeyState.IsKeyDown(Keys.D))
+                if ((Game.LastKeyState.IsKeyDown(Keys.Left) && Game.KeyState.IsKeyDown(Keys.Right)) ||
+                    (Game.LastKeyState.IsKeyDown(Keys.A) && Game.KeyState.IsKeyDown(Keys.D)))
                 {
                     SimulationState.Movement = new Vector2(1, 0);
                     velocityChanged = true;
