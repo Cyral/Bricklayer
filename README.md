@@ -10,6 +10,8 @@
 
 * Found a bug? Report it (along with a crashlog if generated) on the [issue page](https://github.com/Cyral/Bricklayer/issues). _< Help fix and report issues_
 
+* Have an idea? Suggest it! Create an [issue](https://github.com/Cyral/Bricklayer/issues) with the tag "suggestion" or "idea" _< Give us something to do!_
+
 ###Prerequisites
 Running a build? You will need the below items! If you are looking to download and compile yourself, please follow [these steps](https://github.com/Cyral/Bricklayer/wiki/Opening-the-solution-and-running-the-source-on-your-machine).
 * Microsoft XNA Redistributable 4.0: http://www.microsoft.com/en-us/download/details.aspx?id=20914
