@@ -38,7 +38,7 @@ namespace Bricklayer.Server
         }
         public ServerPingData GetQuery()
         {
-            return new ServerPingData() { Online = Server.ConnectionsCount, MaxOnline = Server.Configuration.MaximumConnections, MOTD = Program.Motd };
+            return new ServerPingData() { Online = Server.ConnectionsCount, MaxOnline = Server.Configuration.MaximumConnections, MOTD = Program.Config.MOTD };
         }
         public NetOutgoingMessage CreateMessage()
         {

@@ -6,35 +6,74 @@ using System.IO;
 using System.Linq;
 using System.Xml;
 using Microsoft.Xna.Framework.Graphics;
+using Newtonsoft.Json;
 
 #endregion
 
 namespace Bricklayer.Server
 {
+    /// <summary>
+    /// Handles disk operations such as saving maps and loading settings
+    /// </summary>
     public class IO
     {
-        public static string AssemblyVersion = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
+        /// <summary>
+        /// The current directory the server executable lies in
+        /// Rather than loading from a static folder such as the client, the server
+        /// Will load settings/maps from it's current folder, meaning you can drag and drop the server
+        /// Into any folder to run it
+        /// </summary>
+        public static readonly string ServerDirectory = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+        //Files
+        private static readonly string configFile = ServerDirectory + "\\server.config";
+        private static readonly JsonSerializerSettings serializationSettings = new JsonSerializerSettings() { Formatting = Newtonsoft.Json.Formatting.Indented };
+
 
         static IO()
         {
         }
 
         /// <summary>
-        /// Opens the settings file and loads the values
+        /// Opens the server settings and loads them into the server
         /// </summary>
         public static void LoadSettings()
         {
             try
             {
-                string port = ConfigurationManager.AppSettings["Port"];
-                int.TryParse(port, out Program.Port);
-                string max = ConfigurationManager.AppSettings["MaxPlayers"];
-                int.TryParse(max, out Program.MaxConnections);
-                Program.Motd = ConfigurationManager.AppSettings["MOTD"].Replace("\\n", Environment.NewLine);
+                //If server config does not exist, create it and write the default settings
+                if (!File.Exists(configFile))
+                    SaveSettings(Settings.GetDefaultSettings());
+                string json = File.ReadAllText(configFile);
+                //If config is empty, regenerate and read again
+                if (string.IsNullOrWhiteSpace(json))
+                    SaveSettings(Settings.GetDefaultSettings());
+                json = File.ReadAllText(configFile);
+                Program.Config = JsonConvert.DeserializeObject<Settings>(json);
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.Assert(false, ex.Message);
+                throw; //TODO: Add some form of handling
+            }
+        }
+        /// <summary>
+        /// Saves server settings to the server config
+        /// </summary>
+        public static void SaveSettings(Settings settings)
+        {
+            try
+            {
+                //If server config does not exist, create it
+                if (!File.Exists(configFile))
+                {
+                    FileStream str = File.Create(configFile);
+                    str.Close();
+                }
+                string json = JsonConvert.SerializeObject(settings, serializationSettings);
+                File.WriteAllText(configFile, json);
+            }
+            catch (Exception ex)
+            {
+                throw; //TODO: Add some form of handling
             }
         }
     }

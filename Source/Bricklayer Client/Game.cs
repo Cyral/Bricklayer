@@ -97,8 +97,8 @@ namespace Bricklayer.Client
         {
             TextureLoader = new TextureLoader(Manager.GraphicsDevice, Content);
             IO.CheckFiles();
-            IO.LoadContentPacks(this); //Load textures from content pack
             IO.LoadSettings(this);
+            IO.LoadContentPacks(this); //Load textures from content pack
             MainWindow = new Interface.MainWindow(Manager);
             return MainWindow;
         }

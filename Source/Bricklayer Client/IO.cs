@@ -8,17 +8,22 @@ using System.Xml;
 using Microsoft.Xna.Framework.Graphics;
 using Bricklayer.Client.Networking;
 using Newtonsoft.Json;
+using Bricklayer.Client;
 #endregion
 
 namespace Bricklayer.Client
 {
     public class IO
     {
-        public static string AssemblyVersion = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
+        public static readonly string AssemblyVersion = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
         public static Dictionary<string, string> Directories = new Dictionary<string, string>();
-        public static string MainDirectory = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\.Bricklayer";
+        public static readonly string MainDirectory = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\.Bricklayer";
         public const string MapSuffix = ".map";
-        private static int FileBufferSize = 65536;
+
+        private static readonly string configFile = MainDirectory + "\\settings.config";
+        private static readonly string serverFile = MainDirectory + "\\servers.config";
+        private static readonly int fileBufferSize = 65536;
+        private static readonly JsonSerializerSettings serializationSettings = new JsonSerializerSettings() { Formatting = Newtonsoft.Json.Formatting.Indented };
 
         public static List<ContentPack> ContentPacks = new List<ContentPack>();
 
@@ -49,33 +54,63 @@ namespace Bricklayer.Client
         {
             try
             {
-                Game.Username = ConfigurationManager.AppSettings["Username"];
-                Game.ContentPackName = ConfigurationManager.AppSettings["ContentPack"];
-                string[] res = ConfigurationManager.AppSettings["Resolution"].Split(':');
-                bool vsync = Boolean.Parse(ConfigurationManager.AppSettings["VSync"]);
-                string hexColor = ConfigurationManager.AppSettings["Color"];
-                Game.MyColor = Cyral.Extensions.Xna.ColorExtensions.ToColor(hexColor);
-
-                Game.Resolution = new Microsoft.Xna.Framework.Rectangle(0,0,int.Parse(res[0]), int.Parse(res[1]));
-                game.Graphics.PreferredBackBufferWidth = Game.Resolution.Width;
-                game.Graphics.PreferredBackBufferHeight = Game.Resolution.Height;
-                game.Manager.ScreenWidth = Game.Resolution.Width;
-                game.Manager.ScreenHeight = Game.Resolution.Height;
-                game.Graphics.SynchronizeWithVerticalRetrace = vsync;
-                game.Graphics.ApplyChanges();
+                Settings settings;
+                //If config does not exist, create it and write the default settings
+                if (!File.Exists(configFile))
+                    SaveSettings(Settings.GetDefaultSettings());
+                string json = File.ReadAllText(configFile);
+                //If config is empty, regenerate it
+                if (string.IsNullOrWhiteSpace(json))
+                    SaveSettings(Settings.GetDefaultSettings());
+                json = File.ReadAllText(configFile);
+                settings = JsonConvert.DeserializeObject<Settings>(json);
+                ApplySettings(settings, game);
             }
             catch (Exception ex)
             {
+#if DEBUG
+                throw;
+#else
                 System.Windows.Forms.MessageBox.Show(ex.Message, game.Window.Title + " Configuration Error");
+#endif
                 //Default fallback settings
-                Game.MyColor = Cyral.Extensions.Xna.ColorExtensions.ToColor("#FFBB00");
-                Game.Resolution = new Microsoft.Xna.Framework.Rectangle(0, 0, 900, 600);
-                game.Graphics.PreferredBackBufferWidth = Game.Resolution.Width;
-                game.Graphics.PreferredBackBufferHeight = Game.Resolution.Height;
-                game.Manager.ScreenWidth = Game.Resolution.Width;
-                game.Manager.ScreenHeight = Game.Resolution.Height;
-                game.Graphics.SynchronizeWithVerticalRetrace = false;
-                game.Graphics.ApplyChanges();
+                ApplySettings(Settings.GetDefaultSettings(), game);
+            }
+        }
+        /// <summary>
+        /// Applies loading settings (Handles logic)
+        /// </summary>
+        /// <param name="settings"></param>
+        private static void ApplySettings(Settings settings, Game game)
+        {
+            Game.Username = settings.Username;
+            Game.ContentPackName = settings.ContentPack;
+            Game.MyColor = Cyral.Extensions.Xna.ColorExtensions.ToColor(settings.Color);
+            Game.Resolution = new Microsoft.Xna.Framework.Rectangle(0, 0, settings.Resolution.X, settings.Resolution.Y);
+            game.Graphics.PreferredBackBufferWidth = Game.Resolution.Width;
+            game.Graphics.PreferredBackBufferHeight = Game.Resolution.Height;
+            game.Graphics.SynchronizeWithVerticalRetrace = settings.UseVSync;
+            game.Graphics.ApplyChanges();
+        }
+        /// <summary>
+        /// Saves settings to the settings file
+        /// </summary>
+        public static void SaveSettings(Settings settings)
+        {
+            try
+            {
+                //If server config does not exist, create it
+                if (!File.Exists(configFile))
+                {
+                    FileStream str = File.Create(configFile);
+                    str.Close();
+                }
+                string json = JsonConvert.SerializeObject(settings, serializationSettings);
+                File.WriteAllText(configFile, json);
+            }
+            catch (Exception ex)
+            {
+                throw; //TODO: Add some form of handling
             }
         }
         /// <summary>
@@ -85,9 +120,6 @@ namespace Bricklayer.Client
         {
             try
             {
-                //Set current pack
-                Game.ContentPackName = ConfigurationManager.AppSettings["ContentPack"];
-
                 //Load Content Packs
                 List<string> dirs = new List<string>();
                 //Load embedded pack directories from Content folder
@@ -143,7 +175,7 @@ namespace Bricklayer.Client
         /// </summary>
         public static List<ServerSaveData> ReadServers()
         {
-            string fileName = MainDirectory + "\\servers.config";
+            string fileName = serverFile;
             List<ServerSaveData> servers;
             if (!File.Exists(fileName))
             {
@@ -151,6 +183,11 @@ namespace Bricklayer.Client
                 WriteServers(new List<ServerSaveData>() { new ServerSaveData("Local Server", "127.0.0.1", 14242) }); 
             }
             string json = File.ReadAllText(fileName);
+            if (string.IsNullOrWhiteSpace(json))
+            {
+                WriteServers(new List<ServerSaveData>() { new ServerSaveData("Local Server", "127.0.0.1", 14242) });
+                json = File.ReadAllText(fileName);
+            }
             servers = JsonConvert.DeserializeObject<List<ServerSaveData>>(json);
             return servers;
         }
@@ -159,10 +196,13 @@ namespace Bricklayer.Client
         /// </summary>
         public static void WriteServers(List<ServerSaveData> servers)
         {
-            string fileName = MainDirectory + "\\servers.config";
+            string fileName = serverFile;
             if (!File.Exists(fileName))
-                File.Create(fileName);
-            string json = JsonConvert.SerializeObject(servers);
+            {
+                FileStream str = File.Create(fileName);
+                str.Close();
+            }
+            string json = JsonConvert.SerializeObject(servers, serializationSettings);
             File.WriteAllText(fileName, json);
         }
     }
