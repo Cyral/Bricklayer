@@ -189,8 +189,8 @@ namespace Bricklayer.Client
         {
             if (CurrentGameState == GameState.Game && (MainWindow.ScreenManager.Current as GameScreen).ChatBox.TextBox.Focused)
                 return false;
-            // Is the mouse cursor within the application window?
-            if (pos.X >= 0 && pos.X <= Manager.TargetWidth && pos.Y >= 24 && pos.Y <= Manager.TargetHeight)
+            // Does the game window have focus?
+            if (MainWindow.Focused)
             {
                 foreach (Control c in Manager.Controls)
                 {
