@@ -111,7 +111,7 @@ namespace Bricklayer.Client.Entities
             if (Mode == PlayerMode.God)
                 spriteBatch.Draw(map.godTexture, new Vector2((float)Math.Round(DisplayState.Position.X), (float)Math.Round(DisplayState.Position.Y) - 1) - new Vector2(map.godTexture.Width / 2, map.godTexture.Height / 2) + new Vector2(Width / 2, Height / 2), Tint);
             //Draw player body
-            spriteBatch.Draw(map.bodyTexture, new Vector2((float)Math.Round(DisplayState.Position.X), (float)Math.Round(DisplayState.Position.Y) - 1), new Rectangle((Direction == FacingDirection.Left ? 0 : Width), 0, Width, Height), Tint);
+            spriteBatch.Draw(map.bodyTexture, new Vector2((float)Math.Round(DisplayState.Position.X), (float)Math.Round(DisplayState.Position.Y) - 1), Tint);
             //Draw player smiley
             spriteBatch.Draw(map.smileySheet, new Vector2((float)Math.Round(DisplayState.Position.X), (float)Math.Round(DisplayState.Position.Y) - 1), (Direction == FacingDirection.Left ? Smiley.LeftSource : Smiley.RightSource), Color.White);
         }
