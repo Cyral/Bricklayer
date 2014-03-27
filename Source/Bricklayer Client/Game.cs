@@ -30,6 +30,7 @@ namespace Bricklayer.Client
         //Networking
         public static NetworkManager NetManager;
         public static MessageHandler MsgHandler;
+        public static bool Connected { get { return NetManager.Client != null && NetManager.GetConnectionStatus() == NetConnectionStatus.Connected; } }
 
         public static SpriteFont DefaultFont;
         public static TextureLoader TextureLoader;
@@ -241,9 +242,12 @@ namespace Bricklayer.Client
         /// </summary>
         void MainWindow_FocusGained(object sender, TomShane.Neoforce.Controls.EventArgs e)
         {
-            ListBox playerList = (MainWindow.ScreenManager.Current as GameScreen).PlayerList;
-            playerList.ItemIndex = -1;
-            playerList.Focused = false;
+            if (CurrentGameState == GameState.Game)
+            {
+                ListBox playerList = (MainWindow.ScreenManager.Current as GameScreen).PlayerList;
+                playerList.ItemIndex = -1;
+                playerList.Focused = false;
+            }
         }
 
         #endregion
