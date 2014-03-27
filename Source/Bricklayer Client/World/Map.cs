@@ -141,20 +141,23 @@ namespace Bricklayer.Client.World
         public void PlaceTile(int x, int y, Layer layer, BlockType block, bool sendMessage)
         {
             int z = layer == Layer.Foreground ? 1 : 0;
-            //If the block has changed, and we should send a message, send one
-            if (sendMessage && Tiles[x,y,z].Block.ID != block.ID)
+            if (CanPlaceBlock(x, y, z, block))
             {
-                Game.NetManager.SendMessage(new BlockMessage(block, x, y, z));
-            }
-            //Set the block
-            switch (block.Type)
-            {
-                case TileType.Default:
-                    Tiles[x, y, z] = new Tile(block);
-                    break;
-                case TileType.Animated:
-                    Tiles[x, y, z] = new AnimatedTile(block);
-                    break;
+                //If the block has changed, and we should send a message, send one
+                if (sendMessage && Tiles[x, y, z].Block.ID != block.ID)
+                {
+                    Game.NetManager.SendMessage(new BlockMessage(block, x, y, z));
+                }
+                //Set the block
+                switch (block.Type)
+                {
+                    case TileType.Default:
+                        Tiles[x, y, z] = new Tile(block);
+                        break;
+                    case TileType.Animated:
+                        Tiles[x, y, z] = new AnimatedTile(block);
+                        break;
+                }
             }
         }
         /// <summary>
@@ -234,8 +237,7 @@ namespace Bricklayer.Client.World
             {
                 //Place a tile
                 BlockType block = SelectedBlock;
-                if (CanPlaceBlock(GridPosition.X, GridPosition.Y, block) &&
-                    MousePosition.X > MainCamera.Left && MousePosition.Y > MainCamera.Top && MousePosition.X < MainCamera.Right && MousePosition.Y < MainCamera.Bottom)
+                if (MousePosition.X > MainCamera.Left && MousePosition.Y > MainCamera.Top && MousePosition.X < MainCamera.Right && MousePosition.Y < MainCamera.Bottom)
                 {
                     //Find the layer
                     Layer layer = Game.KeyState.IsKeyDown(Keys.LeftShift) && (SelectedBlock.Layer == Layer.Background || SelectedBlock.Layer == Layer.All) ? Layer.Background : Layer.Foreground;
@@ -362,11 +364,11 @@ namespace Bricklayer.Client.World
         /// Determines if a player can place a block at a specified position
         /// </summary>
         /// <returns>True if the player can place the block, false otherwise</returns>
-        public bool CanPlaceBlock(int x, int y, BlockType block)
+        public bool CanPlaceBlock(int x, int y, int z, BlockType block)
         {
             bool Overlaps = false;
             bool InRange = InBounds(x, y);
-            if (block.Layer == Layer.Foreground && block.ID != BlockType.Empty.ID)
+            if (z == Tile.ForegroundIndex && block.ID != BlockType.Empty.ID)
             {
                 Overlaps = Players.Any(p => (int)(p.SimulationState.Position.X / Tile.Width) == x &&
                      (int)(p.SimulationState.Position.Y / Tile.Height) == y);
