@@ -9,5 +9,6 @@ namespace Bricklayer.Client.World
     {
         Foreground,
         Background,
+        All,
     }
 }

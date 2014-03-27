@@ -130,17 +130,30 @@ namespace Bricklayer.Client.World
         }
         /// <summary>
         /// Places a tile at the specified position, WHILE taking into account it's TileType
+        /// Mainly used for player block placement, if you are looking to place a block through the code
+        /// Either use `Tiles[x,y,z] =` or, set sendMessage to false
         /// </summary>
-        public void PlaceTile(int x, int y, Layer layer, BlockType block)
+        /// <param name="x">The X position on the grid</param>
+        /// <param name="y">The Y position on the grid</param>
+        /// <param name="layer">The layer, either background or foreground</param>
+        /// <param name="block">The block to place</param>
+        /// <param name="sendMessage">Should the block be sent to the server or not</param>
+        public void PlaceTile(int x, int y, Layer layer, BlockType block, bool sendMessage)
         {
-            int l = layer == Layer.Foreground ? 1 : 0;
+            int z = layer == Layer.Foreground ? 1 : 0;
+            //If the block has changed, and we should send a message, send one
+            if (sendMessage && Tiles[x,y,z].Block.ID != block.ID)
+            {
+                Game.NetManager.SendMessage(new BlockMessage(block, x, y, z));
+            }
+            //Set the block
             switch (block.Type)
             {
                 case TileType.Default:
-                    Tiles[x, y, l] = new Tile(block);
+                    Tiles[x, y, z] = new Tile(block);
                     break;
                 case TileType.Animated:
-                    Tiles[x, y, l] = new AnimatedTile(block);
+                    Tiles[x, y, z] = new AnimatedTile(block);
                     break;
             }
         }
@@ -202,6 +215,7 @@ namespace Bricklayer.Client.World
         /// </summary>
         private void HandleInput()
         {
+            //Get positions
             Point MousePosition = new Point((int)MainCamera.Position.X + Game.MousePoint.X, (int)MainCamera.Position.Y + Game.MousePoint.Y);
             Point GridPosition = new Point(MousePosition.X / Tile.Width, MousePosition.Y / Tile.Height);
             
@@ -218,12 +232,14 @@ namespace Bricklayer.Client.World
             //If LeftButton Pressed
             if (Game.MouseState.LeftButton == ButtonState.Pressed)
             {
-                BlockType block = Game.KeyState.IsKeyDown(Keys.LeftShift) ? BlockType.Empty : SelectedBlock;
+                //Place a tile
+                BlockType block = SelectedBlock;
                 if (CanPlaceBlock(GridPosition.X, GridPosition.Y, block) &&
                     MousePosition.X > MainCamera.Left && MousePosition.Y > MainCamera.Top && MousePosition.X < MainCamera.Right && MousePosition.Y < MainCamera.Bottom)
                 {
-                    PlaceTile(GridPosition.X, GridPosition.Y, Layer.Foreground, block);
-                    Game.NetManager.SendMessage(new BlockMessage(Tiles[GridPosition.X, GridPosition.Y,1].Block, GridPosition.X, GridPosition.Y));
+                    //Find the layer
+                    Layer layer = Game.KeyState.IsKeyDown(Keys.LeftShift) && (SelectedBlock.Layer == Layer.Background || SelectedBlock.Layer == Layer.All) ? Layer.Background : Layer.Foreground;
+                    PlaceTile(GridPosition.X, GridPosition.Y, layer, block, true); //Place the tile
                 }
             }
             //If RightButton Pressed
@@ -234,33 +250,24 @@ namespace Bricklayer.Client.World
 
             if (!(Bricklayer.Client.Interface.MainWindow.ScreenManager.Current as Bricklayer.Client.Interface.GameScreen).ChatBox.TextBox.Focused && !Game.IsMouseOnControl)
             {
-            //Select block
-            int key = -1;
 
-            if (Keys.D1.IsKeyToggled(Game.KeyState, Game.LastKeyState))
-                key = 0;
-            else if (Keys.D2.IsKeyToggled(Game.KeyState, Game.LastKeyState))
-                key = 1;
-            else if (Keys.D3.IsKeyToggled(Game.KeyState, Game.LastKeyState))
-                key = 2;
-            else if (Keys.D4.IsKeyToggled(Game.KeyState, Game.LastKeyState))
-                key = 3;
-            else if (Keys.D5.IsKeyToggled(Game.KeyState, Game.LastKeyState))
-                key = 4;
-            else if (Keys.D6.IsKeyToggled(Game.KeyState, Game.LastKeyState))
-                key = 5;
-            else if (Keys.D7.IsKeyToggled(Game.KeyState, Game.LastKeyState))
-                key = 6;
-            else if (Keys.D8.IsKeyToggled(Game.KeyState, Game.LastKeyState))
-                key = 7;
-            else if (Keys.D9.IsKeyToggled(Game.KeyState, Game.LastKeyState))
-                key = 8;
-            else if (Keys.D0.IsKeyToggled(Game.KeyState, Game.LastKeyState))
-                key = 9;
+                //Select block
+                int key = -1;
 
-            BlockType[] Foregrounds = BlockType.BlockList.Where(x => x.Layer == Layer.Foreground && x.ID != BlockType.Empty.ID).ToArray<BlockType>();
-            if (key < Foregrounds.Length && key > -1)
-                SelectedBlock = Foregrounds[key];
+                if (Keys.D1.IsKeyToggled(Game.KeyState, Game.LastKeyState)) key = 0;
+                else if (Keys.D2.IsKeyToggled(Game.KeyState, Game.LastKeyState)) key = 1;
+                else if (Keys.D3.IsKeyToggled(Game.KeyState, Game.LastKeyState)) key = 2;
+                else if (Keys.D4.IsKeyToggled(Game.KeyState, Game.LastKeyState)) key = 3;
+                else if (Keys.D5.IsKeyToggled(Game.KeyState, Game.LastKeyState)) key = 4;
+                else if (Keys.D6.IsKeyToggled(Game.KeyState, Game.LastKeyState)) key = 5;
+                else if (Keys.D7.IsKeyToggled(Game.KeyState, Game.LastKeyState)) key = 6;
+                else if (Keys.D8.IsKeyToggled(Game.KeyState, Game.LastKeyState)) key = 7;
+                else if (Keys.D9.IsKeyToggled(Game.KeyState, Game.LastKeyState)) key = 8;
+                else if (Keys.D0.IsKeyToggled(Game.KeyState, Game.LastKeyState)) key = 9;
+
+                BlockType[] Foregrounds = BlockType.BlockList.Where(x => x.Layer == Layer.Foreground || x.Layer == Layer.All).ToArray<BlockType>();
+                if (key < Foregrounds.Length && key > -1)
+                    SelectedBlock = Foregrounds[key];
             }
         }
         /// <summary>
@@ -297,7 +304,7 @@ namespace Bricklayer.Client.World
                     {
                         tile = Tiles[x, y, 0];
                         if (tile.Block != BlockType.Empty)
-                            tile.Draw(spriteBatch, tileSheet, drawPosition, x, y);
+                            tile.Draw(spriteBatch, tileSheet, drawPosition, x, y, Tile.BackgroundIndex);
                     }
                 }
             }
@@ -311,7 +318,7 @@ namespace Bricklayer.Client.World
                     {
                         tile = Tiles[x, y, 1];
                         if (tile.Block != BlockType.Empty)
-                            tile.Draw(spriteBatch, tileSheet, drawPosition, x, y);
+                            tile.Draw(spriteBatch, tileSheet, drawPosition, x, y, Tile.ForegroundIndex);
                     }
                 }
             }
@@ -333,9 +340,9 @@ namespace Bricklayer.Client.World
         /// <summary>
         /// Determines if a grid position is in the bounds of the map
         /// </summary>
-        public bool InBounds(int x, int y)
+        public bool InBounds(int x, int y, int z = 1)
         {
-            return !(y < 1 || y >= Height - 1 || x < 1 || x >= Width - 1);
+            return !(y < 1 || y >= Height - 1 || x < 1 || x >= Width - 1 || z > 1 || z < 0);
         }
         /// <summary>
         /// Determines if a grid position is in the bounds of the drawing area (The map, but not the border)

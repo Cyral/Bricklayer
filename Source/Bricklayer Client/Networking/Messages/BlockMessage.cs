@@ -11,6 +11,8 @@ namespace Bricklayer.Client.Networking.Messages
 
         public short Y { get; set; }
 
+        public byte Z { get; set; }
+
         public byte BlockID { get; set; }
 
         public double MessageTime { get; set; }
@@ -24,11 +26,15 @@ namespace Bricklayer.Client.Networking.Messages
         {
             this.Decode(im);
         }
-        public BlockMessage(BlockType block, int x, int y)
+        public BlockMessage(BlockType block, int x, int y, int z)
         {
+            if (z > 1) //Throw an exception if the Z is out of range
+                throw new System.ArgumentOutOfRangeException("The Z coordinate cannot be more than 1");
+
             this.BlockID = block.ID;
             this.X = (short)x;
             this.Y = (short)y;
+            this.Z = (byte)z;
             this.MessageTime = NetTime.Now;
         }
         public void Decode(NetIncomingMessage im)
@@ -36,12 +42,14 @@ namespace Bricklayer.Client.Networking.Messages
             this.BlockID = im.ReadByte();
             this.X = im.ReadInt16();
             this.Y = im.ReadInt16();
+            this.Z = im.ReadByte();
         }
         public void Encode(NetOutgoingMessage om)
         {
             om.Write(this.BlockID);
             om.Write(this.X);
             om.Write(this.Y);
+            om.Write(this.Z);
         }
     }
 }
