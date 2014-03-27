@@ -38,6 +38,8 @@ namespace Bricklayer.Client.Entities
         public EntityState PreviousState;
         public PlayerMode Mode;
         public FacingDirection Direction;
+        public GravityDirection GravityDirection;
+        public GravityDirection JumpDirection;
 
         //Physic States
         public bool IsJumping { get; set; }
@@ -396,17 +398,65 @@ namespace Bricklayer.Client.Entities
             {
                 if (!IsMine)
                     IsJumping = VirtualJump;
+                //The next area applies the movement and gravity, based on the current direction the player is being pushed by arrows (if so)
 
-                //If not movement detected from keys, apply acceleration to move, if not, slowly stop
-                if (SimulationState.Movement.X != 0)
-                    SimulationState.Velocity.X += SimulationState.Movement.X * MoveSpeed;
-                else
-                    SimulationState.Velocity.X = MathHelper.Lerp(SimulationState.Velocity.X, 0, MoveSlowDownFactor);
-                SimulationState.Velocity.X = MathHelper.Clamp(SimulationState.Velocity.X, -MaxVelocity, MaxVelocity);
-                //Apply gravity and jump physics
-                SimulationState.Velocity.Y = MathHelper.Clamp((SimulationState.Velocity.Y + GravityAcceleration * .0166f) + GravityAcceleration * .0166f, -MaxFallSpeed, MaxFallSpeed);
-                SimulationState.Velocity.Y = DoJump(SimulationState.Velocity.Y, gameTime);
-                SimulationState.Velocity.Y = MathHelper.Clamp(SimulationState.Velocity.Y + GravityAcceleration * .0166f, -MaxFallSpeed, MaxFallSpeed);
+                //If gravity is up or down
+                if (GravityDirection == GravityDirection.Default || GravityDirection == GravityDirection.Down || GravityDirection == GravityDirection.Up)
+                {
+                    //Apply horizontal movement
+                    //If not movement detected from keys, apply acceleration to move, if not, slowly stop
+                    if (SimulationState.Movement.X != 0)
+                        SimulationState.Velocity.X += SimulationState.Movement.X * MoveSpeed;
+                    else
+                        SimulationState.Velocity.X = MathHelper.Lerp(SimulationState.Velocity.X, 0, MoveSlowDownFactor);
+                    SimulationState.Velocity.X = MathHelper.Clamp(SimulationState.Velocity.X, -MaxVelocity, MaxVelocity);
+
+                    //Apply vertical movement (jump, gravity)
+                    if (GravityDirection == GravityDirection.Up)
+                    {
+                        SimulationState.Velocity.Y = MathHelper.Clamp((SimulationState.Velocity.Y - GravityAcceleration * .0166f) - GravityAcceleration * .0166f, -MaxFallSpeed, MaxFallSpeed);
+                        SimulationState.Velocity.Y = DoJump(SimulationState.Velocity.Y, gameTime);
+                        SimulationState.Velocity.Y = MathHelper.Clamp((SimulationState.Velocity.Y - GravityAcceleration * .0166f), -MaxFallSpeed, MaxFallSpeed);
+                    }
+                    else if (GravityDirection == GravityDirection.Down)
+                    {
+                        SimulationState.Velocity.Y = MathHelper.Clamp(((SimulationState.Velocity.Y + (GravityAcceleration * 2.5f) * .0166f) + (GravityAcceleration * 2.5f) * .0166f), -MaxFallSpeed, MaxFallSpeed);
+                        SimulationState.Velocity.Y = DoJump(SimulationState.Velocity.Y, gameTime);
+                        SimulationState.Velocity.Y = MathHelper.Clamp(((SimulationState.Velocity.Y + (GravityAcceleration * 2.5f) * .0166f)), -MaxFallSpeed, MaxFallSpeed);
+                    }
+                    else
+                    {
+                        SimulationState.Velocity.Y = MathHelper.Clamp((SimulationState.Velocity.Y + GravityAcceleration * .0166f) + GravityAcceleration * .0166f, -MaxFallSpeed, MaxFallSpeed);
+                        SimulationState.Velocity.Y = DoJump(SimulationState.Velocity.Y, gameTime);
+                        SimulationState.Velocity.Y = MathHelper.Clamp(SimulationState.Velocity.Y + GravityAcceleration * .0166f, -MaxFallSpeed, MaxFallSpeed);
+                    }
+                }
+                //If gravity is left or right
+                if (GravityDirection == GravityDirection.Left || GravityDirection == GravityDirection.Right)
+                {
+                    //Apply vertical movement
+                    //If not movement detected from keys, apply acceleration to move, if not, slowly stop
+                    if (SimulationState.Movement.X != 0)
+                        SimulationState.Velocity.Y += SimulationState.Movement.X * MoveSpeed;
+                    else
+                        SimulationState.Velocity.Y = MathHelper.Lerp(SimulationState.Velocity.Y, 0, MoveSlowDownFactor);
+                    SimulationState.Velocity.Y = MathHelper.Clamp(SimulationState.Velocity.Y, -MaxVelocity, MaxVelocity);
+
+                    //Apply vertical movement (jump, gravity)
+                    if (GravityDirection == GravityDirection.Left)
+                    {
+                        SimulationState.Velocity.X = MathHelper.Clamp((SimulationState.Velocity.X - GravityAcceleration * .0166f) - GravityAcceleration * .0166f, -MaxFallSpeed, MaxFallSpeed);
+                        SimulationState.Velocity.X = DoJump(SimulationState.Velocity.X, gameTime);
+                        SimulationState.Velocity.X = MathHelper.Clamp((SimulationState.Velocity.X - GravityAcceleration * .0166f), -MaxFallSpeed, MaxFallSpeed);
+                    }
+                    else if (GravityDirection == GravityDirection.Right)
+                    {
+                        SimulationState.Velocity.X = MathHelper.Clamp(((SimulationState.Velocity.X + GravityAcceleration * .0166f) + GravityAcceleration * .0166f), -MaxFallSpeed, MaxFallSpeed);
+                        SimulationState.Velocity.X = DoJump(SimulationState.Velocity.X, gameTime);
+                        SimulationState.Velocity.X = MathHelper.Clamp(((SimulationState.Velocity.X + GravityAcceleration * .0166f)), -MaxFallSpeed, MaxFallSpeed);
+                    }
+                }
+
 
                 //Apply pseudo-drag horizontally.
                 if (IsOnGround)
@@ -414,19 +464,21 @@ namespace Bricklayer.Client.Entities
                 else
                     SimulationState.Velocity.X *= AirDragFactor;
 
-                //Horizontal Collison, X Axis
-                Vector2 change = SimulationState.Velocity.X * Vector2.UnitX * elapsed;
-                change.X = MathHelper.Clamp(change.X, -(Tile.Width), Tile.Width);
-                SimulationState.Position += change;
-                SimulationState.Position = new Vector2((float)Math.Round(SimulationState.Position.X), SimulationState.Position.Y);
-                HandleCollisions(CollisionDirection.Horizontal, gameTime);
+                 //If gravity is up or down, apply horizontal collision, then vertical
+                if (GravityDirection == GravityDirection.Default || GravityDirection == GravityDirection.Down || GravityDirection == GravityDirection.Up)
+                {
+                    GravityDirection = GravityDirection.Default;
+                    HorizontalCollision(gameTime, elapsed); //Horizontal Collison, X Axis
+                    VerticalCollision(gameTime, elapsed); //Vertical Collision, Y Axis
+                }
+                //If gravity is left or right, apply vertical collision, then horizontal
+                else if (GravityDirection == GravityDirection.Left || GravityDirection == GravityDirection.Right)
+                {
+                    GravityDirection = GravityDirection.Default;
+                    VerticalCollision(gameTime, elapsed); //Vertical Collision, Y Axis
+                    HorizontalCollision(gameTime, elapsed); //Horizontal Collison, X Axis
+                }
 
-                //Vertical Collision, Y Axis
-                change = SimulationState.Velocity.Y * Vector2.UnitY * elapsed;
-                change.Y = MathHelper.Clamp(change.Y, -(Tile.Height), Tile.Height);
-                SimulationState.Position += change;
-                SimulationState.Position = new Vector2(SimulationState.Position.X, (float)Math.Round(SimulationState.Position.Y));
-                HandleCollisions(CollisionDirection.Vertical, gameTime);
 
                 //If the collision stopped us from moving, reset the velocity to zero.
                 if (SimulationState.Position.X == PreviousState.Position.X)
@@ -474,6 +526,22 @@ namespace Bricklayer.Client.Entities
             else
                 IdleTime = 0;
         }
+        private void VerticalCollision(GameTime gameTime, float elapsed)
+        {
+            Vector2 change = SimulationState.Velocity.Y * Vector2.UnitY * elapsed;
+            change.Y = MathHelper.Clamp(change.Y, -(Tile.Height), Tile.Height);
+            SimulationState.Position += change;
+            SimulationState.Position = new Vector2(SimulationState.Position.X, (float)Math.Round(SimulationState.Position.Y));
+            HandleCollisions(CollisionDirection.Vertical, gameTime);
+        }
+        private void HorizontalCollision(GameTime gameTime, float elapsed)
+        {
+            Vector2 change = SimulationState.Velocity.X * Vector2.UnitX * elapsed;
+            change.X = MathHelper.Clamp(change.X, -(Tile.Width), Tile.Width);
+            SimulationState.Position += change;
+            SimulationState.Position = new Vector2((float)Math.Round(SimulationState.Position.X), SimulationState.Position.Y);
+            HandleCollisions(CollisionDirection.Horizontal, gameTime);
+        }
         /// <summary>
         /// Detects and resolves all collisions between the player and his neighboring
         /// tiles. When a collision is detected, the player is pushed away along one
@@ -492,7 +560,7 @@ namespace Bricklayer.Client.Entities
             //Reset flag to search for ground collision.
             IsOnGround = false;
 
-            //For each potentially colliding tile,
+
             for (int y = topTile; y <= bottomTile; ++y)
             {
                 for (int x = leftTile; x <= rightTile; ++x)
@@ -522,12 +590,26 @@ namespace Bricklayer.Client.Entities
                         IsOnGround = true;
                     }
                 }
+                if (collision == BlockCollision.Gravity)
+                {
+                    Tile tile = map.Tiles[x, y, 1];
+                    if (tile.Block == BlockType.UpArrow)
+                        GravityDirection = GravityDirection.Up;
+                    else if (tile.Block == BlockType.DownArrow)
+                        GravityDirection = GravityDirection.Down;
+                    else if (tile.Block == BlockType.RightArrow)
+                        GravityDirection = GravityDirection.Right;
+                    else if (tile.Block == BlockType.LeftArrow)
+                        GravityDirection = GravityDirection.Left;
+                    return true;
+                }
                 if (collision == BlockCollision.Impassable || IsOnGround)
                 {
                     //Now that we know we hit something, resolve the collison
                     if (direction == CollisionDirection.Horizontal)
                     {
                         SimulationState.Position.X += depth.X;
+                        IsOnGround = true;
                     }
                     if (direction == CollisionDirection.Vertical)
                     {
@@ -536,6 +618,7 @@ namespace Bricklayer.Client.Entities
                         JumpTime = 0;
                         //Obviously hit ground or roof
                         IsOnGround = true;
+
                         SimulationState.Position.Y += depth.Y;
                     }
                 }
@@ -567,6 +650,8 @@ namespace Bricklayer.Client.Entities
                 // Begin or continue a jump
                 if ((!WasJumping && IsOnGround) || JumpTime > 0.0f)
                 {
+                    if (JumpTime == 0)
+                        JumpDirection = GravityDirection; //Set the direction this jump started from
                     if (JumpTime == 0 && IsMine)
                     {
                         //Send message we are now jumping
@@ -581,7 +666,7 @@ namespace Bricklayer.Client.Entities
                 if (0.0f < JumpTime && JumpTime <= MaxJumpTime)
                 {
                     //Fully override the vertical velocity with a power curve that gives players more control over the top of the jump
-                    velocityY = JumpLaunchVelocity * (1.0f - (float)Math.Pow(JumpTime / MaxJumpTime, JumpControlPower));
+                    velocityY = (JumpDirection == GravityDirection.Up || JumpDirection == GravityDirection.Left ? -1 : 1) * (JumpLaunchVelocity * (1.0f - (float)Math.Pow(JumpTime / MaxJumpTime, JumpControlPower)));
                 }
                 else
                 {
