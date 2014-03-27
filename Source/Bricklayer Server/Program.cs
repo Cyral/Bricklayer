@@ -216,10 +216,12 @@ namespace Bricklayer.Server
                 case MessageTypes.Block:
                     {
                         BlockMessage state = new BlockMessage(inc);
-                        //Verify Block
-                        if (Map.InBounds(state.X, state.Y))
+                        BlockType block = BlockType.FromID(state.BlockID);
+                        //Verify Block (Make sure it is in bounds and it has changed, no use sending otherwise)
+                        //TODO: Punish players spamming invalid data (Because official client should never send it)
+                        if (Map.InBounds(state.X, state.Y, state.Z) && Map.Tiles[state.X, state.Y, state.Z].Block.ID != block.ID)
                         {
-                            Map.Tiles[state.X, state.Y, 1].Block = BlockType.FromID(state.BlockID);
+                            Map.Tiles[state.X, state.Y, state.Z].Block = block;
                             NetManager.BroadcastMessage(state);
                         }
                         break;
