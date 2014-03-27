@@ -48,8 +48,8 @@ namespace Bricklayer.Client.Entities
         public SmileyType(string name, int index)
         {
             Name = name;
-            RightSource = new Rectangle(0, index, Player.WIDTH, Player.HEIGHT);
-            LeftSource = new Rectangle(Player.WIDTH, index, Player.WIDTH, Player.HEIGHT);
+            RightSource = new Rectangle(0, index, Player.Width, Player.Height);
+            LeftSource = new Rectangle(Player.Width, index, Player.Width, Player.Height);
             ID = (byte)SmileyList.Count();
             SmileyList.Add(this);
         }
@@ -64,13 +64,13 @@ namespace Bricklayer.Client.Entities
         public static void Init()
         {
             Smile = new SmileyType("Smile", 0);
-            Happy = new SmileyType("Happy", Player.HEIGHT);
-            Laughing = new SmileyType("Laughing", Player.HEIGHT * 2);
-            Tounge = new SmileyType("Tounge", Player.HEIGHT * 3);
-            Oh = new SmileyType("Oh", Player.HEIGHT * 4);
-            Meh = new SmileyType("Meh", Player.HEIGHT * 5);
-            Sad = new SmileyType("Sad", Player.HEIGHT * 6);
-            Upset = new SmileyType("Upset", Player.HEIGHT * 7);
+            Happy = new SmileyType("Happy", Player.Height);
+            Laughing = new SmileyType("Laughing", Player.Height * 2);
+            Tounge = new SmileyType("Tounge", Player.Height * 3);
+            Oh = new SmileyType("Oh", Player.Height * 4);
+            Meh = new SmileyType("Meh", Player.Height * 5);
+            Sad = new SmileyType("Sad", Player.Height * 6);
+            Upset = new SmileyType("Upset", Player.Height * 7);
         }
         public static SmileyType FromID(byte ID)
         {

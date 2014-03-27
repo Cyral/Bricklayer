@@ -13,7 +13,7 @@ namespace Bricklayer.Client.Entities
     public class Player
     {
         //Constants
-        public const int WIDTH = 16, HEIGHT = 16;
+        public const int Width = 16, Height = 16;
 
         //Physics
         float MoveSpeed = 35.0f;
@@ -73,7 +73,7 @@ namespace Bricklayer.Client.Entities
         {
             get
             {
-                return new Rectangle((int)SimulationState.Position.X, (int)SimulationState.Position.Y, WIDTH, HEIGHT);
+                return new Rectangle((int)SimulationState.Position.X, (int)SimulationState.Position.Y, Width, Height);
             }
         }
 
@@ -109,9 +109,9 @@ namespace Bricklayer.Client.Entities
 
             //Draw godmode shadow
             if (Mode == PlayerMode.God)
-                spriteBatch.Draw(map.godTexture, new Vector2((float)Math.Round(DisplayState.Position.X), (float)Math.Round(DisplayState.Position.Y) - 1) - new Vector2(map.godTexture.Width / 2, map.godTexture.Height / 2) + new Vector2(WIDTH / 2, HEIGHT / 2), Color.White);
+                spriteBatch.Draw(map.godTexture, new Vector2((float)Math.Round(DisplayState.Position.X), (float)Math.Round(DisplayState.Position.Y) - 1) - new Vector2(map.godTexture.Width / 2, map.godTexture.Height / 2) + new Vector2(Width / 2, Height / 2), Tint);
             //Draw player body
-            spriteBatch.Draw(map.bodyTexture, new Vector2((float)Math.Round(DisplayState.Position.X), (float)Math.Round(DisplayState.Position.Y) - 1), new Rectangle((Direction == FacingDirection.Left ? 0 : WIDTH), 0, WIDTH, HEIGHT), Tint);
+            spriteBatch.Draw(map.bodyTexture, new Vector2((float)Math.Round(DisplayState.Position.X), (float)Math.Round(DisplayState.Position.Y) - 1), new Rectangle((Direction == FacingDirection.Left ? 0 : Width), 0, Width, Height), Tint);
             //Draw player smiley
             spriteBatch.Draw(map.smileySheet, new Vector2((float)Math.Round(DisplayState.Position.X), (float)Math.Round(DisplayState.Position.Y) - 1), (Direction == FacingDirection.Left ? Smiley.LeftSource : Smiley.RightSource), Color.White);
         }

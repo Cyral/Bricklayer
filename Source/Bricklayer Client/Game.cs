@@ -131,8 +131,10 @@ namespace Bricklayer.Client
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
+            //Process multiplayer
             if (NetManager.Client != null)
                 MsgHandler.ProcessNetworkMessages();
+            //Update unput states
             LastKeyState = KeyState;
             LastMouseState = MouseState;
             KeyState = Keyboard.GetState();
