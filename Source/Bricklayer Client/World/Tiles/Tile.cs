@@ -49,14 +49,25 @@ namespace Bricklayer.Client.World
         /// <summary>
         /// Handles drawing of a single tile
         /// </summary>
-        public virtual void Draw(SpriteBatch spriteBatch, Texture2D texture, Vector2 drawPosition, int x, int y, int z)
+        public virtual void Draw(SpriteBatch spriteBatch, Texture2D texture, Vector2 drawPosition, int x, int y, int z, bool flat = false)
         {
+            if (block.ID == BlockType.Empty.ID)
+                return; //If empty, nope.exe out of here
+
             //Foreground blocks
             if (z == 1)
             {
                 drawPosition.X = (x * Tile.Width);
                 drawPosition.Y = ((y * Tile.Height) - (Tile.DrawHeight - Tile.Height)) + 1;
-                spriteBatch.Draw(texture, drawPosition, Block.Source, Color.White);
+                Rectangle source = Block.Source;
+                if (flat)
+                {
+                    source.Y += 4;
+                    source.Width = Tile.Width;
+                    source.Height = Tile.Height;
+                    drawPosition.Y += 4;
+                }
+                spriteBatch.Draw(texture, drawPosition, source, Color.White);
             }
             //Background blocks
             else if (z == 0)

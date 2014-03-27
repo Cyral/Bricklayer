@@ -43,7 +43,7 @@ namespace Bricklayer.Client.World
                     frameIndex = 0;
             }
         }
-        public override void Draw(SpriteBatch spriteBatch, Texture2D texture, Vector2 drawPosition, int x, int y, int z)
+        public override void Draw(SpriteBatch spriteBatch, Texture2D texture, Vector2 drawPosition, int x, int y, int z, bool flat = false)
         {
             drawPosition.X = (x * Tile.Width);
             //Add the frameindex to change the Y coord on the spritesheet
