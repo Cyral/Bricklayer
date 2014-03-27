@@ -112,12 +112,14 @@ namespace Bricklayer.Client.Entities
             //Draw player smiley
             spriteBatch.Draw(map.smileySheet, new Vector2((float)Math.Round(DisplayState.Position.X), (float)Math.Round(DisplayState.Position.Y) - 1), (Direction == FacingDirection.Left ? Smiley.LeftSource : Smiley.RightSource), Color.White);
 
-            //Kinda a "hack fix", but instead of sorting tiles into layers to solve the issue of the "3D" part of the character
-            //Being overlayed incorrectly, just draw the top, right, and top right tiles again
-            map.Tiles[(int)DisplayState.Position.X / Tile.Width, ((int)DisplayState.Position.Y / Tile.Height) - 1, 1].Draw(spriteBatch, map.tileSheet, Vector2.Zero, (int)DisplayState.Position.X / Tile.Width, ((int)DisplayState.Position.Y / Tile.Height) - 1, 1, true);
-            map.Tiles[((int)DisplayState.Position.X / Tile.Width) + 1, (int)DisplayState.Position.Y / Tile.Height, 1].Draw(spriteBatch, map.tileSheet, Vector2.Zero, ((int)DisplayState.Position.X / Tile.Width) + 1, (int)DisplayState.Position.Y / Tile.Height, 1, true);
-            map.Tiles[((int)DisplayState.Position.X / Tile.Width) + 1, ((int)DisplayState.Position.Y / Tile.Height) - 1, 1].Draw(spriteBatch, map.tileSheet, Vector2.Zero, ((int)DisplayState.Position.X / Tile.Width) + 1, ((int)DisplayState.Position.Y / Tile.Height) - 1, 1, true);
-
+            if (Mode == PlayerMode.Normal)
+            {
+                //Kinda a "hack fix", but instead of sorting tiles into layers to solve the issue of the "3D" part of the character
+                //Being overlayed incorrectly, just draw the top, right, and top right tiles again
+                map.Tiles[(int)DisplayState.Position.X / Tile.Width, ((int)DisplayState.Position.Y / Tile.Height) - 1, 1].Draw(spriteBatch, map.tileSheet, Vector2.Zero, (int)DisplayState.Position.X / Tile.Width, ((int)DisplayState.Position.Y / Tile.Height) - 1, 1, true);
+                map.Tiles[((int)DisplayState.Position.X / Tile.Width) + 1, (int)DisplayState.Position.Y / Tile.Height, 1].Draw(spriteBatch, map.tileSheet, Vector2.Zero, ((int)DisplayState.Position.X / Tile.Width) + 1, (int)DisplayState.Position.Y / Tile.Height, 1, true);
+                map.Tiles[((int)DisplayState.Position.X / Tile.Width) + 1, ((int)DisplayState.Position.Y / Tile.Height) - 1, 1].Draw(spriteBatch, map.tileSheet, Vector2.Zero, ((int)DisplayState.Position.X / Tile.Width) + 1, ((int)DisplayState.Position.Y / Tile.Height) - 1, 1, true);
+            }
             //Draw the player tag above them
             DrawTag(spriteBatch, elapsed);
         }

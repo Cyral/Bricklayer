@@ -120,7 +120,7 @@ namespace Bricklayer.Client.Networking
                                 {
                                     BlockMessage msg = new BlockMessage(im);
                                     BlockType block = BlockType.FromID(msg.BlockID);
-                                    if (Map.CanPlaceBlock(msg.X, msg.Y, block))
+                                    if (Map.CanPlaceBlock(msg.X, msg.Y, msg.Z, block))
                                         Map.Tiles[msg.X, msg.Y, msg.Z].Block = block;
                                     break;
                                 }
