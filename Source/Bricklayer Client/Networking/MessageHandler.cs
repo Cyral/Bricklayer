@@ -70,10 +70,14 @@ namespace Bricklayer.Client.Networking
                             case MessageTypes.PlayerJoin:
                                 {
                                     PlayerJoinMessage user = new PlayerJoinMessage(im);
-                                    Map.Players.Add(new Player(Map, Map.Spawn, user.Username, 1, user.ID));
+                                    //Add player to map
+                                    Map.Players.Add(new Player(Map, Map.Spawn, user.Username, 1, user.ID) { Tint = user.Color });
+                                    //Add user to userlist
                                     (MainWindow.ScreenManager.Current as GameScreen).PlayerList.Items.Add(user.Username);
-                                    if (user.ID != Game.MyID && recievedInit)
+                                    if (user.ID != Game.MyID && recievedInit) //Broadcast join message to chat
+                                    {
                                         (MainWindow.ScreenManager.Current as GameScreen).SystemChat(user.Username + " [color:LightGray]has[/color] [color:LightGreen]joined.[/color]");
+                                    }
                                     if (user.Me)
                                     {
                                         //Let game know of it's own player

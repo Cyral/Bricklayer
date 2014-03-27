@@ -46,7 +46,7 @@ namespace Bricklayer.Client.Networking
 
         private void Join(string host, int port)
         {
-            Client.Connect(new IPEndPoint(NetUtility.Resolve(host), port), EncodeMessage(new LoginMessage(Game.Username, "default")));
+            Client.Connect(new IPEndPoint(NetUtility.Resolve(host), port), EncodeMessage(new LoginMessage(Game.Username, "", Game.MyColor)));
         }
         public NetOutgoingMessage CreateMessage()
         {

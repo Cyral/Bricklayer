@@ -101,7 +101,7 @@ namespace Bricklayer.Server
                                             LoginMessage login = new LoginMessage(inc);
                                             //Approve of the client 
                                             inc.SenderConnection.Approve();
-                                            Map.Players.Add(new Player(Map, new Vector2(100, 100), login.Username, inc.SenderConnection.RemoteUniqueIdentifier, FindEmptyID()));
+                                            Map.Players.Add(new Player(Map, new Vector2(100, 100), login.Username, inc.SenderConnection.RemoteUniqueIdentifier, FindEmptyID()) { Tint = login.Color });
                                             break;
                                         }
                                 }
@@ -124,15 +124,15 @@ namespace Bricklayer.Server
                             if (inc.SenderConnection.Status == NetConnectionStatus.Connected)
                             {
                                 //Send message to player notifing he is connected and ready
-                                NetManager.SendMessage(new PlayerJoinMessage(sender.Username, sender.ID, true), sender);
+                                NetManager.SendMessage(new PlayerJoinMessage(sender.Username, sender.ID, true, sender.Tint), sender);
                                 //Send message to everyone notifying of new user
-                                NetManager.BroadcastMessageButPlayer(new PlayerJoinMessage(sender.Username, sender.ID, false), sender);
+                                NetManager.BroadcastMessageButPlayer(new PlayerJoinMessage(sender.Username, sender.ID, false, sender.Tint), sender);
                                 //Let new player know of all existing players and their states (Mode, Position, Smiley)
                                 foreach (Player player in Map.Players)
                                 {
                                     if (player.ID != sender.ID)
                                     {
-                                        NetManager.SendMessage(new PlayerJoinMessage(player.Username, player.ID, false), sender);
+                                        NetManager.SendMessage(new PlayerJoinMessage(player.Username, player.ID, false, player.Tint), sender);
                                         NetManager.SendMessage(new PlayerStateMessage(player), sender);
                                         if (player.Mode != PlayerMode.Normal)
                                             NetManager.SendMessage(new PlayerModeMessage(player), sender);
