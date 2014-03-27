@@ -464,8 +464,8 @@ namespace Bricklayer.Client.Entities
                 SimulationState.Position = new Vector2(SimulationState.Position.X, (float)Math.Round(SimulationState.Position.Y));
 
                 //Clamp position in bounds
-                SimulationState.Position.X = MathHelper.Clamp(SimulationState.Position.X, Tile.WIDTH, (map.Width * Tile.WIDTH) - (Tile.WIDTH * 2));
-                SimulationState.Position.Y = MathHelper.Clamp(SimulationState.Position.Y, Tile.HEIGHT, (map.Height * Tile.HEIGHT) - (Tile.HEIGHT * 2));
+                SimulationState.Position.X = MathHelper.Clamp(SimulationState.Position.X, Tile.Width, (map.Width * Tile.Width) - (Tile.Width * 2));
+                SimulationState.Position.Y = MathHelper.Clamp(SimulationState.Position.Y, Tile.Height, (map.Height * Tile.Height) - (Tile.Height * 2));
             }
 
             //Set idle states
