@@ -22,6 +22,7 @@ namespace Bricklayer.Client.Interface
         {
             base.Add(screenManager);
 
+            Window.Focused = true;
             Bar = new StatusBar(Manager) { Top = Window.Height - 24, Width = Window.Width };
             Bar.Init();
             Window.Add(Bar);

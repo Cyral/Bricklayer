@@ -107,7 +107,7 @@ namespace Bricklayer.Client.Entities
             //Draw the player tag above them
             DrawTag(spriteBatch, elapsed);
 
-            //Draw godmode shadow
+            //Draw godmode glow
             if (Mode == PlayerMode.God)
                 spriteBatch.Draw(map.godTexture, new Vector2((float)Math.Round(DisplayState.Position.X), (float)Math.Round(DisplayState.Position.Y) - 1) - new Vector2(map.godTexture.Width / 2, map.godTexture.Height / 2) + new Vector2(Width / 2, Height / 2), Tint);
             //Draw player body
