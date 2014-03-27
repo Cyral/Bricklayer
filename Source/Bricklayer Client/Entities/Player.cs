@@ -246,7 +246,12 @@ namespace Bricklayer.Client.Entities
 
                 //If jump key pressed/released or release/pressed, send message that the velocity has changed
                 //If the key is down, make sure we are jumping
-                IsJumping = Game.KeyState.IsKeyDown(Keys.W) || Game.KeyState.IsKeyDown(Keys.Space) || Game.KeyState.IsKeyDown(Keys.Up);
+                if (GravityDirection == GravityDirection.Default || GravityDirection == GravityDirection.Down || GravityDirection == GravityDirection.Up)
+                    IsJumping = Game.KeyState.IsKeyDown(Keys.W) || Game.KeyState.IsKeyDown(Keys.Space) || Game.KeyState.IsKeyDown(Keys.Up);
+                else if (GravityDirection == GravityDirection.Left) //Different keys for different gravity arrows
+                    IsJumping = Game.KeyState.IsKeyDown(Keys.D) || Game.KeyState.IsKeyDown(Keys.Space) || Game.KeyState.IsKeyDown(Keys.Right);
+                else if (GravityDirection == GravityDirection.Right)
+                    IsJumping = Game.KeyState.IsKeyDown(Keys.A) || Game.KeyState.IsKeyDown(Keys.Space) || Game.KeyState.IsKeyDown(Keys.Left);
 
                 //Move right
                 if (Game.KeyState.IsKeyDown(Keys.Right) || Game.KeyState.IsKeyDown(Keys.D))
@@ -279,6 +284,40 @@ namespace Bricklayer.Client.Entities
                 {
                     SimulationState.Movement = new Vector2(0, SimulationState.Movement.Y);
                     velocityChanged = true;
+                }
+
+                if (GravityDirection == GravityDirection.Left || GravityDirection == GravityDirection.Right)
+                {
+                    //Move up
+                    if (Game.KeyState.IsKeyDown(Keys.Up) || Game.KeyState.IsKeyDown(Keys.W))
+                    {
+                        SimulationState.Movement = new Vector2(0, -1);
+                        if (Game.LastKeyState.IsKeyUp(Keys.Up) || Game.LastKeyState.IsKeyUp(Keys.W))
+                        {
+                            velocityChanged = true;
+                        }
+                    }
+                    if ((Game.KeyState.IsKeyUp(Keys.Up) && Game.LastKeyState.IsKeyDown(Keys.Up)) ||
+                        (Game.KeyState.IsKeyUp(Keys.W) && Game.LastKeyState.IsKeyDown(Keys.W)))
+                    {
+                        SimulationState.Movement = new Vector2(SimulationState.Movement.X, 0);
+                        velocityChanged = true;
+                    }
+                    //Move Down
+                    if (Game.KeyState.IsKeyDown(Keys.Down) || Game.KeyState.IsKeyDown(Keys.S))
+                    {
+                        SimulationState.Movement = new Vector2(0, 1);
+                        if (Game.LastKeyState.IsKeyUp(Keys.Down) || Game.LastKeyState.IsKeyUp(Keys.S))
+                        {
+                            velocityChanged = true;
+                        }
+                    }
+                    if ((Game.KeyState.IsKeyUp(Keys.Down) && Game.LastKeyState.IsKeyDown(Keys.Down)) ||
+                        (Game.KeyState.IsKeyUp(Keys.S) && Game.LastKeyState.IsKeyDown(Keys.S)))
+                    {
+                        SimulationState.Movement = new Vector2(SimulationState.Movement.X, 0);
+                        velocityChanged = true;
+                    }
                 }
 
                 //Fixes a bug caused by quickly switching directions
@@ -436,8 +475,8 @@ namespace Bricklayer.Client.Entities
                 {
                     //Apply vertical movement
                     //If not movement detected from keys, apply acceleration to move, if not, slowly stop
-                    if (SimulationState.Movement.X != 0)
-                        SimulationState.Velocity.Y += SimulationState.Movement.X * MoveSpeed;
+                    if (SimulationState.Movement.Y != 0)
+                        SimulationState.Velocity.Y += SimulationState.Movement.Y * MoveSpeed;
                     else
                         SimulationState.Velocity.Y = MathHelper.Lerp(SimulationState.Velocity.Y, 0, MoveSlowDownFactor);
                     SimulationState.Velocity.Y = MathHelper.Clamp(SimulationState.Velocity.Y, -MaxVelocity, MaxVelocity);
