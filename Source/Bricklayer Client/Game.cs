@@ -56,7 +56,8 @@ namespace Bricklayer.Client
 
         private SpriteBatch spriteBatch;
 
-        public Game(): base("Bricklayer",true)
+        public Game()
+            : base("Bricklayer", true)
         {
             //Set up the window and UI defaults
             Manager.Content.RootDirectory = "Content";
@@ -100,6 +101,7 @@ namespace Bricklayer.Client
             IO.LoadSettings(this);
             IO.LoadContentPacks(this); //Load textures from content pack
             MainWindow = new Interface.MainWindow(Manager);
+            MainWindow.FocusGained += MainWindow_FocusGained;
             return MainWindow;
         }
 
@@ -188,22 +190,31 @@ namespace Bricklayer.Client
         public bool CheckPosition(Point pos)
         {
             if (CurrentGameState == GameState.Game && (MainWindow.ScreenManager.Current as GameScreen).ChatBox.TextBox.Focused)
+            {
                 return false;
+            }
             // Does the game window have focus?
             if (MainWindow.Focused)
             {
                 foreach (Control c in Manager.Controls)
                 {
                     if (CurrentGameState == GameState.Game && c == (MainWindow.ScreenManager.Current as GameScreen).ChatBox)
+                    {
                         continue;
+                    }
+
                     if (!CheckControlPos(c, pos))
+                    {
                         return false;
+                    }
                 }
                 // Mouse is not over any controls, but is within the application window.
                 return true;
             }
             else
+            {
                 return false;
+            }
         }
         public bool CheckControlPos(Control c, Point pos)
         {
@@ -217,8 +228,24 @@ namespace Bricklayer.Client
                 return false;
             }
             else
+            {
                 return true;
+            }
         }
+        #endregion
+
+        #region Event Handlers
+
+        /// <summary>
+        /// Called when the MainWindow gains focus
+        /// </summary>
+        void MainWindow_FocusGained(object sender, TomShane.Neoforce.Controls.EventArgs e)
+        {
+            ListBox playerList = (MainWindow.ScreenManager.Current as GameScreen).PlayerList;
+            playerList.ItemIndex = -1;
+            playerList.Focused = false;
+        }
+
         #endregion
 
     }
