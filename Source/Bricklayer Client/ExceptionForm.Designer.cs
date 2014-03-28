@@ -42,9 +42,9 @@ namespace Bricklayer.Client
             // 
             this.lblInfo.AutoSize = true;
             this.lblInfo.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.lblInfo.Location = new System.Drawing.Point(35, 48);
+            this.lblInfo.Location = new System.Drawing.Point(14, 48);
             this.lblInfo.Name = "lblInfo";
-            this.lblInfo.Size = new System.Drawing.Size(499, 39);
+            this.lblInfo.Size = new System.Drawing.Size(420, 39);
             this.lblInfo.TabIndex = 0;
             this.lblInfo.Text = resources.GetString("lblInfo.Text");
             // 

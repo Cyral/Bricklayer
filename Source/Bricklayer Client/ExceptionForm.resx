@@ -118,8 +118,8 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="lblInfo.Text" xml:space="preserve">
-    <value>Please report this error to a developer by sending us a message or creating an issue on our GitHub page.
-Please post the crash log below and any relevant information such as steps to reproduce or what was
+    <value>Please report this error to a developer by creating an issue on our GitHub page.
+Post this crash log and any relevant information such as steps to reproduce or what was
 happening at the time of the crash. 
 </value>
   </data>
