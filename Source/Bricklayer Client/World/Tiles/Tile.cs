@@ -62,6 +62,8 @@ namespace Bricklayer.Client.World
                 Rectangle source = Block.Source;
                 if (flat)
                 {
+                    if (Block.Collision != BlockCollision.Impassable)
+                        return; //Don't draw non solid blocks above the player 
                     source.Y += 4;
                     source.Width = Tile.Width;
                     source.Height = Tile.Height;
