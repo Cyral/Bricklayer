@@ -47,7 +47,7 @@ namespace Bricklayer.Server
             catch (Exception e)
             {
                 //Open all exceptions in an error dialog
-                System.Windows.Forms.Application.Run(new BricklayerClient.ExceptionForm(e));
+                System.Windows.Forms.Application.Run(new Bricklayer.Client.ExceptionForm(e));
             }
             #endif
         }
