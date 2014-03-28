@@ -93,7 +93,7 @@ namespace Bricklayer.Client.Entities
             DisplayState = new EntityState();
             PreviousState = new EntityState();
 
-            SimulationState.Position = position;
+            SimulationState.Position = DisplayState.Position = position;
 
             this.RUI = RUI;
             this.ID = (byte)ID;
