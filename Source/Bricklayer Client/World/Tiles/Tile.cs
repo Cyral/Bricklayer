@@ -90,5 +90,9 @@ namespace Bricklayer.Client.World
                 }
             }
         }
+        public bool Equals(Tile compareTo)
+        {
+            return Block.ID == compareTo.Block.ID;
+        }
     }
 }
