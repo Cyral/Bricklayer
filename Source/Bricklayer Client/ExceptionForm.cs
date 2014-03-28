@@ -133,10 +133,6 @@ namespace Bricklayer.Client
         {
             Process.Start(GithubLink);
         }
-        private void btnChat_Click(object sender, EventArgs e)
-        {
-            Process.Start(ChatLink);
-        }
         private void btnCopy_Click(object sender, EventArgs e)
         {
             Clipboard.SetText(errorBox.Text);
