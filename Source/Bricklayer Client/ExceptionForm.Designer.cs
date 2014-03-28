@@ -34,7 +34,6 @@ namespace Bricklayer.Client
             this.lblInfo = new System.Windows.Forms.Label();
             this.errorBox = new System.Windows.Forms.TextBox();
             this.btnForums = new System.Windows.Forms.Button();
-            this.btnEmail = new System.Windows.Forms.Button();
             this.lblMain = new System.Windows.Forms.Label();
             this.btnCopy = new System.Windows.Forms.Button();
             this.SuspendLayout();
@@ -43,7 +42,7 @@ namespace Bricklayer.Client
             // 
             this.lblInfo.AutoSize = true;
             this.lblInfo.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.lblInfo.Location = new System.Drawing.Point(14, 49);
+            this.lblInfo.Location = new System.Drawing.Point(35, 48);
             this.lblInfo.Name = "lblInfo";
             this.lblInfo.Size = new System.Drawing.Size(499, 39);
             this.lblInfo.TabIndex = 0;
@@ -66,22 +65,11 @@ namespace Bricklayer.Client
             this.btnForums.ForeColor = System.Drawing.Color.Black;
             this.btnForums.Location = new System.Drawing.Point(519, 8);
             this.btnForums.Name = "btnForums";
-            this.btnForums.Size = new System.Drawing.Size(139, 24);
+            this.btnForums.Size = new System.Drawing.Size(139, 54);
             this.btnForums.TabIndex = 4;
-            this.btnForums.Text = "Report via GitHub";
+            this.btnForums.Text = "Report issue\r\non GitHub";
             this.btnForums.UseVisualStyleBackColor = true;
             this.btnForums.Click += new System.EventHandler(this.btnGithub_Click);
-            // 
-            // btnEmail
-            // 
-            this.btnEmail.ForeColor = System.Drawing.Color.Black;
-            this.btnEmail.Location = new System.Drawing.Point(519, 38);
-            this.btnEmail.Name = "btnEmail";
-            this.btnEmail.Size = new System.Drawing.Size(139, 24);
-            this.btnEmail.TabIndex = 5;
-            this.btnEmail.Text = "Report via Chat";
-            this.btnEmail.UseVisualStyleBackColor = true;
-            this.btnEmail.Click += new System.EventHandler(this.btnChat_Click);
             // 
             // lblMain
             // 
@@ -112,7 +100,6 @@ namespace Bricklayer.Client
             this.ClientSize = new System.Drawing.Size(670, 358);
             this.Controls.Add(this.btnCopy);
             this.Controls.Add(this.lblMain);
-            this.Controls.Add(this.btnEmail);
             this.Controls.Add(this.btnForums);
             this.Controls.Add(this.errorBox);
             this.Controls.Add(this.lblInfo);
@@ -133,7 +120,6 @@ namespace Bricklayer.Client
         private System.Windows.Forms.Label lblInfo;
         private System.Windows.Forms.TextBox errorBox;
         private Button btnForums;
-        private Button btnEmail;
         private Label lblMain;
         private Button btnCopy;
     }

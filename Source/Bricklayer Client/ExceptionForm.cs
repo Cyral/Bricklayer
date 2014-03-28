@@ -18,7 +18,6 @@ namespace Bricklayer.Client
     {
         #region Constants
         public const string GithubLink = "https://github.com/Cyral/Bricklayer/issues/new";
-        public const string ChatLink = "http://coldstorm.tk/#/login?channels=OpenEE";
         #endregion
 
         /// <summary>
