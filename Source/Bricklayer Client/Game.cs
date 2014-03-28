@@ -145,7 +145,6 @@ namespace Bricklayer.Client
             {
                 case GameState.Loading:
                     {
-
                         break;
                     }
                 case GameState.Game:
