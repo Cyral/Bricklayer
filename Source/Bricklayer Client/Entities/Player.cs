@@ -139,11 +139,7 @@ namespace Bricklayer.Client.Entities
                 float alpha = showTag ? 1f : tagAlpha;
                 int tagWidth = (int)Game.MainWindow.Manager.Skin.Fonts["Default8"].Resource.MeasureString(Username).X / 2;
                 //Draw one white tag, and 4 shadow tags
-                spriteBatch.DrawString(Game.DefaultFont, Username, new Vector2((float)Math.Round(DisplayState.Position.X) - tagWidth + 9, (float)Math.Round(DisplayState.Position.Y) - 16), Color.Black * .6f * alpha);
-                spriteBatch.DrawString(Game.DefaultFont, Username, new Vector2((float)Math.Round(DisplayState.Position.X) - tagWidth + 7, (float)Math.Round(DisplayState.Position.Y) - 16), Color.Black * .6f * alpha);
-                spriteBatch.DrawString(Game.DefaultFont, Username, new Vector2((float)Math.Round(DisplayState.Position.X) - tagWidth + 8, (float)Math.Round(DisplayState.Position.Y) - 17), Color.Black * .6f * alpha);
-                spriteBatch.DrawString(Game.DefaultFont, Username, new Vector2((float)Math.Round(DisplayState.Position.X) - tagWidth + 8, (float)Math.Round(DisplayState.Position.Y) - 15), Color.Black * .6f * alpha);
-                spriteBatch.DrawString(Game.DefaultFont, Username, new Vector2((float)Math.Round(DisplayState.Position.X) - tagWidth + 8, (float)Math.Round(DisplayState.Position.Y) - 16), Color.White * alpha);
+                spriteBatch.DrawString(Game.DefaultFont, Username, new Vector2((float)Math.Round(DisplayState.Position.X) - tagWidth + 8, (float)Math.Round(DisplayState.Position.Y) - 16), Color.LightGray * alpha);
             }
             tagAlpha = MathHelper.Clamp(tagAlpha, 0, 1);
         }

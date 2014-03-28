@@ -20,7 +20,6 @@ namespace Bricklayer.Client.World
         //Width and Height
         public int Width { get { return width; } set { width = value; CreateCamera(); } }
         public int Height { get { return height; } set { height = value; CreateCamera(); } }
-        private int width, height;
 
         /// <summary>
         /// The list of players currently in the map, synced with the server
@@ -56,6 +55,8 @@ namespace Bricklayer.Client.World
 
         //Fields
         private const float cameraSpeed = .18f;
+        private Random random = new Random();
+        private int width, height;
         
         /// <summary>
         /// Creates a client-side version of a map at the specified width and height (To be changed later once Init packet recieved)
@@ -115,6 +116,29 @@ namespace Bricklayer.Client.World
         private void Generate()
         {
             //Temporary Generation
+            int[] heightMap = new int[Width];
+            
+            //Config
+            int offset = Height - 17;
+            float peakheight = 5;
+            float flatness = 40;
+            int iterations = 8;
+
+            double[] rands = new double[iterations];
+            for (int i = 0; i < iterations; i++)
+            {
+                rands[i] = random.NextDouble() + i;
+            }
+
+            for (int x = 0; x < Width; x++)
+            {
+                double height = 0;
+                for (int i = 0; i < iterations; i++)
+                {
+                    height += peakheight / rands[i] * Math.Sin((float)x / flatness * rands[i] + rands[i]);
+                }
+                heightMap[x] = (int)height + offset;
+            }
             for (int x = 0; x < Width; x++)
             {
                 for (int y = 0; y < Height; y++)
@@ -122,9 +146,19 @@ namespace Bricklayer.Client.World
                     if (x == 0 || y == 0 || x == Width - 1 || y == Height - 1)
                         Tiles[x, y, 1] = new Tile(BlockType.Default);
                     else
-                        Tiles[x, y, 1] = new Tile(BlockType.Empty);
+                    {
+                        if (y > heightMap[x] + 8)
+                            Tiles[x, y, 1] = new Tile(BlockType.Stone);
+                        else if (y > heightMap[x])
+                            Tiles[x, y, 1] = new Tile(BlockType.Dirt);
+                        else if (y == heightMap[x])
+                            Tiles[x, y, 1] = new Tile(BlockType.Grass);
+                        else
+                            Tiles[x, y, 1] = new Tile(BlockType.Empty);
+                    }
 
                     Tiles[x, y, 0] = new Tile(BlockType.Empty);
+
                 }
             }
         }

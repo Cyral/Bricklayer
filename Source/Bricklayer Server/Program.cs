@@ -77,7 +77,7 @@ namespace Bricklayer.Server
             // Check time
             DateTime time = DateTime.Now;
             //Create a map
-            Map = new Map(100, 50);
+            Map = new Map(150, 75);
 
             while (true)
             {
