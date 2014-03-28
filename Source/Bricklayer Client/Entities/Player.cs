@@ -138,8 +138,18 @@ namespace Bricklayer.Client.Entities
             {
                 float alpha = showTag ? 1f : tagAlpha;
                 int tagWidth = (int)Game.MainWindow.Manager.Skin.Fonts["Default8"].Resource.MeasureString(Username).X / 2;
-                //Draw one white tag, and 4 shadow tags
-                spriteBatch.DrawString(Game.DefaultFont, Username, new Vector2((float)Math.Round(DisplayState.Position.X) - tagWidth + 8, (float)Math.Round(DisplayState.Position.Y) - 16), Color.LightGray * alpha);
+                //Draw one white tag, and 8 shadow tags
+                for (int x = -1; x <= 1; x++)
+                {
+                    for (int y = -1; y <= 1; y++)
+                    {
+                        if (!(x == 0 && y == 0))
+                        {
+                            spriteBatch.DrawString(Game.DefaultFont, Username, new Vector2((float)Math.Round(DisplayState.Position.X) - tagWidth + (Width / 2) + x, (float)Math.Round(DisplayState.Position.Y) - Height + y), Color.Black * .4f * alpha);
+                        }
+                    }
+                }
+                spriteBatch.DrawString(Game.DefaultFont, Username, new Vector2((float)Math.Round(DisplayState.Position.X) - tagWidth + (Width / 2), (float)Math.Round(DisplayState.Position.Y) - Height), Color.White * alpha);
             }
             tagAlpha = MathHelper.Clamp(tagAlpha, 0, 1);
         }
