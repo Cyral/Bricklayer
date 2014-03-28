@@ -14,11 +14,6 @@ namespace Bricklayer.Server
 
         private bool isDisposed;
 
-        public NetworkManager()
-        {
-
-        }
-
         public void Start(int port, int maxconnections)
         {
             Config = new NetPeerConfiguration("Bricklayer");
@@ -62,7 +57,7 @@ namespace Bricklayer.Server
         }
         public void BroadcastMessageButPlayer(IMessage gameMessage, Player player)
         {
-            BroadcastMessageButPlayer(gameMessage, (NetConnection)Server.Connections.Where(x => x.RemoteUniqueIdentifier == player.RUI).ElementAt(0));
+            BroadcastMessageButPlayer(gameMessage, (NetConnection)Server.Connections.Where(x => x.RemoteUniqueIdentifier == player.RUI && Program.PlayerFromRUI(x.RemoteUniqueIdentifier).Map == player.Map).ElementAt(0));
         }
         public void BroadcastMessageButPlayer(IMessage gameMessage, NetConnection recipient)
         {

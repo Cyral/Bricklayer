@@ -11,6 +11,7 @@ using Microsoft.Xna.Framework;
 using Bricklayer.Client.Entities;
 using Bricklayer.Client.Networking.Messages;
 using Bricklayer.Client.World;
+using System.Collections.Generic;
 
 namespace Bricklayer.Server
 {
@@ -22,7 +23,7 @@ namespace Bricklayer.Server
         //Networking
         public static NetworkManager NetManager;
         public static PingListener PingListener;
-        public static Map Map;
+        public static List<Map> Maps;
         //Console Events
         static ConsoleEventDelegate consoleHandler; //Keeps it from getting garbage collected
         //PInvoke
@@ -77,13 +78,14 @@ namespace Bricklayer.Server
             // Check time
             DateTime time = DateTime.Now;
             //Create a map
-            Map = new Map(150, 75);
+            Maps = new List<Map>();
+            Maps.Add(new Map(150, 75));
 
             while (true)
             {
                 if ((inc = NetManager.ReadMessage()) != null)
                 {
-                    Player sender = inc.SenderConnection == null ? null : Map.PlayerFromRUI(inc.SenderConnection.RemoteUniqueIdentifier, true);
+                    Player sender = inc.SenderConnection == null ? null : PlayerFromRUI(inc.SenderConnection.RemoteUniqueIdentifier, true);
                     switch (inc.MessageType)
                     {
                         case NetIncomingMessageType.ConnectionApproval:
@@ -101,7 +103,7 @@ namespace Bricklayer.Server
                                             LoginMessage login = new LoginMessage(inc);
                                             //Approve of the client 
                                             inc.SenderConnection.Approve();
-                                            Map.Players.Add(new Player(Map, new Vector2(100, 100), login.Username, inc.SenderConnection.RemoteUniqueIdentifier, FindEmptyID()) { Tint = login.Color });
+                                            Maps[0].Players.Add(new Player(Maps[0], Maps[0].Spawn, login.Username, inc.SenderConnection.RemoteUniqueIdentifier, FindEmptyID(Maps[0])) { Tint = login.Color });
                                             break;
                                         }
                                 }
@@ -128,7 +130,7 @@ namespace Bricklayer.Server
                                 //Send message to everyone notifying of new user
                                 NetManager.BroadcastMessageButPlayer(new PlayerJoinMessage(sender.Username, sender.ID, false, sender.Tint), sender);
                                 //Let new player know of all existing players and their states (Mode, Position, Smiley)
-                                foreach (Player player in Map.Players)
+                                foreach (Player player in sender.Map.Players)
                                 {
                                     if (player.ID != sender.ID)
                                     {
@@ -140,7 +142,7 @@ namespace Bricklayer.Server
                                             NetManager.SendMessage(new PlayerSmileyMessage(player, player.Smiley), sender);
                                     }
                                 }
-                                NetManager.SendMessage(new InitMessage(Map), sender);
+                                NetManager.SendMessage(new InitMessage(sender.Map), sender);
                                 Console.WriteLine("\tUsername: " + sender.Username);
                                 Console.WriteLine("\tRemote Unique Identifier: " + sender.RUI);
                                 Console.WriteLine("\tNetwork ID: " + sender.ID);
@@ -154,15 +156,16 @@ namespace Bricklayer.Server
                                 Console.ForegroundColor = ConsoleColor.Red;
                                 Console.WriteLine(sender.Username + " has left (disconnected).");
                                 Console.ForegroundColor = ConsoleColor.White;
-                                if (Map.Players.Contains(sender))
+                                if (sender.Map.Players.Contains(sender))
                                 {
                                     //Remove player
-                                    Map.Players.Remove(sender);
+                                    sender.Map.Players.Remove(sender);
                                     //Rebuild indexes
-                                    for (int i = 0; i < Map.Players.Count; i++)
-                                        Map.Players[i].Index = i;
+                                    for (int i = 0; i < sender.Map.Players.Count; i++)
+                                        sender.Map.Players[i].Index = i;
                                     //Send to players
                                     NetManager.BroadcastMessage(new PlayerLeaveMessage(sender.ID));
+                                    sender = null;
                                 }
                             }
                             break;
@@ -180,7 +183,8 @@ namespace Bricklayer.Server
         /// <param name="inc">The Incoming Message</param>
         private static void ProcessDataMessage(NetIncomingMessage inc)
         {
-            Player sender = Map.PlayerFromRUI(inc.SenderConnection.RemoteUniqueIdentifier);
+            Player sender = PlayerFromRUI(inc.SenderConnection.RemoteUniqueIdentifier);
+            Map map = sender.Map;
             MessageTypes type = (MessageTypes)Enum.Parse(typeof(MessageTypes), inc.ReadByte().ToString());
             switch (type)
             {
@@ -189,13 +193,14 @@ namespace Bricklayer.Server
                         PlayerLeaveMessage user = new PlayerLeaveMessage(inc);
                         user.ID = sender.ID;
                         //Remove player
-                        Map.Players.Remove(Map.PlayerFromID(user.ID));
+                        map.Players.Remove(sender);
                         //Rebuild indexes
-                        for (int i = 0; i < Map.Players.Count; i++)
-                            Map.Players[i].Index = i;
+                        for (int i = 0; i < map.Players.Count; i++)
+                            map.Players[i].Index = i;
                         //Send to players
-                        NetManager.BroadcastMessage(user);
-                        Console.WriteLine(Map.PlayerFromID(user.ID).Username + " has left.");
+                        NetManager.BroadcastMessage(new PlayerLeaveMessage(sender.ID));
+                        sender = null;
+                        Console.WriteLine(map.PlayerFromID(user.ID).Username + " has left.");
                         break;
                     }
                 case MessageTypes.PlayerStatus:
@@ -204,7 +209,7 @@ namespace Bricklayer.Server
                         //Console.WriteLine(state.ID + ":" + sender.ID + "  " + state.Position.X + "," + state.Position.Y);
                         state.ID = sender.ID;
                         //Clamp position in bounds
-                        state.Position = new Point((int)MathHelper.Clamp(state.Position.X, Tile.Width, (Map.Width * Tile.Width) - (Tile.Width * 2)), (int)MathHelper.Clamp(state.Position.Y, Tile.Height, (Map.Height * Tile.Height) - (Tile.Height * 2)));
+                        state.Position = new Point((int)MathHelper.Clamp(state.Position.X, Tile.Width, (map.Width * Tile.Width) - (Tile.Width * 2)), (int)MathHelper.Clamp(state.Position.Y, Tile.Height, (map.Height * Tile.Height) - (Tile.Height * 2)));
                         sender.SimulationState.Position = state.Position.ToVector2();
                         sender.SimulationState.Velocity = state.Velocity.ToVector2();
                         sender.SimulationState.Movement = state.Movement.ToVector2();
@@ -219,9 +224,9 @@ namespace Bricklayer.Server
                         BlockType block = BlockType.FromID(state.BlockID);
                         //Verify Block (Make sure it is in bounds and it has changed, no use sending otherwise)
                         //TODO: Punish players spamming invalid data (Because official client should never send it)
-                        if (Map.InBounds(state.X, state.Y, state.Z) && Map.Tiles[state.X, state.Y, state.Z].Block.ID != block.ID)
+                        if (map.InBounds(state.X, state.Y, state.Z) && map.Tiles[state.X, state.Y, state.Z].Block.ID != block.ID)
                         {
-                            Map.Tiles[state.X, state.Y, state.Z].Block = block;
+                            map.Tiles[state.X, state.Y, state.Z].Block = block;
                             NetManager.BroadcastMessage(state);
                         }
                         break;
@@ -256,12 +261,35 @@ namespace Bricklayer.Server
         }
         #region Utilities
         /// <summary>
+        /// Finds a player from a remote unique identifier
+        /// </summary>
+        /// <param name="remoteUniqueIdentifier">The RMI to find</param>
+        /// <param name="ignoreError">If a player is not found, should an error be thrown?</param>
+        public static Player PlayerFromRUI(long remoteUniqueIdentifier, bool ignoreError = false)
+        {
+            Player found = null;
+            foreach (Map map in Maps)
+            {
+                foreach (Player player in map.Players)
+                {
+                    if (player.RUI == remoteUniqueIdentifier)
+                        found = player;
+                }
+            }
+            if (found != null)
+                return found;
+            else if (ignoreError)
+                return null;
+            else
+                throw new KeyNotFoundException("Could not find player from RemoteUniqueIdentifier: " + remoteUniqueIdentifier);
+        }
+        /// <summary>
         /// Finds an empty slot to use as a player's ID
         /// </summary>
-        public static byte FindEmptyID()
+        public static byte FindEmptyID(Map map)
         {
             for (int i = 0; i < Config.MaxPlayers; i++)
-                if (!Map.Players.Any(x => x.ID == i))
+                if (!map.Players.Any(x => x.ID == i))
                     return (byte)i;
             Console.WriteLine("Could not find empty ID!");
             return 0;
@@ -269,7 +297,7 @@ namespace Bricklayer.Server
         /// <summary>
         /// Used to handle events from the console
         /// </summary>
-        static bool ConsoleEventCallback(int eventType)
+        private static bool ConsoleEventCallback(int eventType)
         {
             if (eventType == 2)
             {
