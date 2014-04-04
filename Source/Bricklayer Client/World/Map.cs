@@ -477,16 +477,18 @@ namespace Bricklayer.Client.World
                     if (block.Source.Contains(new Point(x, y)))
                     {
                         Color color = data[c];
-                        r += color.R;
-                        g += color.G;
-                        b += color.B;
-                        a += color.A;
-                        amount++;
+                        if (color.A > 0)
+                        {
+                            r += color.R;
+                            g += color.G;
+                            b += color.B;
+                            amount++;
+                        }
                     }
                 }
                 //Set the block's minimap color based on the average color of the tile
                 if (amount > 0)
-                    block.Color = new Color(r / amount, g / amount, b / amount, a / amount); //Calculate average
+                    block.Color = new Color(r / amount, g / amount, b / amount); //Calculate average
                 else
                     block.Color = Color.Transparent; 
             }
