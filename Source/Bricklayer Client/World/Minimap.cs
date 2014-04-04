@@ -18,7 +18,7 @@ namespace Bricklayer.Client.World
         public int Height { get; private set; }
         public Texture2D Texture { get; private set; }
 
-        private static Color emtpyColor = Color.Black;
+        private static Color emptyColor = Color.Black;
         private const float updateRate = 0f; //Time, in seconds, between map updates
         private double lastUpdate; //Time minimap was last updated
         private Map map; //Map reference
@@ -65,7 +65,7 @@ namespace Bricklayer.Client.World
                         }
                         else
                         {
-                            twoArray[x, y] = emtpyColor;
+                            twoArray[x, y] = emptyColor;
                         }
 
                         //Convert the 2D array to 1D
@@ -83,7 +83,7 @@ namespace Bricklayer.Client.World
                     {
                         player.LastColors[player.GridPosition] = 0;
                     }
-                    for (int i = player.LastColors.Count - 1; i >= 0; i--) //Fade out trail and add to map
+                    for (int i = 0; i < player.LastColors.Count; i++) //Fade out trail and add to map
                     {
                         KeyValuePair<Point, float> point = player.LastColors.ElementAt(i);
                         player.LastColors[point.Key] += (float)gameTime.ElapsedGameTime.TotalSeconds;
@@ -96,7 +96,6 @@ namespace Bricklayer.Client.World
                     }
                     oneArray[player.GridPosition.X + player.GridPosition.Y * Width] = player.Tint;
                 }
-
                 //Create a new, blank, square texture 
                 if (Texture == null)
                     Texture = new Texture2D(map.Game.GraphicsDevice, Width, Height);
