@@ -18,7 +18,7 @@ namespace Bricklayer.Client.World
         public int Height { get; private set; }
         public Texture2D Texture { get; private set; }
 
-        private static Color emtpyColor = new Color(175, 239, 255);
+        private static Color emtpyColor = Color.Black;
         private const float updateRate = 0f; //Time, in seconds, between map updates
         private double lastUpdate; //Time minimap was last updated
         private Map map; //Map reference
@@ -83,17 +83,17 @@ namespace Bricklayer.Client.World
                     {
                         player.LastColors[player.GridPosition] = 0;
                     }
-                        for (int i = player.LastColors.Count - 1; i >= 0; i--) //Fade out trail and add to map
+                    for (int i = player.LastColors.Count - 1; i >= 0; i--) //Fade out trail and add to map
+                    {
+                        KeyValuePair<Point, float> point = player.LastColors.ElementAt(i);
+                        player.LastColors[point.Key] += (float)gameTime.ElapsedGameTime.TotalSeconds;
+                        oneArray[point.Key.X + point.Key.Y * Width] = Color.Lerp(player.Tint, twoArray[point.Key.X, point.Key.Y], point.Value); //Fade between tint and original tile color
+                        if (point.Value >= 1) //Remove old points
                         {
-                            KeyValuePair<Point, float> point = player.LastColors.ElementAt(i);
-                            player.LastColors[point.Key] += (float)gameTime.ElapsedGameTime.TotalSeconds;
-                            oneArray[point.Key.X + point.Key.Y * Width] = Color.Lerp(player.Tint, twoArray[point.Key.X, point.Key.Y], point.Value); //Fade between tint and original tile color
-                            if (point.Value >= 1) //Remove old points
-                            {
-                                player.LastColors.Remove(point.Key);
-                                i--;
-                            }
+                            player.LastColors.Remove(point.Key);
+                            i--;
                         }
+                    }
                     oneArray[player.GridPosition.X + player.GridPosition.Y * Width] = player.Tint;
                 }
 
