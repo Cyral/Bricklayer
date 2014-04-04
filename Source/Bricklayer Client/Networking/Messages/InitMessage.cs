@@ -29,6 +29,9 @@ namespace Bricklayer.Client.Networking.Messages
             map.Width = im.ReadInt16();
             map.Height = im.ReadInt16();
             map.Tiles = new Tile[map.Width, map.Height, 2];
+
+            map.Minimap = new Minimap(map, map.Width, map.Height);
+            map.Minimap.Position = new Microsoft.Xna.Framework.Vector2(16, 16);
             for (int z = 0; z < 2; z++)
             {
                 for (int y = 0; y < map.Height; y++)

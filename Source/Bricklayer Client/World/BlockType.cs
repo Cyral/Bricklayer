@@ -53,6 +53,10 @@ namespace Bricklayer.Client.World
         /// The total amount of frames in an animation, for animated tiles
         /// </summary>
         public float TotalFrames { get; set; }
+        /// <summary>
+        /// The average color of the tile to appear on the minimap
+        /// </summary>
+        public Color Color { get; set; }
         public static BlockType Empty, Default, Stone, Dirt, Grass, Wood, Brick, Slab, Glass, UpArrow, RightArrow, DownArrow, LeftArrow;
 
         /// <summary>

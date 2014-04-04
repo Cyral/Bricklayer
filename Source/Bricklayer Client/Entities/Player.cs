@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Bricklayer.Client.Networking.Messages;
 using Bricklayer.Client.World;
+using System.Collections.Generic;
 
 namespace Bricklayer.Client.Entities
 {
@@ -76,11 +77,15 @@ namespace Bricklayer.Client.Entities
                 return new Rectangle((int)SimulationState.Position.X, (int)SimulationState.Position.Y, Width, Height);
             }
         }
-
-        //Base map, either from client or server
-        private Map map;
-        //Alpha color value for nametags
-        private float tagAlpha = 0;
+        /// <summary>
+        /// The position on the grid a player is occupying (based of DisplayState)
+        /// </summary>
+        public Point GridPosition { get { return new Point((int)Math.Round(DisplayState.Position.X / Tile.Width), (int)Math.Round(DisplayState.Position.Y / Tile.Height)); } }
+        public Dictionary<Point, float> LastColors = new Dictionary<Point, float>();
+        
+        private Map map; //Base map, either from client or server
+        private float tagAlpha = 0; //Alpha color value for nametags
+        private double lastPositionsUpdate;
 
         public Player(Map map, Vector2 position, string name, long RUI, int ID)
         {
@@ -173,11 +178,15 @@ namespace Bricklayer.Client.Entities
                 }
             }
             ApplyPhysics(gameTime);
-            // Set DisplayState
+            // Set display position
             if (IsMine)
+            {
                 DisplayState = SimulationState;
+            }
             else
+            {
                 Interpolate(gameTime);
+            }
         }
 
         private void Interpolate(GameTime gameTime)

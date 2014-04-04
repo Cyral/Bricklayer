@@ -53,10 +53,16 @@ namespace Bricklayer.Client.World
         /// </summary>
         public BlockType SelectedBlock { get; private set; }
 
+        /// <summary>
+        /// The minimap showing a preview of blocks
+        /// </summary>
+        public Minimap Minimap { get; set; }
+
         //Fields
         private const float cameraSpeed = .18f;
         private Random random = new Random();
         private int width, height;
+        private Texture2D pixel;
         
         /// <summary>
         /// Creates a client-side version of a map at the specified width and height (To be changed later once Init packet recieved)
@@ -76,7 +82,12 @@ namespace Bricklayer.Client.World
             //Setup camera
             CreateCamera();
             LoadContent();
+
             Spawn = new Vector2(Tile.Width, Tile.Height);
+
+            pixel = new Texture2D(game.GraphicsDevice, 1, 1);
+            pixel.SetData<Color>(new Color[1] { Color.White });
+            SetMinimapColors();
         }
         /// <summary>
         /// Creates a server-side version of the map
@@ -210,6 +221,7 @@ namespace Bricklayer.Client.World
             MainCamera.Position = new Vector2((float)Math.Round(MainCamera.Position.X), (float)Math.Round(MainCamera.Position.Y));
 
             UpdateTiles(gameTime);
+            Minimap.Update(gameTime);
         }
         public void UpdateTiles(GameTime gameTime)
         {
@@ -323,6 +335,10 @@ namespace Bricklayer.Client.World
             foreach (Player player in Players)
                 player.Draw(spriteBatch, gameTime);
             spriteBatch.End();
+
+            spriteBatch.Begin();
+            Minimap.Draw(spriteBatch, gameTime);
+            spriteBatch.End();
         }
 
         private void DrawTiles(SpriteBatch spriteBatch)
@@ -433,6 +449,47 @@ namespace Bricklayer.Client.World
                 throw new KeyNotFoundException("Could not find player from RemoteUniqueIdentifier: " + RUI);
             else
                 return null;
+        }
+        /// <summary>
+        /// Sets block's default colors from their image
+        /// </summary>
+        public void SetMinimapColors()
+        {
+            Texture2D texture = tileSheet;
+            Color[] data = new Color[texture.Width * texture.Height];
+            texture.GetData<Color>(data); //Get data 
+
+            for (int i = 0; i < BlockType.BlockList.Count; i++)
+            {
+                BlockType block = BlockType.BlockList[i];
+                int r = 0;
+                int g = 0;
+                int b = 0;
+                int a = 0;
+                int amount = 0;
+
+                Rectangle source = new Rectangle(block.Source.X, 4, Tile.Width, Tile.Height);
+                for (int c = 0; c < data.Length; c++) //Foreach colored pixel; Get RGB values
+                {
+                    int x = c % texture.Width;
+                    int y = (c - x) / texture.Width;
+
+                    if (block.Source.Contains(new Point(x, y)))
+                    {
+                        Color color = data[c];
+                        r += color.R;
+                        g += color.G;
+                        b += color.B;
+                        a += color.A;
+                        amount++;
+                    }
+                }
+                //Set the block's minimap color based on the average color of the tile
+                if (amount > 0)
+                    block.Color = new Color(r / amount, g / amount, b / amount, a / amount); //Calculate average
+                else
+                    block.Color = Color.Transparent; 
+            }
         }
         #endregion
     }
