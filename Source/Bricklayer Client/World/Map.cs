@@ -15,7 +15,7 @@ namespace Bricklayer.Client.World
         /// <summary>
         /// The tile array for the map, containing all tiles and tile data
         /// </summary>
-        public Tile[,,] Tiles { get; set; }
+        public Tile[, ,] Tiles { get; set; }
 
         //Width and Height
         public int Width { get { return width; } set { width = value; CreateCamera(); } }
@@ -62,7 +62,8 @@ namespace Bricklayer.Client.World
         private const float cameraSpeed = .18f;
         private Random random = new Random();
         private int width, height;
-        
+        private Texture2D pixel;
+
         /// <summary>
         /// Creates a client-side version of a map at the specified width and height (To be changed later once Init packet recieved)
         /// </summary>
@@ -81,7 +82,12 @@ namespace Bricklayer.Client.World
             //Setup camera
             CreateCamera();
             LoadContent();
+
             Spawn = new Vector2(Tile.Width, Tile.Height);
+
+            pixel = new Texture2D(game.GraphicsDevice, 1, 1);
+            pixel.SetData<Color>(new Color[1] { Color.White });
+            SetMinimapColors();
         }
         /// <summary>
         /// Creates a server-side version of the map
@@ -112,7 +118,7 @@ namespace Bricklayer.Client.World
         /// </summary>
         private void CreateCamera()
         {
-            if (Game != null) 
+            if (Game != null)
                 MainCamera = new Camera(new Vector2(Game.GraphicsDevice.Viewport.Width - Interface.GameScreen.SidebarSize, Game.GraphicsDevice.Viewport.Height - 24)) { MinBounds = new Vector2(0, 0), MaxBounds = new Vector2(Width * Tile.Width, (Height * Tile.Height)) };
         }
         /// <summary>
@@ -122,7 +128,7 @@ namespace Bricklayer.Client.World
         {
             //Temporary Generation
             int[] heightMap = new int[Width];
-            
+
             //Config
             int offset = Height - 17;
             float peakheight = 5;
@@ -261,7 +267,7 @@ namespace Bricklayer.Client.World
             //Get positions
             Point MousePosition = new Point((int)MainCamera.Position.X + Game.MousePoint.X, (int)MainCamera.Position.Y + Game.MousePoint.Y);
             Point GridPosition = new Point(MousePosition.X / Tile.Width, MousePosition.Y / Tile.Height);
-            
+
             //If LeftButton Clicked
             if (Game.MouseState.LeftButton == ButtonState.Pressed && Game.LastMouseState.RightButton == ButtonState.Released)
             {
@@ -319,9 +325,9 @@ namespace Bricklayer.Client.World
         {
             //Draw the background texture, wrapping it around the screen size
             spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointWrap, null, null, null, MainCamera.GetViewMatrix(Vector2.One));
-            spriteBatch.Draw(backgroundTexture, MainCamera.Position + new Vector2(-13,-3), new Rectangle((int)MainCamera.Left, (int)MainCamera.Top, (int)MainCamera.Right - (int)MainCamera.Left + 16, (int)MainCamera.Bottom - (int)MainCamera.Top + 3), Color.White, 0, Vector2.Zero, 1, SpriteEffects.None,0);
+            spriteBatch.Draw(backgroundTexture, MainCamera.Position + new Vector2(-13, -3), new Rectangle((int)MainCamera.Left, (int)MainCamera.Top, (int)MainCamera.Right - (int)MainCamera.Left + 16, (int)MainCamera.Bottom - (int)MainCamera.Top + 3), Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
             spriteBatch.End();
-            
+
             spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp, null, null, null, MainCamera.GetViewMatrix(Vector2.One));
             //Draw tiles
             DrawTiles(spriteBatch);
@@ -443,6 +449,49 @@ namespace Bricklayer.Client.World
                 throw new KeyNotFoundException("Could not find player from RemoteUniqueIdentifier: " + RUI);
             else
                 return null;
+        }
+        /// <summary>
+        /// Sets block's default colors from their image
+        /// </summary>
+        public void SetMinimapColors()
+        {
+            Texture2D texture = tileSheet;
+            Color[] data = new Color[texture.Width * texture.Height];
+            texture.GetData<Color>(data); //Get data 
+
+            for (int i = 0; i < BlockType.BlockList.Count; i++)
+            {
+                BlockType block = BlockType.BlockList[i];
+                int r = 0;
+                int g = 0;
+                int b = 0;
+                int a = 0;
+                int amount = 0;
+
+                Rectangle source = new Rectangle(block.Source.X, 4, Tile.Width, Tile.Height);
+                for (int c = 0; c < data.Length; c++) //Foreach colored pixel; Get RGB values
+                {
+                    int x = c % texture.Width;
+                    int y = (c - x) / texture.Width;
+
+                    if (block.Source.Contains(new Point(x, y)))
+                    {
+                        Color color = data[c];
+                        if (color.A > 0)
+                        {
+                            r += color.R;
+                            g += color.G;
+                            b += color.B;
+                            amount++;
+                        }
+                    }
+                }
+                //Set the block's minimap color based on the average color of the tile
+                if (amount > 0)
+                    block.Color = new Color(r / amount, g / amount, b / amount); //Calculate average
+                else
+                    block.Color = Color.Transparent;
+            }
         }
         #endregion
     }
