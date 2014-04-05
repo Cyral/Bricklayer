@@ -171,7 +171,9 @@
     <Compile Include="GameState.cs" />
     <Compile Include="Interface\Controls\ControlList.cs" />
     <Compile Include="Interface\Controls\ServerDataControl.cs" />
+    <Compile Include="Interface\Screens\LobbyScreen.cs" />
     <Compile Include="Interface\Windows\AddServerDialog.cs" />
+    <Compile Include="Interface\Windows\LobbyWindow.cs" />
     <Compile Include="Interface\Windows\ServerWindow.cs" />
     <Compile Include="Interface\Screens\BaseScreen.cs" />
     <Compile Include="Interface\Screens\GameScreen.cs" />
