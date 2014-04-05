@@ -53,6 +53,11 @@ namespace Bricklayer.Client.World
         /// </summary>
         public BlockType SelectedBlock { get; private set; }
 
+        /// <summary>
+        /// The minimap showing a preview of blocks
+        /// </summary>
+        public Minimap Minimap { get; set; }
+
         //Fields
         private const float cameraSpeed = .18f;
         private Random random = new Random();
@@ -88,9 +93,7 @@ namespace Bricklayer.Client.World
             IsServer = true; //Running a client
             Tiles = new Tile[Width, Height, 2];
             Players = new List<Player>();
-            Spawn = new Vector2(Tile.Width, Tile.Height);
             Generate();
-
         }
         /// <summary>
         /// Loads content needed for drawing on the client
@@ -212,6 +215,7 @@ namespace Bricklayer.Client.World
             MainCamera.Position = new Vector2((float)Math.Round(MainCamera.Position.X), (float)Math.Round(MainCamera.Position.Y));
 
             UpdateTiles(gameTime);
+            Minimap.Update(gameTime);
         }
         public void UpdateTiles(GameTime gameTime)
         {
@@ -325,6 +329,10 @@ namespace Bricklayer.Client.World
             foreach (Player player in Players)
                 player.Draw(spriteBatch, gameTime);
             spriteBatch.End();
+
+            spriteBatch.Begin();
+            Minimap.Draw(spriteBatch, gameTime);
+            spriteBatch.End();
         }
 
         private void DrawTiles(SpriteBatch spriteBatch)
@@ -422,6 +430,19 @@ namespace Bricklayer.Client.World
                 if (player.ID == id)
                     return player;
             throw new KeyNotFoundException("Could not find player from ID: " + id);
+        }
+        /// <summary>
+        /// Returns a player from a RemoteUniqueIdentifier (The unique message ID)
+        /// </summary>
+        public Player PlayerFromRUI(long RUI, bool ignoreError = false)
+        {
+            foreach (Player player in Players)
+                if (player.RUI == RUI)
+                    return player;
+            if (!ignoreError)
+                throw new KeyNotFoundException("Could not find player from RemoteUniqueIdentifier: " + RUI);
+            else
+                return null;
         }
         #endregion
     }
