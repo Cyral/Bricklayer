@@ -19,7 +19,7 @@ namespace Bricklayer.Client.World
         public Texture2D Texture { get; private set; }
 
         private static Color emptyColor = Color.Black;
-        private const float updateRate = 0f; //Time, in seconds, between map updates
+        private const float updateRate = .016f; //Time, in seconds, between map updates
         private double lastUpdate; //Time minimap was last updated
         private Map map; //Map reference
         private Color[] oneArray; //Array for holding processed 1D color data
@@ -43,9 +43,9 @@ namespace Bricklayer.Client.World
                     oneArray = new Color[Width * Height];
                 }
                 //Add tiles
-                for (int y = 0; y < Height; ++y)
+                for (int y = 0; y < Height; y++)
                 {
-                    for (int x = 0; x < Width; ++x)
+                    for (int x = 0; x < Width; x++)
                     {
                         Tile foreground = map.Tiles[x, y, 1];
                         Tile background = map.Tiles[x, y, 0];
@@ -108,7 +108,10 @@ namespace Bricklayer.Client.World
         }
         public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
-            spriteBatch.Draw(Texture, Position, Color.White);
+            if (Texture != null)
+            {
+                spriteBatch.Draw(Texture, Position, Color.White);
+            }
         }
     }
 }
