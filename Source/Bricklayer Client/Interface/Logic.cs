@@ -82,6 +82,7 @@ namespace Bricklayer.Client.Interface
                         break;
                     }
             }
+            ScreenManager.Update(gameTime);
             base.Update(gameTime);
         }
     }

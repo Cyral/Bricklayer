@@ -52,7 +52,7 @@ namespace Bricklayer.Client.Interface
                     Game.NetManager.Connect(Servers[ServerListCtrl.ItemIndex].IP, Servers[ServerListCtrl.ItemIndex].Port,
                         () =>
                         {
-                            MainWindow.ScreenManager.SwitchScreen(new GameScreen());
+                            MainWindow.ScreenManager.SwitchScreen(new LobbyScreen());
                         }
                    );
                 }
@@ -115,6 +115,7 @@ namespace Bricklayer.Client.Interface
                 RefreshServerList();
             });
             BottomPanel.Add(RefreshBtn);
+            MainWindow.ScreenManager.FadeIn();
         }
         public void AddServer(ServerSaveData server)
         {

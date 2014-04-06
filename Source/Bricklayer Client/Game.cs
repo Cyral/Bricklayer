@@ -132,7 +132,7 @@ namespace Bricklayer.Client
         protected override void Update(GameTime gameTime)
         {
             //Process multiplayer
-            if (NetManager.Client != null)
+            if (NetManager.Client != null && (MainWindow.ScreenManager.Current is GameScreen))
                 MsgHandler.ProcessNetworkMessages();
             //Update unput states
             LastKeyState = KeyState;
