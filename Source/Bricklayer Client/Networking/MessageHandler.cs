@@ -139,41 +139,56 @@ namespace Bricklayer.Client.Networking
                                 }
                             case MessageTypes.PlayerStatus:
                                 {
-                                    PlayerStateMessage user = new PlayerStateMessage(im);
-                                    Player player = Map.PlayerFromID(user.ID);
-                                    player.SimulationState.Position = user.Position.ToVector2();
-                                    player.SimulationState.Velocity = user.Velocity.ToVector2();
-                                    player.SimulationState.Movement = user.Movement.ToVector2();
-                                    if (!recievedInit) //If we have not recieved init (meaning we are not in game yet), set the initial positions directly so interpolation doesn't mess with them
-                                        player.DisplayState.Position = player.SimulationState.Position;
-                                    player.VirtualJump = user.IsJumping;
+                                    if (Game.CurrentGameState == GameState.Game)
+                                    {
+                                        PlayerStateMessage user = new PlayerStateMessage(im);
+                                        Player player = Map.PlayerFromID(user.ID);
+                                        player.SimulationState.Position = user.Position.ToVector2();
+                                        player.SimulationState.Velocity = user.Velocity.ToVector2();
+                                        player.SimulationState.Movement = user.Movement.ToVector2();
+                                        if (!recievedInit) //If we have not recieved init (meaning we are not in game yet), set the initial positions directly so interpolation doesn't mess with them
+                                            player.DisplayState.Position = player.SimulationState.Position;
+                                        player.VirtualJump = user.IsJumping;
+                                    }
                                     break;
                                 }
                             case MessageTypes.Block:
                                 {
-                                    BlockMessage msg = new BlockMessage(im);
-                                    BlockType block = BlockType.FromID(msg.BlockID);
-                                    if (Map.CanPlaceBlock(msg.X, msg.Y, msg.Z, block))
-                                        Map.Tiles[msg.X, msg.Y, msg.Z].Block = block;
+                                    if (Game.CurrentGameState == GameState.Game)
+                                    {
+                                        BlockMessage msg = new BlockMessage(im);
+                                        BlockType block = BlockType.FromID(msg.BlockID);
+                                        if (Map.CanPlaceBlock(msg.X, msg.Y, msg.Z, block))
+                                            Map.Tiles[msg.X, msg.Y, msg.Z].Block = block;
+                                    }
                                     break;
                                 }
                             case MessageTypes.PlayerSmiley:
                                 {
-                                    PlayerSmileyMessage msg = new PlayerSmileyMessage(im);
-                                    Player p = Map.PlayerFromID(msg.ID);
-                                    p.Smiley = msg.Smiley;
+                                    if (Game.CurrentGameState == GameState.Game)
+                                    {
+                                        PlayerSmileyMessage msg = new PlayerSmileyMessage(im);
+                                        Player p = Map.PlayerFromID(msg.ID);
+                                        p.Smiley = msg.Smiley;
+                                    }
                                     break;
                                 }
                             case MessageTypes.PlayerMode:
                                 {
-                                    PlayerModeMessage mode = new PlayerModeMessage(im);
-                                    Map.PlayerFromID(mode.ID).Mode = (PlayerMode)mode.Mode;
+                                    if (Game.CurrentGameState == GameState.Game)
+                                    {
+                                        PlayerModeMessage mode = new PlayerModeMessage(im);
+                                        Map.PlayerFromID(mode.ID).Mode = (PlayerMode)mode.Mode;
+                                    }
                                     break;
                                 }
                             case MessageTypes.Chat:
                                 {
-                                    ChatMessage chat = new ChatMessage(im);
-                                    (MainWindow.ScreenManager.Current as GameScreen).AddChat(Map.PlayerFromID(chat.ID).Username, chat.Message);
+                                    if (Game.CurrentGameState == GameState.Game)
+                                    {
+                                        ChatMessage chat = new ChatMessage(im);
+                                        (MainWindow.ScreenManager.Current as GameScreen).AddChat(Map.PlayerFromID(chat.ID).Username, chat.Message);
+                                    }
                                     break;
                                 }
                             case MessageTypes.Init:

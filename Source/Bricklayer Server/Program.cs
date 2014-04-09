@@ -231,8 +231,8 @@ namespace Bricklayer.Server
                         newMap.Players.Add(new Player(newMap, newMap.Spawn, login.Username, inc.SenderConnection.RemoteUniqueIdentifier, FindEmptyID(newMap)) { Tint = login.Color });
                         sender = PlayerFromRUI(inc.SenderConnection.RemoteUniqueIdentifier, true);
                         //Send message to player notifing he is connected and ready
-                        NetManager.SendMessage(new PlayerJoinMessage(sender.Username, sender.ID, true, sender.Tint), sender);
                         NetManager.SendMessage(new InitMessage(sender.Map), sender);
+                        NetManager.SendMessage(new PlayerJoinMessage(sender.Username, sender.ID, true, sender.Tint), sender);
                         Console.WriteLine(login.Username + " created new room: " + msg.Name);
                         break;
                     }
