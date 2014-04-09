@@ -46,7 +46,7 @@ namespace Bricklayer.Client.Networking
                 //This is a total hack and needs to be changed!
                 pingData.Online = int.Parse(Encoding.ASCII.GetString(data).Substring(0,1));
                 pingData.MaxOnline = int.Parse(Encoding.ASCII.GetString(data).Substring(1, 1));
-                pingData.MOTD = Encoding.ASCII.GetString(data).Substring(2).Replace("\0","");
+                pingData.Description = Encoding.ASCII.GetString(data).Substring(2).Replace("\0","");
             }
             catch (Exception e)
             {

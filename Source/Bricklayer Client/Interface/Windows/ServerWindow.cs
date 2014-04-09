@@ -48,13 +48,9 @@ namespace Bricklayer.Client.Interface
                     if ((ServerListCtrl.Items[ServerListCtrl.ItemIndex] as ServerDataControl).Ping != null && (ServerListCtrl.Items[ServerListCtrl.ItemIndex] as ServerDataControl).Ping.Error)
                         return;
                     //Create a world and connect
-                    Game.Map = new Bricklayer.Client.World.Map((Manager.Game) as Game, 1, 1);
-                    Game.NetManager.Connect(Servers[ServerListCtrl.ItemIndex].IP, Servers[ServerListCtrl.ItemIndex].Port,
-                        () =>
-                        {
-                            MainWindow.ScreenManager.SwitchScreen(new LobbyScreen());
-                        }
-                   );
+                    JoinBtn.Enabled = false;
+                    JoinBtn.Text = "Connecting...";
+                    Game.NetManager.Connect(Servers[ServerListCtrl.ItemIndex].IP, Servers[ServerListCtrl.ItemIndex].Port);
                 }
             });
             BottomPanel.Add(JoinBtn);
@@ -139,6 +135,20 @@ namespace Bricklayer.Client.Interface
                 ServerListCtrl.Items.Add(new ServerDataControl(Manager, Pinger, Servers[i]));
             if (ServerListCtrl.Items.Count > 0)
                 ServerListCtrl.ItemIndex = 0;
+        }
+
+        internal void Disconnected()
+        {
+            //Re-enable join button and display error if couldnt connect
+            if (!JoinBtn.Enabled)
+            {
+                JoinBtn.Enabled = true;
+                JoinBtn.Text = "Connect";
+                MessageBox error = new MessageBox(Manager, MessageBoxType.Error, "Could not connect to server.", "[color:Gold]Error[/color]");
+                error.Init();
+                Manager.Add(error);
+                error.Show();
+            }
         }
     }
 }

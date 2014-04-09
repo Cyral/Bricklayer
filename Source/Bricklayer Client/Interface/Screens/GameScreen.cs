@@ -11,17 +11,35 @@ namespace Bricklayer.Client.Interface
     /// </summary>
     public class GameScreen : BaseScreen
     {
-        public const int SidebarSize = 225 + 2;
+        public const int SidebarWidth = 225 + 2;
+
+        //Controls
         public Button[] Inventory;
         public StatusBar Bar, Sidebar;
         public Label StatsLabel;
         public Console ChatBox;
         public ListBox PlayerList;
+        public Button LeaveButton;
 
+        //Create world once loaded
+        private string worldName, worldDescription;
+
+        public GameScreen()
+        {
+        }
+        public GameScreen(string createName, string createDescription = "")
+        {
+            worldName = createName;
+            worldDescription = createDescription;
+        }
         public override void Add(ScreenManager screenManager)
         {
-            base.Add(screenManager);
+            if (worldDescription != string.Empty)
+                Game.NetManager.SendMessage(new Bricklayer.Client.Networking.Messages.CreateRoomMessage(worldName, worldDescription));
+            if (worldName != string.Empty)
+                Game.NetManager.SendMessage(new Bricklayer.Client.Networking.Messages.JoinRoomMessage(worldName));
 
+            base.Add(screenManager);
             Window.Focused = true;
             Bar = new StatusBar(Manager) { Top = Window.Height - 24, Width = Window.Width };
             Bar.Init();
@@ -30,15 +48,23 @@ namespace Bricklayer.Client.Interface
             StatsLabel.Init();
             Bar.Add(StatsLabel);
 
+            LeaveButton = new Button(Manager) { Right = Bar.ClientWidth - 4, Top = 4, Height = 16, Text = "Lobby" };
+            LeaveButton.Init();
+            LeaveButton.Click += new TomShane.Neoforce.Controls.EventHandler(delegate(object o, TomShane.Neoforce.Controls.EventArgs e)
+            {
+                ScreenManager.SwitchScreen(new LobbyScreen());
+            });
+            Bar.Add(LeaveButton);
+
             Sidebar = new StatusBar(Manager);
             Sidebar.Init();
-            Sidebar.SetSize(SidebarSize, (int)((Window.Height - Bar.Height)));
+            Sidebar.SetSize(SidebarWidth, (int)((Window.Height - Bar.Height)));
             Sidebar.SetPosition(Window.Width - Sidebar.Width, 0);
             Window.Add(Sidebar);
 
             PlayerList = new ListBox(Manager);
             PlayerList.Init();
-            PlayerList.SetSize(SidebarSize, (int)((Window.Height - Bar.Height - 4) * .25f));
+            PlayerList.SetSize(SidebarWidth, (int)((Window.Height - Bar.Height - 4) * .25f));
             PlayerList.SetPosition(1, 2);
             Sidebar.Add(PlayerList);
 
@@ -59,7 +85,14 @@ namespace Bricklayer.Client.Interface
             //Hide them until we recieve the Init packet
             ChatBox.Visible = PlayerList.Visible = Sidebar.Visible = false;
         }
-
+        public override void Remove()
+        {
+            Window.Remove(Bar);
+            Window.Remove(Sidebar);
+            Manager.Remove(ChatBox);
+            Game.NetManager.SendMessage(new Bricklayer.Client.Networking.Messages.PlayerLeaveMessage(Game.MyID));
+            Game.Map = null;
+        }
         #region Chat Helper Methods
         /// <summary>
         /// Called when the content of the chatbox's text is changed
@@ -164,10 +197,5 @@ namespace Bricklayer.Client.Interface
         {
             ChatBox.Visible = PlayerList.Visible = Sidebar.Visible = true;
         }
-        public override void Remove()
-        {
-            //TODO
-        }
-
     }
 }

@@ -76,7 +76,7 @@ namespace Bricklayer.Server
                                 {
                                     writer.Write((byte)pingData.Online);
                                     writer.Write((byte)pingData.MaxOnline);
-                                    writer.Write(pingData.MOTD);
+                                    writer.Write(pingData.Description);
                                 }
                                 byte[] msg = ms.ToArray();
                                 stream.Write(msg, 0, msg.Length);

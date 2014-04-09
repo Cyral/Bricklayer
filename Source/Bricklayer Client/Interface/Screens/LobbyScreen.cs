@@ -14,8 +14,15 @@ namespace Bricklayer.Client.Interface
     {
         public LobbyWindow Lobby;
 
+        public string Description;
+        public string Name;
+        public string Intro;
+        public int Online;
+        public List<Bricklayer.Client.Networking.LobbySaveData> Rooms;
+
         public override void Add(ScreenManager screenManager)
         {
+            Game.CurrentGameState = GameState.Lobby;
             base.Add(screenManager);
             (Manager.Game as Application).BackgroundImage = ContentPack.Textures["gui\\background"];
             //Add the login window

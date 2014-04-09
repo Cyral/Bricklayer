@@ -14,9 +14,6 @@ namespace Bricklayer.Client.Networking
     public class NetworkManager
     {
         public NetClient Client;
-        public delegate void ConnectedCallback();
-
-        private const int ReconnectWait = 10000;
         private bool isDisposed;
 
         public NetworkManager()
@@ -24,7 +21,7 @@ namespace Bricklayer.Client.Networking
 
         }
 
-        public void Connect(string host, int port, ConnectedCallback callback)
+        public void Connect(string host, int port)
         {
             Game.Host = host;
             Game.Port = port;
@@ -41,7 +38,6 @@ namespace Bricklayer.Client.Networking
             Client.Start();
 
             Join(host, port);
-            callback();
         }
 
         private void Join(string host, int port)

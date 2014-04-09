@@ -2,6 +2,9 @@
 {
     public enum MessageTypes : byte
     {
+        CreateRoom,
+        JoinRoom,
+        Request,
         PlayerStatus,
         PlayerJoin,
         PlayerLeave,
@@ -12,5 +15,6 @@
         Ping,
         Init,
         Chat,
+        Lobby,
     }
 }

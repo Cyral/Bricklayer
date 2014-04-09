@@ -87,21 +87,31 @@ namespace Bricklayer.Client.World
                     {
                         KeyValuePair<Point, float> point = player.LastColors.ElementAt(i);
                         player.LastColors[point.Key] += (float)gameTime.ElapsedGameTime.TotalSeconds;
-                        oneArray[point.Key.X + point.Key.Y * Width] = Color.Lerp(player.Tint, twoArray[point.Key.X, point.Key.Y], point.Value); //Fade between tint and original tile color
-                        if (point.Value >= 1) //Remove old points
+                        if (Game.Map.InBounds(point.Key.X, point.Key.Y))
                         {
-                            player.LastColors.Remove(point.Key);
-                            i--;
+                            oneArray[point.Key.X + point.Key.Y * Width] = Color.Lerp(player.Tint, twoArray[point.Key.X, point.Key.Y], point.Value); //Fade between tint and original tile color
+                            if (point.Value >= 1) //Remove old points
+                            {
+                                player.LastColors.Remove(point.Key);
+                                i--;
+                            }
                         }
                     }
-                    oneArray[player.GridPosition.X + player.GridPosition.Y * Width] = player.Tint;
+                    if (Game.Map.InBounds(player.GridPosition.X, player.GridPosition.Y))
+                        oneArray[player.GridPosition.X + player.GridPosition.Y * Width] = player.Tint;
                 }
                 //Create a new, blank, square texture 
                 if (Texture == null)
                     Texture = new Texture2D(map.Game.GraphicsDevice, Width, Height);
+                try
+                {
+                    //Assign the newly filled 1D array into the texture 
+                    Texture.SetData<Color>(oneArray);
+                }
+                catch
+                {
 
-                //Assign the newly filled 1D array into the texture 
-                Texture.SetData<Color>(oneArray);
+                }
 
                 lastUpdate = gameTime.TotalGameTime.TotalSeconds;
             }

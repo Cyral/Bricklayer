@@ -132,7 +132,7 @@ namespace Bricklayer.Client
         protected override void Update(GameTime gameTime)
         {
             //Process multiplayer
-            if (NetManager.Client != null && (MainWindow.ScreenManager.Current is GameScreen))
+            if (NetManager.Client != null)
                 MsgHandler.ProcessNetworkMessages();
             //Update unput states
             LastKeyState = KeyState;
@@ -243,7 +243,7 @@ namespace Bricklayer.Client
         /// </summary>
         void MainWindow_FocusGained(object sender, TomShane.Neoforce.Controls.EventArgs e)
         {
-            if (CurrentGameState == GameState.Game)
+            if (CurrentGameState == GameState.Game && (MainWindow.ScreenManager.Current as GameScreen).PlayerList != null)
             {
                 ListBox playerList = (MainWindow.ScreenManager.Current as GameScreen).PlayerList;
                 playerList.ItemIndex = -1;

@@ -14,13 +14,11 @@ namespace Bricklayer.Client.Networking
     /// </summary>
     public class MessageHandler
     {
-        //Reference to the game class to interact with it
-        private Game game;
+        private Game game; //Reference to the game class to interact with it
         //Quick access to game classes
         private NetworkManager NetManager { get {return Game.NetManager; }}
         private Map Map { get { return Game.Map; } set { Game.Map = value; } }
-        //Have we recieved the init message yet?
-        private bool recievedInit = false;
+        private bool recievedInit = false; //Have we recieved the init message yet?
 
         public MessageHandler(Game game)
         {
@@ -45,20 +43,37 @@ namespace Bricklayer.Client.Networking
                     case NetIncomingMessageType.StatusChanged:
                         switch ((NetConnectionStatus)im.ReadByte())
                         {
+                                //When connected to the server
                             case NetConnectionStatus.Connected:
-                                Debug.WriteLine("{0} Connected", im.SenderEndPoint);
-                                break;
+                                {
+                                    Debug.WriteLine("{0} Connected", im.SenderEndPoint);
+                                    //Once connected, switch to the lobby screen
+                                    MainWindow.ScreenManager.SwitchScreen(new LobbyScreen());
+                                    Game.CurrentGameState = GameState.Lobby;
+                                    break;
+                                }
+                                //When disconnected from the server
                             case NetConnectionStatus.Disconnected:
                                 {
                                     Debug.WriteLine("{0} Disconnected", im.SenderEndPoint);
-                                    Game.CurrentGameState = GameState.Loading;
-                                    (MainWindow.ScreenManager.Current as GameScreen).SystemChat("Server connection disconnected.");
-                                    (MainWindow.ScreenManager.Current as GameScreen).StatsLabel.Text = "Status: Disconnected.";
+                                    if (Game.CurrentGameState != GameState.Loading)
+                                    {
+                                        Game.CurrentGameState = GameState.Loading;
+                                        if (Game.CurrentGameState == GameState.Game)
+                                        {
+                                            (MainWindow.ScreenManager.Current as GameScreen).SystemChat("Server connection disconnected.");
+                                            (MainWindow.ScreenManager.Current as GameScreen).StatsLabel.Text = "Status: Disconnected.";
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (MainWindow.ScreenManager.Current is LoginScreen)
+                                            (MainWindow.ScreenManager.Current as LoginScreen).Login.Disconnected();
+                                    }
                                 }
                                 break;
                             case NetConnectionStatus.RespondedAwaitingApproval:
-                                NetOutgoingMessage hailMessage = NetManager.CreateMessage();
-                                im.SenderConnection.Approve(hailMessage);
+                                im.SenderConnection.Approve(NetManager.CreateMessage());
                                 break;
                         }
 
@@ -67,6 +82,21 @@ namespace Bricklayer.Client.Networking
                         var gameMessageType = (MessageTypes)im.ReadByte();
                         switch (gameMessageType)
                         {
+                            case MessageTypes.Lobby:
+                                {
+                                    if (Game.CurrentGameState == GameState.Lobby)
+                                    {
+                                        LobbyScreen screen = MainWindow.ScreenManager.Current as LobbyScreen;
+                                        LobbyMessage msg = new LobbyMessage(im);
+                                        screen.Name = msg.ServerName;
+                                        screen.Description = msg.Description;
+                                        screen.Intro = msg.Intro;
+                                        screen.Online = msg.Online;
+                                        screen.Rooms = msg.Rooms;
+                                        screen.Lobby.LoadRooms();
+                                    }
+                                    break;
+                                }
                             case MessageTypes.PlayerJoin:
                                 {
                                     PlayerJoinMessage user = new PlayerJoinMessage(im);
@@ -91,16 +121,19 @@ namespace Bricklayer.Client.Networking
                                 {
                                     PlayerLeaveMessage user = new PlayerLeaveMessage(im);
                                     //Remove player
-                                    Player player = Map.PlayerFromID(user.ID);
-                                    Map.Players.Remove(Map.PlayerFromID(user.ID));
-                                    (MainWindow.ScreenManager.Current as GameScreen).PlayerList.Items.Remove(player.Username);
-                                    (MainWindow.ScreenManager.Current as GameScreen).SystemChat(player.Username + " [color:LightGray]has[/color] [color:IndianRed]left.[/color]");
-                                    //Rebuild indexes
-                                    for (int i = 0; i < Map.Players.Count; i++)
+                                    if (user.ID != Game.MyID)
                                     {
-                                        Map.Players[i].Index = i;
-                                        if (Map.Players[i].ID == Game.MyID)
-                                            Game.MyIndex = (byte)i;
+                                        Player player = Map.PlayerFromID(user.ID);
+                                        Map.Players.Remove(Map.PlayerFromID(user.ID));
+                                        (MainWindow.ScreenManager.Current as GameScreen).PlayerList.Items.Remove(player.Username);
+                                        (MainWindow.ScreenManager.Current as GameScreen).SystemChat(player.Username + " [color:LightGray]has[/color] [color:IndianRed]left.[/color]");
+                                        //Rebuild indexes
+                                        for (int i = 0; i < Map.Players.Count; i++)
+                                        {
+                                            Map.Players[i].Index = i;
+                                            if (Map.Players[i].ID == Game.MyID)
+                                                Game.MyIndex = (byte)i;
+                                        }
                                     }
                                     break;
                                 }
@@ -145,6 +178,7 @@ namespace Bricklayer.Client.Networking
                                 }
                             case MessageTypes.Init:
                                 {
+                                    Game.Map = new Bricklayer.Client.World.Map(game, 1, 1);
                                     InitMessage msg = new InitMessage(im, Map);
                                     Game.CurrentGameState = GameState.Game;
                                     (MainWindow.ScreenManager.Current as GameScreen).Show();

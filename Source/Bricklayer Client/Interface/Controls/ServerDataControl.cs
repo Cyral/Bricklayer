@@ -66,7 +66,7 @@ namespace Bricklayer.Client.Interface
                 //Set the controls with the recieved data
                 Stats.Text = ping.Online + "/" + ping.MaxOnline;
                 Stats.Left = (ClientWidth - (int)Manager.Skin.Fonts["Default14"].Resource.MeasureString(Stats.Text).X) - 4 - 32;
-                Motd.Text = ping.MOTD;
+                Motd.Text = ping.Description;
             }
             else
             {

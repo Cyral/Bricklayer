@@ -105,6 +105,26 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
+    <Compile Include="Content Packs\Default\textures\gui\icons\empty_star.png">
+      <Name>empty_star</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Content Packs\Default\textures\gui\icons\full_star.png">
+      <Name>full_star</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Content Packs\Default\textures\gui\icons\half_star.png">
+      <Name>half_star</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Content Packs\Default\textures\gui\icons\refresh.png">
+      <Name>refresh</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
     <Content Include="Skins\Bricklayer.skin">
       <Name>Bricklayer</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

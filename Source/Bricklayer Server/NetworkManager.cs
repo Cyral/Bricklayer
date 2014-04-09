@@ -4,6 +4,7 @@ using Lidgren.Network;
 using Bricklayer.Client.Entities;
 using Bricklayer.Client.Networking;
 using Bricklayer.Client.Networking.Messages;
+using Bricklayer.Client.World;
 
 namespace Bricklayer.Server
 {
@@ -33,7 +34,7 @@ namespace Bricklayer.Server
         }
         public ServerPingData GetQuery()
         {
-            return new ServerPingData() { Online = Server.ConnectionsCount, MaxOnline = Server.Configuration.MaximumConnections, MOTD = Program.Config.MOTD };
+            return new ServerPingData() { Online = Server.ConnectionsCount, MaxOnline = Server.Configuration.MaximumConnections, Description = Program.Config.Decription };
         }
         public NetOutgoingMessage CreateMessage()
         {
@@ -46,7 +47,7 @@ namespace Bricklayer.Server
         }
         public void SendMessage(IMessage gameMessage, Player player)
         {
-            SendMessage(gameMessage, (NetConnection)Server.Connections.Where(x => x.RemoteUniqueIdentifier == player.RUI).ElementAt(0));
+            SendMessage(gameMessage, (NetConnection)Server.Connections.Where(x => x.RemoteUniqueIdentifier == player.RUI && Program.PlayerFromRUI(x.RemoteUniqueIdentifier, true).Map == player.Map).ElementAt(0));
         }
         public void SendMessage(IMessage gameMessage, NetConnection recipient)
         {
@@ -57,23 +58,25 @@ namespace Bricklayer.Server
         }
         public void BroadcastMessageButPlayer(IMessage gameMessage, Player player)
         {
-            BroadcastMessageButPlayer(gameMessage, (NetConnection)Server.Connections.Where(x => x.RemoteUniqueIdentifier == player.RUI && Program.PlayerFromRUI(x.RemoteUniqueIdentifier).Map == player.Map).ElementAt(0));
+            BroadcastMessageButPlayer(gameMessage, (NetConnection)Server.Connections.Where(x => x.RemoteUniqueIdentifier == player.RUI && Program.PlayerFromRUI(x.RemoteUniqueIdentifier, true).Map == player.Map).ElementAt(0));
         }
         public void BroadcastMessageButPlayer(IMessage gameMessage, NetConnection recipient)
         {
             NetOutgoingMessage message = Server.CreateMessage();
             message.Write((byte)gameMessage.MessageType);
             gameMessage.Encode(message);
-            List<NetConnection> recipients = Server.Connections.Where(x => x.RemoteUniqueIdentifier != recipient.RemoteUniqueIdentifier).ToList<NetConnection>();
+            List<NetConnection> recipients = Server.Connections.Where(x => x.RemoteUniqueIdentifier != recipient.RemoteUniqueIdentifier && Program.PlayerFromRUI(x.RemoteUniqueIdentifier, true) != null && Program.PlayerFromRUI(x.RemoteUniqueIdentifier, true).Map == Program.PlayerFromRUI(recipient.RemoteUniqueIdentifier).Map).ToList<NetConnection>();
             if (recipients.Count > 0)
                 Server.SendMessage(message, recipients, NetDeliveryMethod.ReliableOrdered, 0);
         }
-        public void BroadcastMessage(IMessage gameMessage)
+        public void BroadcastMessage(Map map, IMessage gameMessage)
         {
             NetOutgoingMessage message = Server.CreateMessage();
             message.Write((byte)gameMessage.MessageType);
             gameMessage.Encode(message);
-            Server.SendToAll(message, NetDeliveryMethod.ReliableOrdered);
+            List<NetConnection> recipients = Server.Connections.Where(x => Program.PlayerFromRUI(x.RemoteUniqueIdentifier, true) != null && Program.PlayerFromRUI(x.RemoteUniqueIdentifier, true).Map == map).ToList<NetConnection>();
+            if (recipients.Count > 0)
+                Server.SendMessage(message,recipients, NetDeliveryMethod.ReliableOrdered,0);
         }
 
         public NetOutgoingMessage EncodeMessage(IMessage gameMessage)

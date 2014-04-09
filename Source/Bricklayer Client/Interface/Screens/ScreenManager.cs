@@ -68,13 +68,7 @@ namespace Bricklayer.Client.Interface
         public void SwitchScreen(IScreen newScreen)
         {   
             //Do not fade if setting the login screen (first screen)
-            if (!(newScreen is LoginScreen)) 
-            {
-                //Set the current screen and add it's objects
-                fadeTo = newScreen;
-                state = FadeState.Out;
-            }
-            else //If the screen is the first login screen
+            if ((newScreen is LoginScreen) && Current == null) 
             {
                 //Destory objects from the first screen
                 if (Current != null)
@@ -83,6 +77,12 @@ namespace Bricklayer.Client.Interface
                 }
                 Current = newScreen;
                 Current.Add(this);
+            }
+            else
+            {
+                //Set the current screen and add it's objects
+                fadeTo = newScreen;
+                state = FadeState.Out;
             }
             fadeImage.BringToFront();
         }

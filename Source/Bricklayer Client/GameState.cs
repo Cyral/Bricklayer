@@ -3,6 +3,7 @@
     public enum GameState
     {
         Loading,
+        Lobby,
         Game,
     }
 }

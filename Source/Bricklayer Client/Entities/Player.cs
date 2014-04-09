@@ -124,9 +124,11 @@ namespace Bricklayer.Client.Entities
             {
                 //Kinda a "hack fix", but instead of sorting tiles into layers to solve the issue of the "3D" part of the character
                 //Being overlayed incorrectly, just draw the top, right, and top right tiles again
-                Map.Tiles[(int)DisplayState.Position.X / Tile.Width, ((int)DisplayState.Position.Y / Tile.Height) - 1, 1].Draw(spriteBatch, Map.tileSheet, Vector2.Zero, (int)DisplayState.Position.X / Tile.Width, ((int)DisplayState.Position.Y / Tile.Height) - 1, 1, true);
+                if (((int)DisplayState.Position.Y / Tile.Height) - 1 > 0)
+                    Map.Tiles[(int)DisplayState.Position.X / Tile.Width, ((int)DisplayState.Position.Y / Tile.Height) - 1, 1].Draw(spriteBatch, Map.tileSheet, Vector2.Zero, (int)DisplayState.Position.X / Tile.Width, ((int)DisplayState.Position.Y / Tile.Height) - 1, 1, true);
                 Map.Tiles[((int)DisplayState.Position.X / Tile.Width) + 1, (int)DisplayState.Position.Y / Tile.Height, 1].Draw(spriteBatch, Map.tileSheet, Vector2.Zero, ((int)DisplayState.Position.X / Tile.Width) + 1, (int)DisplayState.Position.Y / Tile.Height, 1, true);
-                Map.Tiles[((int)DisplayState.Position.X / Tile.Width) + 1, ((int)DisplayState.Position.Y / Tile.Height) - 1, 1].Draw(spriteBatch, Map.tileSheet, Vector2.Zero, ((int)DisplayState.Position.X / Tile.Width) + 1, ((int)DisplayState.Position.Y / Tile.Height) - 1, 1, true);
+                if (((int)DisplayState.Position.Y / Tile.Height) - 1 > 0)
+                    Map.Tiles[((int)DisplayState.Position.X / Tile.Width) + 1, ((int)DisplayState.Position.Y / Tile.Height) - 1, 1].Draw(spriteBatch, Map.tileSheet, Vector2.Zero, ((int)DisplayState.Position.X / Tile.Width) + 1, ((int)DisplayState.Position.Y / Tile.Height) - 1, 1, true);
             }
             //Draw the player tag above them
             DrawTag(spriteBatch, elapsed);
@@ -186,6 +188,9 @@ namespace Bricklayer.Client.Entities
                 DisplayState = SimulationState;
             else
                 Interpolate(gameTime);
+
+            DisplayState.Position.X = Math.Max(0, DisplayState.Position.X);
+            DisplayState.Position.Y = Math.Max(0, DisplayState.Position.Y);
         }
 
         private void Interpolate(GameTime gameTime)

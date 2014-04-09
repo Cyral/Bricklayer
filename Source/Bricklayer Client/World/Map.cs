@@ -12,22 +12,47 @@ namespace Bricklayer.Client.World
 {
     public class Map
     {
+        #region Properties
         /// <summary>
-        /// The tile array for the map, containing all tiles and tile data
+        /// The tile array for the map, containing all tiles and tile data [X, Y, Layer/Z]
+        /// Layer 0 = Background
+        /// Layer 1 = Foreground
         /// </summary>
         public Tile[, ,] Tiles { get; set; }
 
-        //Width and Height
+        /// <summary>
+        /// The width, in blocks, of the map
+        /// </summary>
         public int Width { get { return width; } set { width = value; CreateCamera(); } }
+        /// <summary>
+        /// The height, in blocks, of the map
+        /// </summary>
         public int Height { get { return height; } set { height = value; CreateCamera(); } }
 
+        /// <summary>
+        /// The name of the map, defined from the server
+        /// </summary>
+        public string Name { get; set; }
+        /// <summary>
+        /// The description of the map, defined from the server
+        /// </summary>
+        public string Description { get; set; }
+        /// <summary>
+        /// The number of players online
+        /// </summary>
+        public int Online { get { return Players.Count; } }
+        /// <summary>
+        /// The map's play count
+        /// </summary>
+        public int Plays { get; set; }
+        /// <summary>
+        /// The map's rating, defined from the server
+        /// </summary>
+        public double Rating { get; set; }
         /// <summary>
         /// The list of players currently in the map, synced with the server
         /// </summary>
         public List<Player> Players { get; set; }
-
-        //Textures
-        public Texture2D tileSheet, smileySheet, backgroundTexture, godTexture, bodyTexture;
 
         /// <summary>
         /// Defines if this map instance is part of a server
@@ -57,12 +82,16 @@ namespace Bricklayer.Client.World
         /// The minimap showing a preview of blocks
         /// </summary>
         public Minimap Minimap { get; set; }
+        #endregion
 
-        //Fields
+        #region Fields
+        //Textures
+        public Texture2D tileSheet, smileySheet, backgroundTexture, godTexture, bodyTexture;
         private const float cameraSpeed = .18f;
         private Random random = new Random();
         private int width, height;
         private Texture2D pixel;
+        #endregion
 
         /// <summary>
         /// Creates a client-side version of a map at the specified width and height (To be changed later once Init packet recieved)
@@ -92,8 +121,10 @@ namespace Bricklayer.Client.World
         /// <summary>
         /// Creates a server-side version of the map
         /// </summary>
-        public Map(int width, int height)
+        public Map(string name, string description, int width, int height)
         {
+            Name = name;
+            Description = description;
             Width = width;
             Height = height;
             IsServer = true; //Running a client
@@ -119,7 +150,7 @@ namespace Bricklayer.Client.World
         private void CreateCamera()
         {
             if (Game != null)
-                MainCamera = new Camera(new Vector2(Game.GraphicsDevice.Viewport.Width - Interface.GameScreen.SidebarSize, Game.GraphicsDevice.Viewport.Height - 24)) { MinBounds = new Vector2(0, 0), MaxBounds = new Vector2(Width * Tile.Width, (Height * Tile.Height)) };
+                MainCamera = new Camera(new Vector2(Game.GraphicsDevice.Viewport.Width - Interface.GameScreen.SidebarWidth, Game.GraphicsDevice.Viewport.Height - 24)) { MinBounds = new Vector2(0, 0), MaxBounds = new Vector2(Width * Tile.Width, (Height * Tile.Height)) };
         }
         /// <summary>
         /// Generates a simple world with borders

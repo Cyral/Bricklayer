@@ -12,6 +12,7 @@ using Bricklayer.Client.Entities;
 using Bricklayer.Client.Networking.Messages;
 using Bricklayer.Client.World;
 using System.Collections.Generic;
+using Bricklayer.Client.Networking;
 
 namespace Bricklayer.Server
 {
@@ -24,6 +25,11 @@ namespace Bricklayer.Server
         public static NetworkManager NetManager;
         public static PingListener PingListener;
         public static List<Map> Maps;
+        /// <summary>
+        /// Lookup of remote unique identifiers to login data
+        /// </summary>
+        public static Dictionary<long, LoginMessage> Logins = new Dictionary<long, LoginMessage>();
+
         //Console Events
         static ConsoleEventDelegate consoleHandler; //Keeps it from getting garbage collected
         //PInvoke
@@ -69,7 +75,7 @@ namespace Bricklayer.Server
             Console.ForegroundColor = ConsoleColor.White;
             Console.WriteLine("Server started on port " + Config.Port + " with " + Config.MaxPlayers + " max players.");
             Console.WriteLine("Waiting for new connections and updating world state...\n");
-            //Create a PingListener to handle query requests from clients (to serve motd, players online, etc)
+            //Create a PingListener to handle query requests from clients (to serve decription, players online, etc)
             PingListener = new PingListener(Config.Port);
             PingListener.Start();
 
@@ -79,8 +85,9 @@ namespace Bricklayer.Server
             DateTime time = DateTime.Now;
             //Create a map
             Maps = new List<Map>();
-            Maps.Add(new Map(150, 75));
-
+            Maps.Add(new Map("Main World", "A Simple Map.\n'Nuff Said", 150, 75) { Rating = 2.5 });
+            Maps.Add(new Map("Nub Crew Shift", "Wow. Much Innvovation. Very Copy\nSuch Troll. Ultra.", 150, 75) { Rating = 4.5 });
+            Maps.Add(new Map("DerpyCraft", "Derp derp da da derp", 150, 75) { Rating = 1.5 });
             while (true)
             {
                 if ((inc = NetManager.ReadMessage()) != null)
@@ -99,11 +106,18 @@ namespace Bricklayer.Server
                                             Console.WriteLine("Incoming Login Request (" + inc.SenderConnection.RemoteUniqueIdentifier + " - " + inc.SenderEndPoint.Address + ")");
                                             Console.ForegroundColor = ConsoleColor.White;
 
-                                            //Parse login
-                                            LoginMessage login = new LoginMessage(inc);
-                                            //Approve of the client 
-                                            inc.SenderConnection.Approve();
-                                            Maps[0].Players.Add(new Player(Maps[0], Maps[0].Spawn, login.Username, inc.SenderConnection.RemoteUniqueIdentifier, FindEmptyID(Maps[0])) { Tint = login.Color });
+                                            if (!Logins.ContainsKey(inc.SenderConnection.RemoteUniqueIdentifier))
+                                            {
+                                                //Parse login
+                                                LoginMessage login = new LoginMessage(inc);
+                                                Logins.Add(inc.SenderConnection.RemoteUniqueIdentifier, login);
+                                                //Approve of the client 
+                                                inc.SenderConnection.Approve();
+                                            }
+                                            else
+                                            {
+                                                inc.SenderConnection.Deny();
+                                            }
                                             break;
                                         }
                                 }
@@ -125,48 +139,33 @@ namespace Bricklayer.Server
                             //When a players connection is finalized
                             if (inc.SenderConnection.Status == NetConnectionStatus.Connected)
                             {
-                                //Send message to player notifing he is connected and ready
-                                NetManager.SendMessage(new PlayerJoinMessage(sender.Username, sender.ID, true, sender.Tint), sender);
-                                //Send message to everyone notifying of new user
-                                NetManager.BroadcastMessageButPlayer(new PlayerJoinMessage(sender.Username, sender.ID, false, sender.Tint), sender);
-                                //Let new player know of all existing players and their states (Mode, Position, Smiley)
-                                foreach (Player player in sender.Map.Players)
-                                {
-                                    if (player.ID != sender.ID)
-                                    {
-                                        NetManager.SendMessage(new PlayerJoinMessage(player.Username, player.ID, false, player.Tint), sender);
-                                        NetManager.SendMessage(new PlayerStateMessage(player), sender);
-                                        if (player.Mode != PlayerMode.Normal)
-                                            NetManager.SendMessage(new PlayerModeMessage(player), sender);
-                                        if (player.Smiley != SmileyType.Default)
-                                            NetManager.SendMessage(new PlayerSmileyMessage(player, player.Smiley), sender);
-                                    }
-                                }
-                                NetManager.SendMessage(new InitMessage(sender.Map), sender);
-                                Console.WriteLine("\tUsername: " + sender.Username);
-                                Console.WriteLine("\tRemote Unique Identifier: " + sender.RUI);
-                                Console.WriteLine("\tNetwork ID: " + sender.ID);
-                                Console.WriteLine("\tPlayer Index: " + sender.Index);
-                                Console.WriteLine("\tIP: " + inc.SenderEndPoint.Address);
                                 break;
                             }
                             //When a client disconnects
                             if (inc.SenderConnection.Status == NetConnectionStatus.Disconnected || inc.SenderConnection.Status == NetConnectionStatus.Disconnecting)
                             {
                                 Console.ForegroundColor = ConsoleColor.Red;
-                                Console.WriteLine(sender.Username + " has left (disconnected).");
-                                Console.ForegroundColor = ConsoleColor.White;
-                                if (sender.Map.Players.Contains(sender))
+                                if (sender != null)
                                 {
-                                    //Remove player
-                                    sender.Map.Players.Remove(sender);
-                                    //Rebuild indexes
-                                    for (int i = 0; i < sender.Map.Players.Count; i++)
-                                        sender.Map.Players[i].Index = i;
-                                    //Send to players
-                                    NetManager.BroadcastMessage(new PlayerLeaveMessage(sender.ID));
-                                    sender = null;
+                                    Console.WriteLine(sender.Username + " has left game (disconnected).");
+                                    if (sender.Map.Players.Contains(sender))
+                                    {
+                                        //Remove player
+                                        sender.Map.Players.Remove(sender);
+                                        //Rebuild indexes
+                                        for (int i = 0; i < sender.Map.Players.Count; i++)
+                                            sender.Map.Players[i].Index = i;
+                                        //Send to players
+                                        NetManager.BroadcastMessage(sender.Map, new PlayerLeaveMessage(sender.ID));
+                                        sender = null;
+                                    }
                                 }
+                                else
+                                {
+                                    Console.WriteLine(inc.SenderConnection.RemoteUniqueIdentifier + " has left lobby (disconnected).");
+                                }
+                                Logins.Remove(inc.SenderConnection.RemoteUniqueIdentifier);
+                                Console.ForegroundColor = ConsoleColor.White;
                             }
                             break;
                         default:
@@ -183,24 +182,90 @@ namespace Bricklayer.Server
         /// <param name="inc">The Incoming Message</param>
         private static void ProcessDataMessage(NetIncomingMessage inc)
         {
-            Player sender = PlayerFromRUI(inc.SenderConnection.RemoteUniqueIdentifier);
-            Map map = sender.Map;
+            Player sender = PlayerFromRUI(inc.SenderConnection.RemoteUniqueIdentifier, true);
+            Map map = null;
+            if (sender != null)
+               map = sender.Map;
             MessageTypes type = (MessageTypes)Enum.Parse(typeof(MessageTypes), inc.ReadByte().ToString());
             switch (type)
             {
+                case MessageTypes.JoinRoom:
+                    {
+                        JoinRoomMessage msg = new JoinRoomMessage(inc);
+                        int newMap = Maps.IndexOf(Maps.Where(m => m.Name == msg.Name).ToList()[0]);
+                        LoginMessage login = Logins[inc.SenderConnection.RemoteUniqueIdentifier]; //Fetch stored login from dictionary
+                        Maps[newMap].Players.Add(new Player(Maps[newMap], Maps[newMap].Spawn, login.Username, inc.SenderConnection.RemoteUniqueIdentifier, FindEmptyID(Maps[newMap])) { Tint = login.Color });
+                        sender = PlayerFromRUI(inc.SenderConnection.RemoteUniqueIdentifier, true);
+                        NetManager.SendMessage(new InitMessage(sender.Map), sender);
+                        //Send message to player notifing he is connected and ready
+                        NetManager.SendMessage(new PlayerJoinMessage(sender.Username, sender.ID, true, sender.Tint), sender);
+                        Console.WriteLine(login.Username + " joined room: " + msg.Name);
+                        //Send message to everyone notifying of new user
+                        NetManager.BroadcastMessageButPlayer(new PlayerJoinMessage(sender.Username, sender.ID, false, sender.Tint), sender);
+                        //Let new player know of all existing players and their states (Mode, Position, Smiley)
+                        foreach (Player player in sender.Map.Players)
+                        {
+                            if (player.ID != sender.ID)
+                            {
+                                NetManager.SendMessage(new PlayerJoinMessage(player.Username, player.ID, false, player.Tint), sender);
+                                NetManager.SendMessage(new PlayerStateMessage(player), sender);
+                                if (player.Mode != PlayerMode.Normal)
+                                    NetManager.SendMessage(new PlayerModeMessage(player), sender);
+                                if (player.Smiley != SmileyType.Default)
+                                    NetManager.SendMessage(new PlayerSmileyMessage(player, player.Smiley), sender);
+                            }
+                        }
+                        Console.WriteLine("\tUsername: " + sender.Username);
+                        Console.WriteLine("\tRemote Unique Identifier: " + sender.RUI);
+                        Console.WriteLine("\tNetwork ID: " + sender.ID);
+                        Console.WriteLine("\tPlayer Index: " + sender.Index);
+                        Console.WriteLine("\tIP: " + inc.SenderEndPoint.Address);
+                        break;
+                    }
+                case MessageTypes.CreateRoom:
+                    {
+                        CreateRoomMessage msg = new CreateRoomMessage(inc);
+                        Map newMap = new Map(msg.Name, msg.Description, 200, 100);
+                        Maps.Add(newMap);
+                        LoginMessage login = Logins[inc.SenderConnection.RemoteUniqueIdentifier]; //Fetch stored login from dictionary
+                        newMap.Players.Add(new Player(newMap, newMap.Spawn, login.Username, inc.SenderConnection.RemoteUniqueIdentifier, FindEmptyID(newMap)) { Tint = login.Color });
+                        sender = PlayerFromRUI(inc.SenderConnection.RemoteUniqueIdentifier, true);
+                        //Send message to player notifing he is connected and ready
+                        NetManager.SendMessage(new PlayerJoinMessage(sender.Username, sender.ID, true, sender.Tint), sender);
+                        NetManager.SendMessage(new InitMessage(sender.Map), sender);
+                        Console.WriteLine(login.Username + " created new room: " + msg.Name);
+                        break;
+                    }
+                case MessageTypes.Request:
+                    {
+                        MessageTypes request = new RequestMessage(inc).RequestType;
+                        if (request == MessageTypes.Lobby)
+                        {
+                            //Send them the lobby data
+                            List<LobbySaveData> rooms = new List<LobbySaveData>();
+                            foreach (Map m in Maps)
+                            {
+                                rooms.Add(LobbySaveData.FromMap(m));
+                            }
+
+                            LobbyMessage msg = new LobbyMessage(Config.Name, Config.Decription, Config.Intro, NetworkManager.Server.ConnectionsCount, rooms);
+                            NetManager.SendMessage(msg, inc.SenderConnection);
+                        }
+                        break;
+                    }
                 case MessageTypes.PlayerLeave:
                     {
                         PlayerLeaveMessage user = new PlayerLeaveMessage(inc);
                         user.ID = sender.ID;
+                        Console.WriteLine(map.PlayerFromID(user.ID).Username + " has left.");
                         //Remove player
                         map.Players.Remove(sender);
                         //Rebuild indexes
                         for (int i = 0; i < map.Players.Count; i++)
                             map.Players[i].Index = i;
                         //Send to players
-                        NetManager.BroadcastMessage(new PlayerLeaveMessage(sender.ID));
+                        NetManager.BroadcastMessage(sender.Map,new PlayerLeaveMessage(sender.ID));
                         sender = null;
-                        Console.WriteLine(map.PlayerFromID(user.ID).Username + " has left.");
                         break;
                     }
                 case MessageTypes.PlayerStatus:
@@ -227,7 +292,7 @@ namespace Bricklayer.Server
                         if (map.InBounds(state.X, state.Y, state.Z) && map.Tiles[state.X, state.Y, state.Z].Block.ID != block.ID)
                         {
                             map.Tiles[state.X, state.Y, state.Z].Block = block;
-                            NetManager.BroadcastMessage(state);
+                            NetManager.BroadcastMessage(sender.Map, state);
                         }
                         break;
                     }

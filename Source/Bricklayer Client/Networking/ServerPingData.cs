@@ -10,7 +10,7 @@ namespace Bricklayer.Client.Networking
         public int Online;
         public int MaxOnline;
         public int Ping;
-        public string MOTD;
+        public string Description;
         public bool Error;
     }
 }
