@@ -53,8 +53,15 @@ namespace Bricklayer.Client.Interface
             txtDescription.Init();
             txtDescription.TextChanged += new TomShane.Neoforce.Controls.EventHandler(delegate(object o, TomShane.Neoforce.Controls.EventArgs e)
             {
+                //Filter the text by checking for length and lines
                 if (txtDescription.Text.Length > Bricklayer.Client.Networking.Messages.CreateRoomMessage.MaxDescriptionLength)
                     txtDescription.Text = txtDescription.Text.Truncate(Bricklayer.Client.Networking.Messages.CreateRoomMessage.MaxDescriptionLength);
+                int newLines = txtDescription.Text.Count(c => c == '\n');
+                if (newLines >= Bricklayer.Client.Networking.Messages.CreateRoomMessage.MaxDescriptionLines)
+                {
+                    txtDescription.Text = txtDescription.Text.Substring(0, txtDescription.Text.Length - 1);
+                    txtDescription.CursorPosition = 0;
+                }
             });
             Add(txtDescription);
 
@@ -69,7 +76,10 @@ namespace Bricklayer.Client.Interface
         /// </summary>
         void CreateBtn_Click(object sender, TomShane.Neoforce.Controls.EventArgs e)
         {
-            MainWindow.ScreenManager.SwitchScreen(new GameScreen(txtName.Text, txtDescription.Text));
+            //                Game.NetManager.SendMessage(new Bricklayer.Client.Networking.Messages.JoinRoomMessage(worldName));
+            MainWindow.ScreenManager.SwitchScreen(new GameScreen(new Action((new Action(() =>  {
+                Game.NetManager.SendMessage(new Bricklayer.Client.Networking.Messages.CreateRoomMessage(txtName.Text, txtDescription.Text));
+            })))));
             Close();
         }
     }

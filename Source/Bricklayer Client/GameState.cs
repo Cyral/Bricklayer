@@ -2,7 +2,7 @@
 {
     public enum GameState
     {
-        Loading,
+        Login,
         Lobby,
         Game,
     }

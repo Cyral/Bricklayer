@@ -12,6 +12,7 @@ namespace Bricklayer.Client.Interface
 {
     public class LobbyScreen : BaseScreen
     {
+        //Controls
         public LobbyWindow Lobby;
 
         public string Description;

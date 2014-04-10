@@ -8,8 +8,8 @@ namespace Bricklayer.Client.Interface
         protected ScreenManager ScreenManager { get; private set; }
         protected MainWindow Window { get { return ScreenManager.Window; } }
         protected Manager Manager { get { return ScreenManager.Manager; } }
-        public GameState GameState { get; set; }
         public Action Initialized { get; set; }
+
         /// <summary>
         /// Adds the controls for this screen to the window
         /// </summary>
@@ -21,6 +21,7 @@ namespace Bricklayer.Client.Interface
             }
             ScreenManager = screenManager;
         }
+
         /// <summary>
         /// Removes the controls for this screen to the window
         /// </summary>

@@ -22,7 +22,7 @@ namespace Bricklayer.Client.Interface
         {
             switch (Game.CurrentGameState)
             {
-                case GameState.Loading:
+                case GameState.Login:
                     {
                         GameScreen screen = (ScreenManager.Current as GameScreen);
                         break;

@@ -1,8 +1,10 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 using Cyral.Extensions;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using TomShane.Neoforce.Controls;
+using Console = TomShane.Neoforce.Controls.Console;
 
 namespace Bricklayer.Client.Interface
 {
@@ -21,24 +23,16 @@ namespace Bricklayer.Client.Interface
         public ListBox PlayerList;
         public Button LeaveButton;
 
-        //Create world once loaded
-        private string worldName, worldDescription;
-
         public GameScreen()
         {
         }
-        public GameScreen(string createName, string createDescription = "")
+        public GameScreen(Action action)
         {
-            worldName = createName;
-            worldDescription = createDescription;
+            Initialized = action;
         }
+
         public override void Add(ScreenManager screenManager)
         {
-            if (worldDescription != string.Empty)
-                Game.NetManager.SendMessage(new Bricklayer.Client.Networking.Messages.CreateRoomMessage(worldName, worldDescription));
-            else if (worldName != string.Empty)
-                Game.NetManager.SendMessage(new Bricklayer.Client.Networking.Messages.JoinRoomMessage(worldName));
-
             base.Add(screenManager);
             Window.Focused = true;
             Bar = new StatusBar(Manager) { Top = Window.Height - 24, Width = Window.Width };
@@ -97,7 +91,7 @@ namespace Bricklayer.Client.Interface
         /// <summary>
         /// Called when the content of the chatbox's text is changed
         /// </summary>
-        void TextBox_TextChanged(object sender, EventArgs e)
+        void TextBox_TextChanged(object sender, TomShane.Neoforce.Controls.EventArgs e)
         {
             TextBox txtBox = sender as TextBox;
             //Trim to max length

@@ -132,7 +132,7 @@ namespace Bricklayer.Client.Interface
             btnDisconnect.Click += new TomShane.Neoforce.Controls.EventHandler(delegate(object o, TomShane.Neoforce.Controls.EventArgs e)
             {
                 Game.NetManager.Disconnect("Left Lobby");
-                Game.CurrentGameState = GameState.Loading;
+                Game.CurrentGameState = GameState.Login;
                 Interface.MainWindow.ScreenManager.SwitchScreen(new LoginScreen());
             });
             BottomPanel.Add(btnDisconnect);
@@ -145,7 +145,14 @@ namespace Bricklayer.Client.Interface
         /// </summary>
         public void JoinRoom(int index)
         {
-            MainWindow.ScreenManager.SwitchScreen(new GameScreen((RoomListCtrl.Items[index] as LobbyDataControl).Data.Name));
+            if (index >= 0)
+            {
+                MainWindow.ScreenManager.SwitchScreen(new GameScreen(new Action((new Action(() =>
+                {
+                    Game.NetManager.SendMessage(new Bricklayer.Client.Networking.Messages.JoinRoomMessage(
+                        (RoomListCtrl.Items[index] as LobbyDataControl).Data.Name));
+                })))));
+            }
         }
         /// <summary>
         /// Loads rooms from the recieved lobby message

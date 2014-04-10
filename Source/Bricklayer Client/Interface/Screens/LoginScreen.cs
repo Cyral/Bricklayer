@@ -21,6 +21,7 @@ namespace Bricklayer.Client.Interface
 
         public override void Add(ScreenManager screenManager)
         {
+            Game.CurrentGameState = GameState.Login;
             base.Add(screenManager);
             (Manager.Game as Application).BackgroundImage = ContentPack.Textures["gui\\background"];
 

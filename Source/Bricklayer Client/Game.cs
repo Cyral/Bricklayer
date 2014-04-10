@@ -35,7 +35,7 @@ namespace Bricklayer.Client
         public static SpriteFont DefaultFont;
         public static TextureLoader TextureLoader;
         public static MainWindow MainWindow;
-        public static GameState CurrentGameState = GameState.Loading;
+        public static GameState CurrentGameState = GameState.Login;
 
         public static Map Map;
         public static Random Random;
@@ -143,7 +143,7 @@ namespace Bricklayer.Client
             IsMouseOnControl = !CheckPosition(MousePoint);
             switch (CurrentGameState)
             {
-                case GameState.Loading:
+                case GameState.Login:
                     {
                         break;
                     }
@@ -171,7 +171,7 @@ namespace Bricklayer.Client
         {
             switch (CurrentGameState)
             {
-                case GameState.Loading:
+                case GameState.Login:
                     {
                         break;
                     }

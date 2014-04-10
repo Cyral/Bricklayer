@@ -56,9 +56,9 @@ namespace Bricklayer.Client.Networking
                             case NetConnectionStatus.Disconnected:
                                 {
                                     Debug.WriteLine("{0} Disconnected", im.SenderEndPoint);
-                                    if (Game.CurrentGameState != GameState.Loading)
+                                    if (Game.CurrentGameState != GameState.Login)
                                     {
-                                        Game.CurrentGameState = GameState.Loading;
+                                        Game.CurrentGameState = GameState.Login;
                                         if (Game.CurrentGameState == GameState.Game)
                                         {
                                             (MainWindow.ScreenManager.Current as GameScreen).SystemChat("Server connection disconnected.");

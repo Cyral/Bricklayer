@@ -6,7 +6,7 @@ namespace Bricklayer.Client.Networking.Messages
 {
     public class CreateRoomMessage : IMessage
     {
-        public const int MaxNameLength = 24, MaxDescriptionLength = 80;
+        public const int MaxNameLength = 24, MaxDescriptionLength = 80, MaxDescriptionLines = 2;
 
         public string Name { get; set; }
 

@@ -22,7 +22,7 @@ namespace Bricklayer.Client.Interface
         {
             //Setup
             Passive = false;
-            Height = 76;
+            Height = 60;
             ClientWidth = (700 / 2) - 16;
             Data = data;
 
@@ -49,12 +49,12 @@ namespace Bricklayer.Client.Interface
             Add(lblStats);
 
             //Add controls
-            lblName = new Label(Manager) { Width = this.Width, Text = data.Name, Left = 4, Top = 4, Font = FontSize.Default14, Alignment = Alignment.TopLeft };
+            lblName = new Label(Manager) { Width = 100, Text = data.Name, Left = 4, Top = 4, Font = FontSize.Default14, Alignment = Alignment.TopLeft };
             lblName.Init();
             Add(lblName);
             lblName.Text = data.Name;
 
-            lblDescription = new Label(Manager) { Width = this.Width, Text = data.Name, Left = 4, Top = lblName.Bottom + 4, Alignment = Alignment.TopLeft };
+            lblDescription = new Label(Manager) { Width = 200, Text = data.Name, Left = 4, Top = lblName.Bottom + 4, Alignment = Alignment.TopLeft };
             lblDescription.Init();
             Add(lblDescription);
             lblDescription.Text = data.Description;
