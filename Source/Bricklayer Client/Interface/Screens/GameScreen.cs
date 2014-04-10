@@ -36,7 +36,7 @@ namespace Bricklayer.Client.Interface
         {
             if (worldDescription != string.Empty)
                 Game.NetManager.SendMessage(new Bricklayer.Client.Networking.Messages.CreateRoomMessage(worldName, worldDescription));
-            if (worldName != string.Empty)
+            else if (worldName != string.Empty)
                 Game.NetManager.SendMessage(new Bricklayer.Client.Networking.Messages.JoinRoomMessage(worldName));
 
             base.Add(screenManager);
