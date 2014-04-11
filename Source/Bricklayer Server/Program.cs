@@ -85,7 +85,7 @@ namespace Bricklayer.Server
             DateTime time = DateTime.Now;
             //Create a map
             Maps = new List<Map>();
-            Maps.Add(new Map("Main World", "A large world for anyone to play and\nbuild! [color:SkyBlue]--Join Now!--[/color]", 150, 75) { Rating = 5 });
+            Maps.Add(new Map("Main World", "A large world for anyone to play and\nbuild! [color:SkyBlue]--Join Now!--[/color]", 150, 75, 0) { Rating = 5 });
             while (true)
             {
                 if ((inc = NetManager.ReadMessage()) != null)
@@ -196,7 +196,7 @@ namespace Bricklayer.Server
                         if (sender == null)
                         {
                             JoinRoomMessage msg = new JoinRoomMessage(inc);
-                            int newMap = Maps.IndexOf(Maps.Where(m => m.Name == msg.Name).ToList()[0]);
+                            int newMap = Maps.IndexOf(MapFromID(msg.ID));
                             LoginMessage login = Logins[inc.SenderConnection.RemoteUniqueIdentifier]; //Fetch stored login from dictionary
                             Maps[newMap].Players.Add(new Player(Maps[newMap], Maps[newMap].Spawn, login.Username, inc.SenderConnection.RemoteUniqueIdentifier, FindEmptyID(Maps[newMap])) { Tint = login.Color });
                             sender = PlayerFromRUI(inc.SenderConnection.RemoteUniqueIdentifier, true);
@@ -206,7 +206,7 @@ namespace Bricklayer.Server
 
                             //Log message
                             Console.ForegroundColor = ConsoleColor.Magenta;
-                            Console.WriteLine(login.Username + " joined room: " + msg.Name);
+                            Console.WriteLine(login.Username + " joined room: " + Maps[newMap].Name);
                             Console.ForegroundColor = ConsoleColor.White;
 
                             //Send message to everyone notifying of new user
@@ -233,7 +233,7 @@ namespace Bricklayer.Server
                         if (sender == null)
                         {
                             CreateRoomMessage msg = new CreateRoomMessage(inc);
-                            Map newMap = new Map(msg.Name, msg.Description, 200, 100);
+                            Map newMap = new Map(msg.Name, msg.Description, 200, 100, Maps.Count);
                             Maps.Add(newMap);
                             LoginMessage login = Logins[inc.SenderConnection.RemoteUniqueIdentifier]; //Fetch stored login from dictionary
                             newMap.Players.Add(new Player(newMap, newMap.Spawn, login.Username, inc.SenderConnection.RemoteUniqueIdentifier, FindEmptyID(newMap)) { Tint = login.Color });
@@ -339,7 +339,16 @@ namespace Bricklayer.Server
                     }
             }
         }
+
         #region Utilities
+        /// <summary>
+        /// Finds a map from an ID
+        /// </summary>
+        /// <param name="ID">The ID of the map to find</param>
+        public static Map MapFromID(int ID)
+        {
+            return Maps.First(m => m.ID == ID);
+        }
         /// <summary>
         /// Finds a player from a remote unique identifier
         /// </summary>

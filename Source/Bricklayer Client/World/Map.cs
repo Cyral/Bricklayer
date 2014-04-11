@@ -82,6 +82,11 @@ namespace Bricklayer.Client.World
         /// The minimap showing a preview of blocks
         /// </summary>
         public Minimap Minimap { get; set; }
+
+        /// <summary>
+        /// The ID of this map, for server use
+        /// </summary>
+        public int ID { get; set; }
         #endregion
 
         #region Fields
@@ -121,8 +126,9 @@ namespace Bricklayer.Client.World
         /// <summary>
         /// Creates a server-side version of the map
         /// </summary>
-        public Map(string name, string description, int width, int height)
+        public Map(string name, string description, int width, int height, int id)
         {
+            ID = id;
             Name = name;
             Description = description;
             Width = width;

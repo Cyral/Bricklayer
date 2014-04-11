@@ -150,7 +150,7 @@ namespace Bricklayer.Client.Interface
                 MainWindow.ScreenManager.SwitchScreen(new GameScreen(new Action((new Action(() =>
                 {
                     Game.NetManager.SendMessage(new Bricklayer.Client.Networking.Messages.JoinRoomMessage(
-                        (RoomListCtrl.Items[index] as LobbyDataControl).Data.Name));
+                        (RoomListCtrl.Items[index] as LobbyDataControl).Data.ID));
                 })))));
             }
         }

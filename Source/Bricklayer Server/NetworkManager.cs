@@ -47,7 +47,7 @@ namespace Bricklayer.Server
         }
         public void SendMessage(IMessage gameMessage, Player player)
         {
-            SendMessage(gameMessage, (NetConnection)Server.Connections.Where(x => x.RemoteUniqueIdentifier == player.RUI && Program.PlayerFromRUI(x.RemoteUniqueIdentifier, true).Map == player.Map).ElementAt(0));
+            SendMessage(gameMessage, (NetConnection)Server.Connections.Where(x => x.RemoteUniqueIdentifier == player.RUI && Program.PlayerFromRUI(x.RemoteUniqueIdentifier, true).Map.ID == player.Map.ID).ElementAt(0));
         }
         public void SendMessage(IMessage gameMessage, NetConnection recipient)
         {
@@ -58,14 +58,14 @@ namespace Bricklayer.Server
         }
         public void BroadcastMessageButPlayer(IMessage gameMessage, Player player)
         {
-            BroadcastMessageButPlayer(gameMessage, (NetConnection)Server.Connections.Where(x => x.RemoteUniqueIdentifier == player.RUI && Program.PlayerFromRUI(x.RemoteUniqueIdentifier, true).Map == player.Map).ElementAt(0));
+            BroadcastMessageButPlayer(gameMessage, (NetConnection)Server.Connections.Where(x => x.RemoteUniqueIdentifier == player.RUI && Program.PlayerFromRUI(x.RemoteUniqueIdentifier, true).Map.ID == player.Map.ID).ElementAt(0));
         }
         public void BroadcastMessageButPlayer(IMessage gameMessage, NetConnection recipient)
         {
             NetOutgoingMessage message = Server.CreateMessage();
             message.Write((byte)gameMessage.MessageType);
             gameMessage.Encode(message);
-            List<NetConnection> recipients = Server.Connections.Where(x => x.RemoteUniqueIdentifier != recipient.RemoteUniqueIdentifier && Program.PlayerFromRUI(x.RemoteUniqueIdentifier, true) != null && Program.PlayerFromRUI(x.RemoteUniqueIdentifier, true).Map == Program.PlayerFromRUI(recipient.RemoteUniqueIdentifier).Map).ToList<NetConnection>();
+            List<NetConnection> recipients = Server.Connections.Where(x => x.RemoteUniqueIdentifier != recipient.RemoteUniqueIdentifier && Program.PlayerFromRUI(x.RemoteUniqueIdentifier, true) != null && Program.PlayerFromRUI(x.RemoteUniqueIdentifier, true).Map.ID == Program.PlayerFromRUI(recipient.RemoteUniqueIdentifier).Map.ID).ToList<NetConnection>();
             if (recipients.Count > 0)
                 Server.SendMessage(message, recipients, NetDeliveryMethod.ReliableOrdered, 0);
         }

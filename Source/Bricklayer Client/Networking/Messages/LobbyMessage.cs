@@ -44,7 +44,7 @@ namespace Bricklayer.Client.Networking.Messages
             int roomsLength = im.ReadByte();
             for (int i = 0; i < roomsLength; i++)
             {
-                Rooms.Add(new LobbySaveData(im.ReadString(), im.ReadString(), im.ReadByte(), im.ReadInt16(), im.ReadDouble()));
+                Rooms.Add(new LobbySaveData(im.ReadString(), im.ReadInt16(), im.ReadString(), im.ReadByte(), im.ReadInt16(), im.ReadDouble()));
             }
         }
         public void Encode(NetOutgoingMessage om)
@@ -57,6 +57,7 @@ namespace Bricklayer.Client.Networking.Messages
             for (int i = 0; i < Rooms.Count; i++)
             {
                 om.Write(Rooms[i].Name);
+                om.Write((short)Rooms[i].ID);
                 om.Write(Rooms[i].Description);
                 om.Write((byte)Rooms[i].Online);
                 om.Write((short)Rooms[i].Plays);

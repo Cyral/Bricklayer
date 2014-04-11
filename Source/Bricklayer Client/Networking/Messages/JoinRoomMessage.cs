@@ -6,7 +6,7 @@ namespace Bricklayer.Client.Networking.Messages
 {
     public class JoinRoomMessage : IMessage
     {
-        public string Name { get; set; }
+        public int ID { get; set; }
 
         public MessageTypes MessageType
         {
@@ -17,17 +17,17 @@ namespace Bricklayer.Client.Networking.Messages
         {
             this.Decode(im);
         }
-        public JoinRoomMessage(string name)
+        public JoinRoomMessage(int id)
         {
-            this.Name = name;
+            this.ID = id;
         }
         public void Decode(NetIncomingMessage im)
         {
-            this.Name = im.ReadString();
+            this.ID = im.ReadInt16();
         }
         public void Encode(NetOutgoingMessage om)
         {
-            om.Write(this.Name);
+            om.Write((short)this.ID);
         }
     }
 }

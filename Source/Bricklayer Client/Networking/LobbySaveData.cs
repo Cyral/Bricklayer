@@ -15,10 +15,12 @@ namespace Bricklayer.Client.Networking
         public int Online;
         public double Rating;
         public int Plays;
+        public int ID;
 
-        public LobbySaveData(string name, string description, int players, int plays, double rating)
+        public LobbySaveData(string name, int id, string description, int players, int plays, double rating)
         {
             Name = name;
+            ID = id;
             Description = description;
             Online = players;
             Rating = rating;
@@ -29,7 +31,7 @@ namespace Bricklayer.Client.Networking
         /// </summary>
         public static LobbySaveData FromMap(World.Map map)
         {
-            return new LobbySaveData(map.Name, map.Description, map.Online, map.Plays, map.Rating);
+            return new LobbySaveData(map.Name, map.ID, map.Description, map.Online, map.Plays, map.Rating);
         }
     }
 }
