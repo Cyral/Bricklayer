@@ -40,7 +40,8 @@ namespace Bricklayer.Server
             #else
                 try
                 {
-                    Run();
+                    Server = new Server();
+                    Server.Run();
                 }
                 catch (Exception e)
                 {
