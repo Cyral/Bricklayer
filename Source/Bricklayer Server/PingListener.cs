@@ -1,10 +1,12 @@
-﻿using System;
+﻿#region Usings
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using Bricklayer.Client.Networking;
+#endregion
 
 namespace Bricklayer.Server
 {
@@ -13,9 +15,15 @@ namespace Bricklayer.Server
     /// </summary>
     public class PingListener
     {
-        private Thread ListenerThread;
+        #region Fields
+        private Thread listenerThread;
         private int port;
+        private TcpClient client;
+        private TcpListener server;
+        private NetworkStream stream;
+        #endregion
 
+        #region Methods
         /// <summary>
         /// Creates a new listener to listen for TCP messages from clients that want to check server status
         /// </summary>
@@ -24,12 +32,16 @@ namespace Bricklayer.Server
         {
             this.port = port;
         }
+
+        /// <summary>
+        /// Starts listening on a new thread for ping requests
+        /// </summary>
         public void Start()
         {
-            //Start the UdpClient on a new thread
-            ListenerThread = new Thread(() => Listen());
-            ListenerThread.Start();
-            Console.WriteLine("PingListener started, Listening for query requests.");
+            listenerThread = new Thread(() => Listen()); //Start the TcpClient on a new thread
+            listenerThread.Name = "PingListener";
+            listenerThread.Start();
+            Console.WriteLine("PingListener started, Listening for query requests."); //Log message
         }
         /// <summary>
         /// Listens for ping requests, and sends back statistics
@@ -38,27 +50,18 @@ namespace Bricklayer.Server
         {
             try
             {
-                //Create a TcpListener to listen for requests
-                TcpListener server = new TcpListener(IPAddress.Parse("127.0.0.1"), port);
-                //Start listening for client requests.
-                server.Start();
+                server = new TcpListener(IPAddress.Parse("127.0.0.1"), port); //Create a TcpListener to listen for requests
+                server.Start(); //Start listening for client requests.
 
-                // Buffer for reading data
-                byte[] bytes = new byte[1];
-                //Use a client to send a response back
-                TcpClient client;
-                NetworkStream stream;
+                byte[] bytes = new byte[1]; //Single byte buffer for reading data (should not exceed 1 byte)
 
-                // Enter the listening loop.
+                //Enter the listening loop.
                 while (true)
                 {
-                    //Perform a blocking call to accept requests.
-                    //You could also user server.AcceptSocket() here.
-                    client = server.AcceptTcpClient();
-
-                    //Get a stream object for reading and writing
-                    stream = client.GetStream();
+                    client = server.AcceptTcpClient(); //Wait and accept requests
+                    stream = client.GetStream(); //Get a stream object for reading and writing
                     int i;
+
                     //Loop to receive all the data sent by the client
                     while ((i = stream.Read(bytes, 0, bytes.Length)) != 0)
                     {
@@ -66,9 +69,9 @@ namespace Bricklayer.Server
                         //If ping request recieved, send back the data (0 is the ping packet id)
                         if ((byte)bytes[0] == 0x00)
                         {
-                            Debug.WriteLine("Query request recieved.");
+                            Debug.WriteLine("PingListener: Data validated, query request recieved.");
                             //Get server stats to send back
-                            ServerPingData pingData = Program.NetManager.GetQuery();
+                            ServerPingData pingData = Server.NetManager.GetQuery();
                             //Write the data to a steam and send
                             using (MemoryStream ms = new MemoryStream())
                             {
@@ -93,5 +96,6 @@ namespace Bricklayer.Server
                 Console.WriteLine("PingListener Error: {0}", e);
             }
         }
+        #endregion
     }
 }

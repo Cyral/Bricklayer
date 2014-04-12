@@ -1,11 +1,6 @@
 ﻿#region Usings
 using System;
-using System.Collections.Generic;
-using System.Configuration;
 using System.IO;
-using System.Linq;
-using System.Xml;
-using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
 
 #endregion
@@ -17,22 +12,22 @@ namespace Bricklayer.Server
     /// </summary>
     public class IO
     {
+        #region Fields
         /// <summary>
         /// The current directory the server executable lies in
         /// Rather than loading from a static folder such as the client, the server
         /// Will load settings/maps from it's current folder, meaning you can drag and drop the server
         /// Into any folder to run it
         /// </summary>
-        public static readonly string ServerDirectory = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+        public static readonly string ServerDirectory =
+            Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
         //Files
         private static readonly string configFile = ServerDirectory + "\\server.config";
-        private static readonly JsonSerializerSettings serializationSettings = new JsonSerializerSettings() { Formatting = Newtonsoft.Json.Formatting.Indented };
+        private static readonly JsonSerializerSettings serializationSettings = 
+            new JsonSerializerSettings() { Formatting = Newtonsoft.Json.Formatting.Indented };
+        #endregion
 
-
-        static IO()
-        {
-        }
-
+        #region Methods
         /// <summary>
         /// Opens the server settings and loads them into the server
         /// </summary>
@@ -48,7 +43,7 @@ namespace Bricklayer.Server
                 if (string.IsNullOrWhiteSpace(json))
                     SaveSettings(Settings.GetDefaultSettings());
                 json = File.ReadAllText(configFile);
-                Program.Config = JsonConvert.DeserializeObject<Settings>(json);
+                Server.Config = JsonConvert.DeserializeObject<Settings>(json);
             }
             catch (Exception ex)
             {
@@ -76,5 +71,6 @@ namespace Bricklayer.Server
                 throw; //TODO: Add some form of handling
             }
         }
+        #endregion
     }
 }
