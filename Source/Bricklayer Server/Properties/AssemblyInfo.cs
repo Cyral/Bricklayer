@@ -7,9 +7,9 @@ using System.Runtime.InteropServices;
 // associated with an assembly.
 [assembly: AssemblyTitle("Bricklayer Server")]
 [assembly: AssemblyProduct("Bricklayer")]
-[assembly: AssemblyDescription("An Open Source, Fully Moddable and Customizable 2D Building Game inspired by Everybody Edits")]
+[assembly: AssemblyDescription("An Open Source, Fully Moddable and Customizable 2D Building Game")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyCopyright("Copyright © Cyral 2014")]
+[assembly: AssemblyCopyright("https://github.com/Cyral/Bricklayer/blob/master/LICENSE.txt")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -31,5 +31,5 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("0.0.2.1")]
+[assembly: AssemblyVersion("0.0.2.2")]
 [assembly: AssemblyVersionName("Alpha", "a")]
