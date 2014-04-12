@@ -9,6 +9,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Bricklayer.Client.Networking;
 using Newtonsoft.Json;
 using Bricklayer.Client;
+using Cyral.Extensions;
 #endregion
 
 namespace Bricklayer.Client
@@ -24,6 +25,9 @@ namespace Bricklayer.Client
         private static readonly string serverFile = MainDirectory + "\\servers.config";
         private static readonly int fileBufferSize = 65536;
         private static readonly JsonSerializerSettings serializationSettings = new JsonSerializerSettings() { Formatting = Newtonsoft.Json.Formatting.Indented };
+
+        public const int ColorValue = 250;
+        public const int ColorSaturation = 210;
 
         public static List<ContentPack> ContentPacks = new List<ContentPack>();
 
@@ -71,7 +75,7 @@ namespace Bricklayer.Client
 #if DEBUG
                 throw;
 #else
-                System.Windows.Forms.MessageBox.Show(ex.Message, game.Window.Title + " Configuration Error");
+                System.Windows.Forms.MessageBox.Show(ex.Message + "\nTry deleting your config file!", game.Window.Title + " Configuration Error");
 #endif
                 //Default fallback settings
                 ApplySettings(Settings.GetDefaultSettings(), game);
@@ -85,7 +89,8 @@ namespace Bricklayer.Client
         {
             Game.Username = settings.Username;
             Game.ContentPackName = settings.ContentPack;
-            Game.MyColor = Cyral.Extensions.Xna.ColorExtensions.ToColor(settings.Color);
+            Game.MyHue = settings.Color;
+            Game.MyColor = Cyral.Extensions.Xna.ColorExtensions.ColorFromHSV(settings.Color, ColorSaturation, ColorValue);
             Game.Resolution = new Microsoft.Xna.Framework.Rectangle(0, 0, settings.Resolution.X, settings.Resolution.Y);
             game.Graphics.PreferredBackBufferWidth = Game.Resolution.Width;
             game.Graphics.PreferredBackBufferHeight = Game.Resolution.Height;
@@ -97,6 +102,8 @@ namespace Bricklayer.Client
         /// </summary>
         public static void SaveSettings(Settings settings)
         {
+            if (settings.Username.Length > Settings.MaxNameLength) //Clamp name length
+                settings.Username = settings.Username.Truncate(Settings.MaxNameLength);
             try
             {
                 //If server config does not exist, create it

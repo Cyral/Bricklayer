@@ -48,6 +48,7 @@ namespace Bricklayer.Client
         public static byte MyIndex;
         public static Player Me { get { return Map.Players[MyIndex]; } }
         public static Color MyColor;
+        public static int MyHue;
 
         //Input
         public static MouseState MouseState, LastMouseState;

@@ -1,5 +1,6 @@
 ﻿using Lidgren.Network;
 using Microsoft.Xna.Framework;
+using Cyral.Extensions.Xna;
 
 namespace Bricklayer.Client.Networking.Messages
 {
@@ -15,6 +16,8 @@ namespace Bricklayer.Client.Networking.Messages
 
         public double MessageTime { get; set; }
 
+        public int Hue { get; set; }
+
         public MessageTypes MessageType
         {
             get { return MessageTypes.Login; }
@@ -24,28 +27,26 @@ namespace Bricklayer.Client.Networking.Messages
         {
             this.Decode(im);
         }
-        public LoginMessage(string username, string password, Color color)
+        public LoginMessage(string username, string password, int hue)
         {
             this.Username = username;
             this.Password = password;
             this.MessageTime = NetTime.Now;
-            this.Color = color;
+            this.Hue = hue;
         }
         public void Decode(NetIncomingMessage im)
         {
             this.Username = im.ReadString();
             this.Password = im.ReadString();
 
-            this.Color = new Color(im.ReadByte(), im.ReadByte(), im.ReadByte());
+            this.Color = ColorExtensions.ColorFromHSV(im.ReadInt16(), Client.IO.ColorSaturation / 255f, Client.IO.ColorValue / 255f);
         }
         public void Encode(NetOutgoingMessage om)
         {
             om.Write(this.Username);
             om.Write(this.Password);
 
-            om.Write(this.Color.R);
-            om.Write(this.Color.G);
-            om.Write(this.Color.B);
+            om.Write((short)this.Hue);
         }
     }
 }

@@ -10,6 +10,8 @@ namespace Bricklayer.Client
     /// </summary>
     public class Settings
     {
+        public const int MaxNameLength = 20;
+        public const string NameRegex = "";
         /// <summary>
         /// The name of the current content pack
         /// </summary>
@@ -23,9 +25,9 @@ namespace Bricklayer.Client
         /// </summary>
         public string Username { get; set; }
         /// <summary>
-        /// The color, in hex, that the player should be tinted
+        /// The hue, 0-360, that the player should be tinted
         /// </summary>
-        public string Color { get; set; }
+        public int Color { get; set; }
         /// <summary>
         /// Determines if Vertical Synchronization should be enabled
         /// </summary>
@@ -38,7 +40,7 @@ namespace Bricklayer.Client
                 ContentPack = "Default",
                 Resolution = new Microsoft.Xna.Framework.Point(900,600),
                 Username = "Guest",
-                Color = "#FFBB00",
+                Color = 40,
                 UseVSync = false,
             };
         }

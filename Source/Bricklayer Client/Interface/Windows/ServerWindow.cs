@@ -5,6 +5,7 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Bricklayer.Client.Networking;
 using TomShane.Neoforce.Controls;
+using Cyral.Extensions;
 
 namespace Bricklayer.Client.Interface
 {
@@ -16,7 +17,13 @@ namespace Bricklayer.Client.Interface
         public ServerPinger Pinger;
         public ControlList<ServerDataControl> ServerListCtrl;
         public List<ServerSaveData> Servers;
+
         private Button JoinBtn, AddBtn, RemoveBtn, EditBtn, RefreshBtn;
+        private TextBox NameTxt;
+        private Label NameLbl, ColorLbl;
+        private ImageBox BodyImg, SmileyImg;
+        private ColorPicker BodyClr;
+
 
         public ServerWindow(Manager manager) : base(manager)
         {
@@ -32,8 +39,49 @@ namespace Bricklayer.Client.Interface
             Height = 350;
             Shadow = true;
             Center();
+
+            //Player config
+            NameLbl = new Label(Manager) { Left = 8, Top = TopPanel.Bottom + 10, Width = 64, Text = "Username:" };
+            NameLbl.Init();
+            Add(NameLbl);
+
+            NameTxt = new TextBox(Manager) { Left = NameLbl.Right + 4, Top = TopPanel.Bottom + 8, Width = 150, Text = Game.Username};
+            NameTxt.Init();
+            NameTxt.Refresh();
+            NameTxt.TextChanged += new TomShane.Neoforce.Controls.EventHandler(delegate(object o, TomShane.Neoforce.Controls.EventArgs e)
+            {
+                if (NameTxt.Text.Length > Settings.MaxNameLength) //Clamp length
+                    NameTxt.Text = NameTxt.Text.Truncate(Settings.MaxNameLength);
+                Game.Username = NameTxt.Text;
+            });
+            Add(NameTxt);
+
+            ColorLbl = new Label(Manager) { Left = NameTxt.Right + 8, Top = TopPanel.Bottom + 10, Width = 36, Text = "Color:" };
+            ColorLbl.Init();
+            Add(ColorLbl);
+
+            BodyClr = new ColorPicker(Manager) { Left = ColorLbl.Right + 4, Top = TopPanel.Bottom + 8, Width = 128, Saturation = IO.ColorSaturation, Value = IO.ColorValue };
+            BodyClr.Init();
+            BodyClr.ValueChanged += new TomShane.Neoforce.Controls.EventHandler(delegate(object o, TomShane.Neoforce.Controls.EventArgs e)
+            {
+                BodyImg.Color = BodyClr.SelectedColor;
+                Game.MyColor = BodyClr.SelectedColor;
+                Game.MyHue = BodyClr.Hue;
+            });
+            Add(BodyClr);
+
+            BodyImg = new ImageBox(Manager) { Left = BodyClr.Right + 6, Top = TopPanel.Bottom + 8, Width = 18, Height = 18, Color = Game.MyColor, Image = ContentPack.Textures["entity\\body"] };
+            BodyImg.Init();
+            Add(BodyImg);
+
+            SmileyImg = new ImageBox(Manager) { Left = BodyClr.Right + 6, Top = TopPanel.Bottom + 8, Width = 18, Height = 18, Image = ContentPack.Textures["entity\\smileys"], SourceRect = new Rectangle(0, 0, 18, 18) };
+            SmileyImg.Init();
+            SmileyImg.ToolTip.Text = "I love this color!";
+            Add(SmileyImg);
+
+            BodyClr.Hue = Game.MyHue;
             //Create main server list
-            ServerListCtrl = new ControlList<ServerDataControl>(manager) { Left = 8, Top = TopPanel.Bottom + 8, Width = ClientWidth - 16, Height = ClientHeight - TopPanel.Height - BottomPanel.Height - 16 };
+            ServerListCtrl = new ControlList<ServerDataControl>(manager) { Left = 8, Top = TopPanel.Bottom + 34, Width = ClientWidth - 16, Height = ClientHeight - TopPanel.Height - BottomPanel.Height - 42 };
             ServerListCtrl.Init();
             Add(ServerListCtrl);
             RefreshServerList();
@@ -43,6 +91,9 @@ namespace Bricklayer.Client.Interface
             JoinBtn.Init();
             JoinBtn.Click += new TomShane.Neoforce.Controls.EventHandler(delegate(object o, TomShane.Neoforce.Controls.EventArgs e)
             {
+                //Logical place to save name/color settings
+                IO.SaveSettings(new Settings() { Username = Game.Username, Color = Game.MyHue, ContentPack = Game.ContentPackName, Resolution = new Point(Game.Resolution.Width, Game.Resolution.Height), UseVSync = Game.MainWindow.Manager.Graphics.SynchronizeWithVerticalRetrace });
+                //Connect
                 if (ServerListCtrl.Items.Count > 0)
                 {
                     if ((ServerListCtrl.Items[ServerListCtrl.ItemIndex] as ServerDataControl).Ping != null && (ServerListCtrl.Items[ServerListCtrl.ItemIndex] as ServerDataControl).Ping.Error)
