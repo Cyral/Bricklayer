@@ -1,0 +1,696 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Cyral.Extensions</name>
+    </assembly>
+    <members>
+        <member name="M:Cyral.Extensions.BooleanExtensions.ToYesNoString(System.Boolean)">
+            <summary>
+            Converts the value of this instance to its equivalent string representation (either "Yes" or "No").
+            </summary>
+            <param name="boolean">Bool value to base the conversion on</param>
+            <returns>"Yes" or "No"</returns>
+        </member>
+        <member name="M:Cyral.Extensions.BooleanExtensions.ToTFString(System.Boolean)">
+            <summary>
+            Converts the value of this instance to its equivalent string representation (either "T" or "F").
+            </summary>
+            <param name="boolean">Bool value to base the conversion on</param>
+            <returns>"T" or "F"</returns>
+        </member>
+        <member name="M:Cyral.Extensions.BooleanExtensions.ToBinary(System.Boolean)">
+            <summary>
+            Converts the value of this instance to its equivalent binary representation (either "1" or "0").
+            </summary>
+            <param name="boolean">Bool value to base the conversion on</param>
+            <returns>1 or 0</returns>
+        </member>
+        <member name="M:Cyral.Extensions.CollectionExtensions.IsNullOrEmpty(System.Collections.ICollection)">
+            <summary>
+            Tests if the collection is empty.
+            </summary>
+            <param name="source">The collection to test.</param>
+            <returns>True if the collection is null or has a count of 0, false otherwise.</returns>
+        </member>
+        <member name="M:Cyral.Extensions.CollectionExtensions.AddUnique``1(System.Collections.Generic.ICollection{``0},``0)">
+            <summary>
+            Adds a value uniquely to to a collection and returns a value whether the value was added or not.
+            (If the collection already contains the value(s), they will not be added)
+            </summary>
+            <typeparam name="T">The generic collection value type.</typeparam>
+            <param name="collection">The collection.</param>
+            <param name="value">The value to be added.</param>
+            <returns>Indicates whether the value was added or not.</returns>
+            <example>
+            	<code>
+            		list.AddUnique(1); // returns true;
+            		list.AddUnique(1); // returns false the second time;
+            	</code>
+            </example>
+        </member>
+        <member name="M:Cyral.Extensions.CollectionExtensions.AddRangeUnique``1(System.Collections.Generic.ICollection{``0},System.Collections.Generic.IEnumerable{``0})">
+            <summary>
+            Adds a range of values uniquely to a collection and returns the amount of values added.
+            (If the collection already contains the value(s), they will not be added)
+            </summary>
+            <typeparam name="T">The generic collection value type.</typeparam>
+            <param name="collection">The collection.</param>
+            <param name="values">The values to be added.</param>
+            <returns>The amount of values that were added.</returns>
+        </member>
+        <member name="M:Cyral.Extensions.DateTimeExtensions.GetPrettyDate(System.DateTime)">
+            <summary>
+            Convert the <c>DateTime</c> into a pretty and more readable version, such as "8 minutes ago"
+            </summary>
+        </member>
+        <member name="M:Cyral.Extensions.DateTimeExtensions.IsWeekend(System.DateTime)">
+            <summary>
+            Indicates whether the specified date is on a weekend (Ex: Saturday or Sunday).
+            </summary>
+        </member>
+        <member name="M:Cyral.Extensions.DateTimeExtensions.AddWeeks(System.DateTime,System.Int32)">
+            <summary>
+            Adds the specified amount of weeks (7 days) to the <c>DateTime</c> value.
+            </summary>
+        </member>
+        <member name="M:Cyral.Extensions.DoubleExtensions.IsBetween(System.Double,System.Double,System.Double,System.Boolean)">
+            <summary>
+            Finds whether or not a <c>double</c> value is between two other numbers.
+            </summary>
+            <param name="num">Number to test.</param>
+            <param name="lower">Lower number.</param>
+            <param name="upper">Upper number.</param>
+            <param name="inclusive">If the check is inclusive.</param>
+            <returns>True if the value was between the upper and lower numbers, false otherwise.</returns>
+        </member>
+        <member name="M:Cyral.Extensions.DoubleExtensions.RoundTo(System.Double,System.Double)">
+            <summary>
+            Rounds a number to the nearest specified value. (Ex: Round 7.3 to the nearest 10th equals 10)
+            </summary>
+            <param name="number">Number to round</param>
+            <param name="nearest">Nearest number to round to</param>
+            <returns>The number rounded to the nearest specified value</returns>
+        </member>
+        <member name="M:Cyral.Extensions.DoubleExtensions.IsDivisble(System.Double,System.Double)">
+            <summary>
+            Checks if a number is divisible by a certain factor.
+            </summary>
+            <param name="number">Number to check.</param>
+            <param name="factor">Factor to use.</param>
+            <returns>True if the number is divisible by the factor, false otherwise</returns>
+        </member>
+        <member name="M:Cyral.Extensions.EnumerableExtensions.IsNullOrEmpty(System.Array)">
+            <summary>
+            	Tests if the array is null or empty.
+            </summary>
+            <param name="source">Source array to test.</param>
+            <returns>True if the array is null or has a length of 0, false otherwise.</returns>
+        </member>
+        <member name="M:Cyral.Extensions.EnumerableExtensions.ForEach``1(System.Collections.Generic.IEnumerable{``0},System.Action{``0})">
+            <summary>
+            Executes the specified action on each element in the source collection.
+            </summary>
+            <typeparam name="T">Type of the objects in the collection.</typeparam>
+            <param name="source">The collection to apply the action to.</param>
+            <param name="action">The action to repeat on each element in the source.</param>
+        </member>
+        <member name="M:Cyral.Extensions.EnumerableExtensions.Shuffle``1(System.Collections.Generic.IList{``0})">
+            <summary>
+            Randomizes the order of elements in a collection.
+            </summary>
+            <typeparam name="T">Type of the objects in the collection.</typeparam>
+            <param name="list">Collection to shuffle.</param>
+        </member>
+        <member name="T:Cyral.Extensions.EnumExtensions">
+            <summary>
+            Extension methods for the enum data type
+            </summary>
+        </member>
+        <member name="M:Cyral.Extensions.EnumExtensions.IsValid``1(``0)">
+            <summary>
+            Tests to see if a constant with the specified value exists in the enumeration type.
+            </summary>
+            <typeparam name="T">Type of <c>Enum</c></typeparam>
+            <param name="value">Constant to check.</param>
+            <returns>True of the constant exists in the enumeration, false otherwise</returns>
+        </member>
+        <member name="M:Cyral.Extensions.EnumExtensions.GetEnumDescription(System.Enum)">
+            <summary>
+            Gets the Description attribute from an enum constant.
+            </summary>
+            <example>
+            	<code>
+                    public enum States
+                    {
+                        California,
+                        [Description("New Mexico")]
+                        NewMexico,
+                        Washington
+                    }
+                    GetEnumDescription(States.NewMexico) will return "New Mexico"
+            	</code>
+            </example>
+            <param name="value">Enum constant</param>
+            <returns>The <c>DescriptionAttribute</c> of the enum constant.</returns>
+        </member>
+        <member name="M:Cyral.Extensions.EventExtensions.Raise(System.EventHandler,System.Object,System.EventArgs)">
+            <summary>
+            Raise event while checking if it is null before continuing.
+            </summary>
+            <param name="handler">Event to execute.</param>
+            <param name="sender">Event's sender.</param>
+            <param name="args">Event's arguments.</param>
+        </member>
+        <member name="M:Cyral.Extensions.EventExtensions.Raise``1(System.EventHandler{``0},System.Object,``0)">
+            <summary>
+            Raise event while checking if it is null before continuing.
+            </summary>
+            <typeparam name="T">Custom event type.</typeparam>
+            <param name="handler">Event to execute.</param>
+            <param name="sender">Event's sender.</param>
+            <param name="args">Event's arguments.</param>
+        </member>
+        <member name="M:Cyral.Extensions.FloatExtensions.IsBetween(System.Single,System.Single,System.Single,System.Boolean)">
+            <summary>
+            Finds whether or not a <c>float</c> value is between two other numbers.
+            </summary>
+            <param name="num">Number to test.</param>
+            <param name="lower">Lower number.</param>
+            <param name="upper">Upper number.</param>
+            <param name="inclusive">If the check is inclusive.</param>
+            <returns>True if the value was between the upper and lower numbers, false otherwise.</returns>
+        </member>
+        <member name="M:Cyral.Extensions.FloatExtensions.RoundTo(System.Single,System.Single)">
+            <summary>
+            Rounds a number to the nearest specified value. (Ex: Round 7.3f to the nearest 10th equals 10)
+            </summary>
+            <param name="number">Number to round</param>
+            <param name="nearest">Nearest number to round to</param>
+            <returns>The number rounded to the nearest specified value</returns>
+        </member>
+        <member name="M:Cyral.Extensions.FloatExtensions.IsDivisble(System.Single,System.Single)">
+            <summary>
+            Checks if a number is divisible by a certain factor.
+            </summary>
+            <param name="number">Number to check.</param>
+            <param name="factor">Factor to use.</param>
+            <returns>True if the number is divisible by the factor, false otherwise</returns>
+        </member>
+        <member name="M:Cyral.Extensions.IntExtensions.IsBetween(System.Int32,System.Int32,System.Int32,System.Boolean)">
+            <summary>
+            Finds whether or not an <c>int</c> value is between two other numbers.
+            </summary>
+            <param name="num">Number to test.</param>
+            <param name="lower">Lower number.</param>
+            <param name="upper">Upper number.</param>
+            <param name="inclusive">If the check is inclusive.</param>
+            <returns>True if the value was between the upper and lower numbers, false otherwise.</returns>
+        </member>
+        <member name="M:Cyral.Extensions.IntExtensions.IsEven(System.Int32)">
+            <summary>
+            Determines if the specified number is even.
+            </summary>      
+        </member>
+        <member name="M:Cyral.Extensions.IntExtensions.IsOdd(System.Int32)">
+            <summary>
+            Determines if the specified number is odd.
+            </summary>
+        </member>
+        <member name="M:Cyral.Extensions.IntExtensions.IsDivisble(System.Int32,System.Int32)">
+            <summary>
+            Checks if a number is divisible by a certain factor.
+            </summary>
+            <param name="number">Number to check.</param>
+            <param name="factor">Factor to use.</param>
+            <returns>True if the number is divisible by the factor, false otherwise</returns>
+        </member>
+        <member name="M:Cyral.Extensions.IntExtensions.RoundTo(System.Int32,System.Int32)">
+            <summary>
+            Rounds a number to the nearest specified value. (Ex: Round 7 to the nearest 10th equals 10)
+            </summary>
+            <param name="number">Number to round</param>
+            <param name="nearest">Nearest number to round to</param>
+            <returns>The number rounded to the nearest specified value</returns>
+        </member>
+        <member name="M:Cyral.Extensions.IntExtensions.ToRomanNumeral(System.Int32)">
+            <summary>
+            Converts an integer into a Roman numeral (Ex: 8 to VIII)
+            </summary>
+            <param name="number">Integer to convert.</param>
+            <returns>A string containing a Roman numeral</returns>
+            <see cref="!:http://stackoverflow.com/a/11749642/1218281"/>
+        </member>
+        <member name="M:Cyral.Extensions.IntExtensions.AppendOrdinal(System.Int32)">
+            <summary>
+            Adds an ordinal to the end of a number (Ex: 5 becomes 5th)
+            </summary>
+            <param name="number">Intiger to add ordinal to.</param>
+            <returns>A string with the added ordinal.</returns>
+            <see cref="!:http://stackoverflow.com/a/20175/1218281"/>
+        </member>
+        <member name="M:Cyral.Extensions.ObjectExtensions.EqualsAny``1(``0,``0[])">
+            <summary>
+            Checks to see if any of the object(s) in the collection are equal to the source value.
+            </summary>
+            <typeparam name="T">The type of object used.</typeparam>
+            <param name="source">The source object.</param>
+            <param name="list">The possible objects to equal.</param>
+            <returns>True of any object(s) are equal to the source, false otherwise.</returns>
+        </member>
+        <member name="M:Cyral.Extensions.ObjectExtensions.EqualsNone``1(``0,``0[])">
+            <summary>
+            Checks to see if all of the object(s) in the collection are not equal to the souce value.
+            </summary>
+            <typeparam name="T">The type of object used.</typeparam>
+            <param name="source">The source object.</param>
+            <param name="list">The possible objects to equal.</param>
+            <returns>True of all object(s) are not equal to the source, false otherwise.</returns>
+        </member>
+        <member name="M:Cyral.Extensions.ObjectExtensions.IsOfType(System.Object,System.Type)">
+            <summary>
+            Determines whether the object is excactly of the passed type
+            </summary>
+            <param name="obj">The object to check.</param>
+            <param name="type">The target type.</param>
+            <returns>
+            <c>true</c> if the object is of the specified type; otherwise, <c>false</c>.
+            </returns>
+        </member>
+        <member name="M:Cyral.Extensions.ObjectExtensions.IsOfTypeOrInherits``1(System.Object)">
+            <summary>
+            Determines whether the object is of the passed generic type or inherits from it.
+            </summary>
+            <typeparam name="T">The target type.</typeparam>
+            <param name="obj">The object to check.</param>
+            <returns><c>true</c> if the object is of the specified type; otherwise, <c>false</c>.</returns>
+        </member>
+        <member name="M:Cyral.Extensions.ObjectExtensions.IsOfTypeOrInherits(System.Object,System.Type)">
+            <summary>
+            Determines whether the object is of the passed type or inherits from it.
+            </summary>
+            <param name="obj">The object to check.</param>
+            <param name="type">The target type.</param>
+            <returns><c>true</c> if the object is of the specified type; otherwise, <c>false</c>.</returns>
+        </member>
+        <member name="M:Cyral.Extensions.ObjectExtensions.AsString(System.Object)">
+            <summary>
+            Returns a string representation of the given object.
+            </summary>
+        </member>
+        <member name="M:Cyral.Extensions.ObjectExtensions.CastAs``1(System.Object)">
+            <summary>
+            Cast an object to the specified type.
+            </summary>
+            <typeparam name="T">The type of object to cast.</typeparam>
+            <param name="obj">The object to be cast</param>
+            <returns>The object casted to the given type, or the default type value.</returns>
+        </member>
+        <member name="M:Cyral.Extensions.ObjectExtensions.DeepClone``1(``0)">
+            <summary>
+            Perform a deep copy of an object.
+            </summary>
+            <typeparam name="T">The type of object being copied.</typeparam>
+            <param name="source">The object instance to copy.</param>
+            <returns>The copied object.</returns>
+            <see cref="!:http://stackoverflow.com/a/519512/1218281"/>
+        </member>
+        <member name="M:Cyral.Extensions.RandomExtensions.OneOf``1(System.Random,``0[])">
+            <summary>
+            Returns a random element from the input.
+            </summary>
+            <typeparam name="T">Type of object in the input.</typeparam>
+            <param name="random">Random generator to use.</param>
+            <param name="input">Input objects.</param>
+            <returns>Random element from the input.</returns>
+        </member>
+        <member name="M:Cyral.Extensions.RandomExtensions.NextDecimal(System.Random,System.Decimal,System.Decimal)">
+            <summary>
+            Returns a random number between min and max
+            </summary>
+        </member>
+        <member name="M:Cyral.Extensions.RandomExtensions.NextDecimal(System.Random)">
+            <summary>
+            Returns a random number between 0.0 and 1.0
+            </summary>
+        </member>
+        <member name="M:Cyral.Extensions.RandomExtensions.NextDouble(System.Random,System.Double,System.Double)">
+            <summary>
+            Returns a random number between min and max
+            </summary>
+        </member>
+        <member name="M:Cyral.Extensions.RandomExtensions.NextFloat(System.Random,System.Single,System.Single)">
+            <summary>
+            Returns a random number between min and max
+            </summary>
+        </member>
+        <member name="M:Cyral.Extensions.RandomExtensions.NextFloat(System.Random)">
+            <summary>
+            Returns a random number between 0.0 and 1.0
+            </summary>
+        </member>
+        <member name="M:Cyral.Extensions.RandomExtensions.NextBoolean(System.Random)">
+            <summary>
+            Generates a random boolean value, true or false
+            </summary>
+            <param name="random">A random instance</param>
+            <returns>A random boolean value, true or false</returns>
+        </member>
+        <member name="M:Cyral.Extensions.RandomExtensions.Deviation(System.Random,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Numbers near the average number are generated most often
+            In example: doing Deviation(0,10,5) Will generate 5 most of the time and 0 and 10
+            the least, as it is "rare" random, 4 and 6 will be quite common, but not 1 and 9
+            </summary>
+            <param name="min">Minimum Value, Unlikely</param>
+            <param name="max">Maximum Value, Unlikely</param>
+            <param name="avg">Average Value, Common</param>
+        </member>
+        <member name="M:Cyral.Extensions.StringExtensions.ToEnum``1(System.String)">
+            <summary>
+            Parses a string into an Enum
+            </summary>
+            <typeparam name="T">The type of the Enum</typeparam>
+            <param name="value">String value to parse</param>
+            <returns>The Enum corresponding to the stringExtensions</returns>
+        </member>
+        <member name="M:Cyral.Extensions.StringExtensions.ToEnum``1(System.String,System.Boolean)">
+            <summary>
+            Parses a string into an Enum
+            </summary>
+            <typeparam name="T">The type of the Enum</typeparam>
+            <param name="value">String value to parse</param>
+            <param name="ignorecase">Ignore the case of the string being parsed</param>
+            <returns>The Enum corresponding to the stringExtensions</returns>
+        </member>
+        <member name="M:Cyral.Extensions.StringExtensions.ToInteger(System.String,System.Int32)">
+            <summary>
+            Converts a string into an int value.
+            </summary>
+        </member>
+        <member name="M:Cyral.Extensions.StringExtensions.ToInteger(System.String)">
+            <summary>
+            Converts a string into an int value.
+            </summary>
+        </member>
+        <member name="M:Cyral.Extensions.StringExtensions.ToDouble(System.String,System.Double)">
+            <summary>
+            Converts a string into a double value.
+            </summary>
+        </member>
+        <member name="M:Cyral.Extensions.StringExtensions.ToDouble(System.String)">
+            <summary>
+            Converts a string into a double value.
+            </summary>
+        </member>
+        <member name="M:Cyral.Extensions.StringExtensions.ToBoolean(System.String)">
+            <summary>
+            Converts a string value to <c>Boolean</c> value, supports "T" and "F" conversions.
+            </summary>
+            <param name="value">The string value.</param>
+            <returns>A bool based on the string value</returns>
+        </member>
+        <member name="M:Cyral.Extensions.StringExtensions.Truncate(System.String,System.Int32)">
+            <summary>
+            Clamps a strings character count to a specified length.
+            </summary>
+        </member>
+        <member name="M:Cyral.Extensions.StringExtensions.RemoveWhitespace(System.String)">
+            <summary>
+            Uses <c>Regex.Replace(str, @"\s+", "");</c> to remove whitespace from a string.
+            </summary>
+        </member>
+        <member name="M:Cyral.Extensions.StringExtensions.AddSpacesToSentence(System.String,System.Boolean)">
+            <summary>
+            Adds spaces before capitals in a string.
+            </summary>
+        </member>
+        <member name="M:Cyral.Extensions.StringExtensions.Repeat(System.String,System.Int32)">
+            <summary>
+            Repeats the specified string value as provided by the repeat count.
+            </summary>
+            <param name ="value">The original string.</param>
+            <param name ="iterations">The repeat count.</param>
+            <returns>The repeated string</returns>
+        </member>
+        <member name="M:Cyral.Extensions.StringExtensions.IsNumeric(System.String)">
+            <summary>
+            Tests whether the contents of a string is a numeric value
+            </summary>
+            <param name ="value">String to check</param>
+            <returns>
+            Boolean indicating whether or not the string contents are numeric
+            </returns>
+        </member>
+        <member name="M:Cyral.Extensions.StringExtensions.ToTitleCase(System.String)">
+            <summary>Convert text's case to a title case with the current culture</summary>
+            <remarks>UppperCase characters is the source string after the first of each word are lowered, unless the word is exactly 2 characters</remarks>
+        </member>
+        <member name="M:Cyral.Extensions.StringExtensions.ToTitleCase(System.String,System.Globalization.CultureInfo)">
+            <summary>Convert text's case to a title case</summary>
+            <param name ="culture">Culture to use</param>
+            <remarks>UppperCase characters is the source string after the first of each word are lowered, unless the word is exactly 2 characters</remarks>
+        </member>
+        <member name="M:Cyral.Extensions.StringExtensions.ToPlural(System.String)">
+            <summary>
+            Uses simple english rules to convert a string to it's plural form.
+            </summary>
+            <param name="singular">The singular form of the string</param>
+            <returns>The pluralized form of the string</returns>
+        </member>
+        <member name="M:Cyral.Extensions.StringExtensions.WordCount(System.String)">
+            <summary>
+            Finds the amount of words in a string, using spaces and punctuation as splitters
+            </summary>
+            <param name="str">Input string</param>
+            <returns>The word count</returns>
+        </member>
+        <member name="M:Cyral.Extensions.StringExtensions.Capitalize(System.String)">
+            <summary>
+            Capitalizes the first letter in the word
+            </summary>
+            <param name="word"></param>
+            <returns>The string with an uppercase first letter</returns>
+        </member>
+        <member name="M:Cyral.Extensions.StringExtensions.Reverse(System.String)">
+            <summary>
+            Reverses a String
+            </summary>
+            <param name="input">The string to reverse</param>
+            <returns>The reversed String</returns>
+        </member>
+        <member name="M:Cyral.Extensions.StringExtensions.IsValidUrl(System.String)">
+            <summary>
+            Determines whether a string is a valid URL. (For use with http and https)
+            </summary>
+        </member>
+        <member name="M:Cyral.Extensions.StringExtensions.IsValidEmailAddress(System.String)">
+            <summary>
+            Determines whether a string is a valid email address
+            </summary>
+        </member>
+        <member name="M:Cyral.Extensions.StringExtensions.IsFileNameSafe(System.String)">
+            <summary>
+            Indicates if the string can be used as a file name.
+            </summary>
+        </member>
+        <member name="M:Cyral.Extensions.StringExtensions.Right(System.String,System.Int32)">
+            <summary>
+            Returns the right portion of the string for the specified length.
+            </summary>
+        </member>
+        <member name="M:Cyral.Extensions.StringExtensions.Left(System.String,System.Int32)">
+            <summary>
+            Returns the left portion of the string for the specified length.
+            </summary>
+        </member>
+        <member name="M:Cyral.Extensions.StringExtensions.EqualsIgnoreCase(System.String,System.String)">
+            <summary>
+            Indicates if the specified string is equal to the string to test, while ignoring the case of both.
+            </summary>
+        </member>
+        <member name="M:Cyral.Extensions.StringExtensions.Overwrite(System.String,System.Int32,System.String)">
+            <summary>
+            Overwrites a string value with a new string value, preserving the old string characters if the new string is shorter than it.
+            </summary>
+        </member>
+        <member name="M:Cyral.Extensions.StringExtensions.IsLike(System.String,System.String)">
+            <summary>
+            Indicates whether the current string matches the supplied wildcard pattern.  Behaves the same
+            as VB's "Like" Operator.
+            </summary>
+            <param name="str">The string instance where the extension method is called</param>
+            <param name="wildcardPattern">The wildcard pattern to match.  Syntax matches VB's Like operator.</param>
+            <returns>True if the string matches the supplied pattern, false otherwise.</returns>
+            <remarks>See http://msdn.microsoft.com/en-us/library/swf8kaxw(v=VS.100).aspx </remarks>
+        </member>
+        <member name="T:Cyral.Extensions.Xna.Circle">
+            <summary> 
+            Represents a 2D circle. 
+            </summary> 
+        </member>
+        <member name="M:Cyral.Extensions.Xna.Circle.#ctor(Microsoft.Xna.Framework.Vector2,System.Single)">
+            <summary> 
+            Constructs a new circle. 
+            </summary> 
+        </member>
+        <member name="M:Cyral.Extensions.Xna.Circle.#ctor(System.Int32,System.Int32,System.Single)">
+            <summary> 
+            Constructs a new circle. 
+            </summary> 
+        </member>
+        <member name="M:Cyral.Extensions.Xna.Circle.Intersects(Microsoft.Xna.Framework.Rectangle)">
+            <summary> 
+            Determines if a circle intersects a rectangle. 
+            </summary> 
+            <returns>True if the circle and rectangle overlap. False otherwise.</returns> 
+        </member>
+        <member name="M:Cyral.Extensions.Xna.Circle.Contains(Microsoft.Xna.Framework.Point)">
+            <summary> 
+            Determines if a circle contains a Point
+            </summary> 
+            <returns>True if the circle and Point overlap. False otherwise.</returns> 
+        </member>
+        <member name="M:Cyral.Extensions.Xna.Circle.Contains(Microsoft.Xna.Framework.Vector2)">
+            <summary> 
+            Determines if a circle contains a Vector2
+            </summary> 
+            <returns>True if the circle and Vector2 overlap. False otherwise.</returns> 
+        </member>
+        <member name="P:Cyral.Extensions.Xna.Circle.Center">
+            <summary> 
+            Center position of the circle. 
+            </summary> 
+        </member>
+        <member name="P:Cyral.Extensions.Xna.Circle.Radius">
+            <summary> 
+            Radius of the circle. 
+            </summary> 
+        </member>
+        <member name="M:Cyral.Extensions.Xna.ColorExtensions.ColorFromHSV(System.Double,System.Double,System.Double)">
+            <summary>
+            Converts a HSV color to an RGB (XNA) color
+            </summary>
+            <remarks>
+            Hue varies from 0 to 360
+            Saturation and Value vary from 0 to 255
+            </remarks>
+            <see cref="!:http://stackoverflow.com/a/1626232/1218281"/>
+        </member>
+        <member name="M:Cyral.Extensions.Xna.ColorExtensions.FromRGB(System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Creates a color from a Red, Green, and Blue value.
+            Values are from 0 - 255
+            </summary>
+        </member>
+        <member name="M:Cyral.Extensions.Xna.ColorExtensions.FromRGB(System.Single,System.Single,System.Single)">
+            <summary>
+            Creates a color from a Red, Green, and Blue value.
+            Values are from 0f - 1f
+            </summary>
+        </member>
+        <member name="M:Cyral.Extensions.Xna.ColorExtensions.FromARGB(System.Int32,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Creates a color from an Alpha, Red, Green, and Blue value.
+            Values are from 0 - 255
+            </summary>
+        </member>
+        <member name="M:Cyral.Extensions.Xna.ColorExtensions.FromARGB(System.Single,System.Single,System.Single,System.Single)">
+            <summary>
+            Creates a color from an Alpha, Red, Green, and Blue value.
+            Values are from 0f - 1f
+            </summary>
+        </member>
+        <member name="M:Cyral.Extensions.Xna.ColorExtensions.Alpha(Microsoft.Xna.Framework.Color,System.Single)">
+            <summary>
+            Ajusts the alpha value of a color (transparency)
+            </summary>
+            <param name="color">Existing Color</param>
+            <param name="alpha">Alpha (0 - 1f)</param>
+        </member>
+        <member name="M:Cyral.Extensions.Xna.ColorExtensions.ToHex(Microsoft.Xna.Framework.Color,System.Boolean)">
+            <summary>
+            Creates an ARGB hex string representation of the <see cref="T:Microsoft.Xna.Framework.Color"/> value.
+            </summary>
+            <param name="color">The <see cref="T:Microsoft.Xna.Framework.Color"/> value to parse.</param>
+            <param name="includeHash">Indicates whether to include the hash mark (#) character in the string.</param>
+            <returns>A hex string representation of the specified <see cref="T:Microsoft.Xna.Framework.Color"/> value.</returns>
+        </member>
+        <member name="M:Cyral.Extensions.Xna.ColorExtensions.FromHex(System.String)">
+            <summary>
+            Creates a <see cref="T:Microsoft.Xna.Framework.Color"/> value from an ARGB or RGB hex string.  The string may
+            begin with or without the hash mark (#) character.
+            </summary>
+            <param name="hexString">The ARGB hex string to parse.</param>
+            <returns>
+            A <see cref="T:Microsoft.Xna.Framework.Color"/> value as defined by the ARGB or RGB hex string.
+            </returns>
+            <exception cref="T:System.InvalidOperationException">Thrown if the string is not a valid ARGB or RGB hex value.</exception>
+        </member>
+        <member name="M:Cyral.Extensions.Xna.IOExtensions.Write(System.IO.BinaryWriter,Microsoft.Xna.Framework.Color)">
+            <summary>
+            Writes an XNA color value to a binary writer.
+            </summary>
+        </member>
+        <member name="M:Cyral.Extensions.Xna.IOExtensions.ReadColor(System.IO.BinaryReader)">
+            <summary>
+            Reads an XNA color value from a binary reader.
+            </summary>
+        </member>
+        <member name="M:Cyral.Extensions.Xna.MouseStateExtensions.GetPositionPoint(Microsoft.Xna.Framework.Input.MouseState)">
+            <summary>
+            Gets the position of the cursor as a Point value.
+            </summary>
+        </member>
+        <member name="M:Cyral.Extensions.Xna.MouseStateExtensions.GetPositionVector(Microsoft.Xna.Framework.Input.MouseState)">
+            <summary>
+            Gets the position of the cursor as a Vector2 value.
+            </summary>
+        </member>
+        <member name="M:Cyral.Extensions.Xna.PointExtensions.FromPoint(Microsoft.Xna.Framework.Vector2)">
+            <summary>
+            Creates a new Point from a Vector2
+            </summary>
+        </member>
+        <member name="M:Cyral.Extensions.Xna.PointExtensions.ToVector2(Microsoft.Xna.Framework.Point)">
+            <summary>
+            Transforms a Point into a Vector2
+            </summary>
+        </member>
+        <member name="M:Cyral.Extensions.Xna.RectangleExtensions.FromPoint(Microsoft.Xna.Framework.Point,System.Int32,System.Int32)">
+            <summary>
+            Constructs a rectangle from a Point's X and Y position
+            </summary>
+        </member>
+        <member name="M:Cyral.Extensions.Xna.RectangleExtensions.FromVector2(Microsoft.Xna.Framework.Vector2,System.Int32,System.Int32)">
+            <summary>
+            Constructs a rectangle from a Vector2's X and Y position
+            </summary>
+        </member>
+        <member name="M:Cyral.Extensions.Xna.Vector2Extensions.FromPoint(Microsoft.Xna.Framework.Point)">
+            <summary>
+            Creates a new Vector2 from a Point.
+            </summary>
+        </member>
+        <member name="M:Cyral.Extensions.Xna.Vector2Extensions.ToPoint(Microsoft.Xna.Framework.Vector2)">
+            <summary>
+            Transforms a Vector2 into a Point.
+            </summary>
+        </member>
+        <member name="M:Cyral.Extensions.Xna.Vector2Extensions.Round(Microsoft.Xna.Framework.Vector2)">
+            <summary>
+            Rounds a vector's X and Y values to the nearest integer.
+            </summary>
+            <param name="vector">Vector2 to round.</param>
+            <returns>A Vector2 with integer X and Y values.</returns>
+        </member>
+        <member name="M:Cyral.Extensions.Xna.Vector2Extensions.RotateAboutOrigin(Microsoft.Xna.Framework.Vector2,Microsoft.Xna.Framework.Vector2,System.Single)">
+            <summary>
+            Rotates a vector around a center point.
+            </summary>
+            <param name="point">Vector position to rotate.</param>
+            <param name="origin">Point to rotate around.</param>
+            <param name="rotation">Rotation to be applied.</param>
+            <returns>A Vector2 that has been rotated around a center point.</returns>
+        </member>
+    </members>
+</doc>
