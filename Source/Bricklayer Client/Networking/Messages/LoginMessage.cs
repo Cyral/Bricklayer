@@ -1,6 +1,7 @@
 ﻿using Lidgren.Network;
 using Microsoft.Xna.Framework;
 using Cyral.Extensions.Xna;
+using Cyral.Extensions;
 
 namespace Bricklayer.Client.Networking.Messages
 {
@@ -38,14 +39,18 @@ namespace Bricklayer.Client.Networking.Messages
         {
             this.Username = im.ReadString();
             this.Password = im.ReadString();
-
             this.Color = ColorExtensions.ColorFromHSV(im.ReadInt16(), Client.IO.ColorSaturation / 255f, Client.IO.ColorValue / 255f);
+
+            if (Username.Length > Settings.MaxNameLength) //Clamp name length
+                Username = Username.Truncate(Settings.MaxNameLength);
         }
         public void Encode(NetOutgoingMessage om)
         {
+            if (Username.Length > Settings.MaxNameLength) //Clamp name length
+                Username = Username.Truncate(Settings.MaxNameLength);
+
             om.Write(this.Username);
             om.Write(this.Password);
-
             om.Write((short)this.Hue);
         }
     }
