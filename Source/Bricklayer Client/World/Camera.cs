@@ -1,9 +1,11 @@
-﻿using System;
+﻿#region Usings
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Graphics; 
+#endregion
 
 namespace Bricklayer.Client.World
 {
@@ -12,32 +14,68 @@ namespace Bricklayer.Client.World
     /// </summary>
     public class Camera
     {
-        //Properties
+        #region Properties
+        /// <summary>
+        /// The position of the upper left corner of the camera
+        /// </summary>
         public Vector2 Position { get { return position; } set {
             position.X = (float)MathHelper.Clamp(value.X, MinBounds.X, MaxBounds.X - size.X);
             position.Y = (float)MathHelper.Clamp(value.Y, MinBounds.Y, MaxBounds.Y - size.Y);
         } }
+
+        /// <summary>
+        /// The position of the center of the camera
+        /// </summary>
         public Vector2 Origin {
             get { return new Vector2(size.X / 2.0f, size.Y / 2.0f); }
             set { Position = new Vector2(value.X - size.X / 2.0f, value.Y - size.Y / 2.0f); }
         }   
 
+        /// <summary>
+        /// The current zoom factor of the camera
+        /// </summary>
         public float Zoom { get; set; }
+
+        /// <summary>
+        /// The rotation, in radians, of the camera
+        /// </summary>
         public float Rotation { get; set; }
 
-        //Bounds
+        /// <summary>
+        /// The top (Y) position of the camera
+        /// </summary>
         public float Top { get { return Position.Y; } }
+
+        /// <summary>
+        /// The left (X) position of the camera
+        /// </summary>
         public float Left { get { return Position.X; } }
+
+        /// <summary>
+        /// The bottom bound of the camera (Y + Height)
+        /// </summary>
         public float Bottom { get { return Position.Y + size.Y; } }
+
+        /// <summary>
+        /// The right bound of the camera (X + Width)
+        /// </summary>
         public float Right { get { return Position.X + size.X; } }
 
-        //Maximum positions
+        /// <summary>
+        /// The maximum position the camera can travel to (Using the bottom right position)
+        /// </summary>
         public Vector2 MaxBounds { get; set; }
-        public Vector2 MinBounds { get; set; }
 
-        //Fields
+        /// <summary>
+        /// The minimum position the camera can travel to
+        /// </summary>
+        public Vector2 MinBounds { get; set; }
+        #endregion
+
+        #region Fields
         private Vector2 size;
         private Vector2 position;
+        #endregion
 
         /// <summary>
         /// Creates a new camera with the specified size
@@ -48,6 +86,7 @@ namespace Bricklayer.Client.World
             this.size = size;
             Zoom = 1.0f;
         }
+
         /// <summary>
         /// Get a Matrix that can be used with a spritebatch for drawing objects in the camera
         /// </summary>
@@ -59,8 +98,9 @@ namespace Bricklayer.Client.World
                    Matrix.CreateScale(Zoom, Zoom, 1) *
                    Matrix.CreateTranslation(new Vector3(Origin, 0.0f));
         }
+
         /// <summary>
-        /// Will move the position a certain amount
+        /// Moves the position a certain amount
         /// </summary>
         /// <param name="displacement">Amount to move</param>
         /// <param name="respectRotation">Account for the current rotation</param>
@@ -73,6 +113,7 @@ namespace Bricklayer.Client.World
 
             Position += displacement;
         }
+
         /// <summary>
         /// Sets the position to look at a certain point, automatically factoring for the center of the camera
         /// </summary>
@@ -80,6 +121,7 @@ namespace Bricklayer.Client.World
         {
             Position = position - Origin;
         }
+
         /// <summary>
         /// Transforms world coordinates to screen coordinates
         /// </summary>
@@ -87,6 +129,7 @@ namespace Bricklayer.Client.World
         {
             return Vector2.Transform(worldPosition, GetViewMatrix(Vector2.One));
         }
+
         /// <summary>
         /// Transforms screen coordinates to world coordinates
         /// </summary>

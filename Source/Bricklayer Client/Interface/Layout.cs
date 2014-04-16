@@ -6,8 +6,14 @@ using TomShane.Neoforce.Controls;
 
 namespace Bricklayer.Client.Interface
 {
+    /// <summary>
+    /// Handles the layout aspects of the window
+    /// </summary>
     public partial class MainWindow : Window
     {
+        /// <summary>
+        /// The main <c>ScreenManager</c> that handles control adding/removing
+        /// </summary>
         public static ScreenManager ScreenManager { get; set; }
 
         public MainWindow(Manager manager)
@@ -19,6 +25,7 @@ namespace Bricklayer.Client.Interface
             Transparent = true;
             AutoScroll = false;
 
+            //Set up the ScreenManager which will handle all of the controls from here
             ScreenManager = new ScreenManager(this);
             ScreenManager.SwitchScreen(new LoginScreen());
         }

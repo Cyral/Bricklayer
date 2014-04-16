@@ -17,7 +17,7 @@ using TomShane.Neoforce.Controls;
 namespace Bricklayer.Client
 {
     /// <summary>
-    /// This is the main type for your game
+    /// The main game code
     /// </summary>
     public class Game : Application
     {
@@ -134,14 +134,18 @@ namespace Bricklayer.Client
         {
             //Process multiplayer
             if (NetManager.Client != null)
+            {
                 MsgHandler.ProcessNetworkMessages();
-            //Update unput states
+            }
+
+            //Update input states
             LastKeyState = KeyState;
             LastMouseState = MouseState;
             KeyState = Keyboard.GetState();
             MouseState = Mouse.GetState();
             MousePoint = MouseState.GetPositionPoint();
             IsMouseOnControl = !CheckPosition(MousePoint);
+
             switch (CurrentGameState)
             {
                 case GameState.Login:
@@ -156,6 +160,7 @@ namespace Bricklayer.Client
             }
             base.Update(gameTime);
         }
+
         /// <summary>
         /// This is called when the game should draw itself.
         /// </summary>
@@ -164,6 +169,7 @@ namespace Bricklayer.Client
         {
             base.Draw(gameTime);
         }
+
         /// <summary>
         /// Draws content behind the UI interface
         /// </summary>

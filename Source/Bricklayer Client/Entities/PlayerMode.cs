@@ -5,6 +5,9 @@ using System.Text;
 
 namespace Bricklayer.Client.Entities
 {
+    /// <summary>
+    /// Represents a player's mode
+    /// </summary>
     public enum PlayerMode : byte
     {
         Normal = 0,

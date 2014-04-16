@@ -8,6 +8,7 @@ using Color = Microsoft.Xna.Framework.Color;
 namespace Bricklayer.Client
 {
     /// <summary>
+    /// Loads textures without use of the content pipeline
     /// Based on http://jakepoz.com/jake_poznanski__background_load_xna.html 
     /// </summary>
     public class TextureLoader : IDisposable

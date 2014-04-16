@@ -1,4 +1,5 @@
-﻿using System;
+﻿#region Usings
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,6 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Bricklayer.Client.Entities;
 using Bricklayer.Client.Networking.Messages;
+#endregion
 
 namespace Bricklayer.Client.World
 {
@@ -228,7 +230,7 @@ namespace Bricklayer.Client.World
                 //If the block has changed, and we should send a message, send one
                 if (sendMessage && Tiles[x, y, z].Block.ID != block.ID)
                 {
-                    Game.NetManager.SendMessage(new BlockMessage(block, x, y, z));
+                    Game.NetManager.Send(new BlockMessage(block, x, y, z));
                 }
                 //Set the block
                 switch (block.Type)

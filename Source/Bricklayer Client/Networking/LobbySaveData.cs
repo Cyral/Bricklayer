@@ -10,12 +10,12 @@ namespace Bricklayer.Client.Networking
     /// </summary>
     public class LobbySaveData
     {
-        public string Name;
-        public string Description;
-        public int Online;
-        public double Rating;
-        public int Plays;
-        public int ID;
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public int Online { get; set; }
+        public double Rating { get; set; }
+        public int Plays { get; set; }
+        public int ID { get; set; }
 
         public LobbySaveData(string name, int id, string description, int players, int plays, double rating)
         {

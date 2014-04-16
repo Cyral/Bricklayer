@@ -85,7 +85,7 @@ namespace Bricklayer.Client.Interface
             btnReload.ToolTip.Text = "Refresh";
             btnReload.Click += new TomShane.Neoforce.Controls.EventHandler(delegate(object o, TomShane.Neoforce.Controls.EventArgs e)
             {
-                Game.NetManager.SendMessage(new RequestMessage(MessageTypes.Lobby));
+                Game.NetManager.Send(new RequestMessage(MessageTypes.Lobby));
             });
             grpLobby.Add(btnReload);
 
@@ -138,7 +138,7 @@ namespace Bricklayer.Client.Interface
             BottomPanel.Add(btnDisconnect);
 
             //When finished, request server send lobby data
-            Game.NetManager.SendMessage(new RequestMessage(MessageTypes.Lobby));
+            Game.NetManager.Send(new RequestMessage(MessageTypes.Lobby));
         }
         /// <summary>
         /// Joins a world
@@ -149,7 +149,7 @@ namespace Bricklayer.Client.Interface
             {
                 MainWindow.ScreenManager.SwitchScreen(new GameScreen(new Action((new Action(() =>
                 {
-                    Game.NetManager.SendMessage(new Bricklayer.Client.Networking.Messages.JoinRoomMessage(
+                    Game.NetManager.Send(new Bricklayer.Client.Networking.Messages.JoinRoomMessage(
                         (RoomListCtrl.Items[index] as LobbyDataControl).Data.ID));
                 })))));
             }

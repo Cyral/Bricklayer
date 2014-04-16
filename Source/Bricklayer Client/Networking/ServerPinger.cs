@@ -41,6 +41,7 @@ namespace Bricklayer.Client.Networking
 
                 //Read the first batch of the TcpServer response bytes
                 int bytes = stream.Read(data, 0, data.Length);
+
                 //TODO: This way of reading the recieved info is prone to errors
                 //Someone needs to find a way to use methods like ReadString(), ReadByte(), etc for this section
                 //This is a total hack and needs to be changed!

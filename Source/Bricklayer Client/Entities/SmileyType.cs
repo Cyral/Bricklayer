@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 namespace Bricklayer.Client.Entities
 {
     /// <summary>
-    /// Smiley Type
+    /// A type of expression that players will show
     /// </summary>
     public class SmileyType
     {
@@ -16,27 +16,31 @@ namespace Bricklayer.Client.Entities
         /// List of all block types
         /// </summary>
         public static List<SmileyType> SmileyList;
+
+        /// <summary>
+        /// The default smiley to be used if no other is specified
+        /// </summary>
         public static SmileyType Default { get { return SmileyType.Smile; }}
+
         /// <summary>
         /// Name of the smiley
         /// </summary>
         public string Name { get; private set; }
+
         /// <summary>
-        /// ID used for loading and saving
+        /// ID used for loading, saving, and networking
         /// </summary>
         public byte ID { get; private set; }
+
         /// <summary>
         /// The source rectangle the smiley is found in the sprite sheet when the player is flipped right
         /// </summary>
         public Rectangle RightSource { get; private set; }
+
         /// <summary>
         /// The source rectangle the smiley is found in the sprite sheet when the player is flipped left
         /// </summary>
         public Rectangle LeftSource { get; private set; }
-        /// <summary>
-        /// Texture
-        /// </summary>
-        public Texture2D Texture { get; set; }
 
         public static SmileyType Smile, Happy, Laughing, Tounge, Oh, Meh, Sad, Upset;
 
@@ -53,13 +57,15 @@ namespace Bricklayer.Client.Entities
             ID = (byte)SmileyList.Count();
             SmileyList.Add(this);
         }
+
         static SmileyType()
         {
             SmileyList = new List<SmileyType>();
             Init();
         }
+
         /// <summary>
-        /// Add all of the achivement configs here
+        /// Adds/creates all <c>SmileyType</c>s
         /// </summary>
         public static void Init()
         {
@@ -72,6 +78,10 @@ namespace Bricklayer.Client.Entities
             Sad = new SmileyType("Sad", Player.Height * 6);
             Upset = new SmileyType("Upset", Player.Height * 7);
         }
+
+        /// <summary>
+        /// Finds a <c>SmileyType</c> from a given ID number
+        /// </summary>
         public static SmileyType FromID(byte ID)
         {
             return SmileyList.First(x => x.ID == ID);

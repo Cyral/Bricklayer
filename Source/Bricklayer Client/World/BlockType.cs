@@ -9,7 +9,7 @@ using Bricklayer.Client.World;
 namespace Bricklayer.Client.World
 {
     /// <summary>
-    /// Block Type
+    /// A tile's block type (Ex: Dirt, Stone, etc)
     /// </summary>
     public class BlockType
     {
@@ -60,7 +60,7 @@ namespace Bricklayer.Client.World
         public static BlockType Empty, Default, Stone, Dirt, Grass, Wood, Brick, Slab, Glass, UpArrow, RightArrow, DownArrow, LeftArrow;
 
         /// <summary>
-        /// Creates a new instance of a blocktype
+        /// Creates a new instance of a <c>BlockType</c>
         /// </summary>
         /// <param name="name">Name of the block</param>
         public BlockType(string name, Layer layer, Rectangle source, BlockCollision collision = BlockCollision.Passable, TileType type = TileType.Default)
@@ -79,8 +79,9 @@ namespace Bricklayer.Client.World
             BlockList = new List<BlockType>();
             Init();
         }
+
         /// <summary>
-        /// Add all of the achivement configs here
+        /// Adds/Creates all of the block type's
         /// </summary>
         public static void Init()
         {
@@ -98,6 +99,10 @@ namespace Bricklayer.Client.World
             LeftArrow = new BlockType("Left Arrow", Layer.Foreground, new Rectangle(Tile.DrawWidth * 9, 0, Tile.DrawWidth, Tile.DrawHeight), BlockCollision.Gravity);
             RightArrow = new BlockType("Right Arrow", Layer.Foreground, new Rectangle(Tile.DrawWidth * 11, 0, Tile.DrawWidth, Tile.DrawHeight), BlockCollision.Gravity);
         }
+
+        /// <summary>
+        /// Finds a <c>BlockType</c> from it's ID
+        /// </summary>
         public static BlockType FromID(byte ID)
         {
             return BlockList.First(x => x.ID == ID);

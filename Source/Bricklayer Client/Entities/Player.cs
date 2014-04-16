@@ -179,7 +179,7 @@ namespace Bricklayer.Client.Entities
             {
                 if (HandleInput())
                 {
-                    Game.NetManager.SendMessage(new PlayerStateMessage(this));
+                    Game.NetManager.Send(new PlayerStateMessage(this));
                 }
             }
             ApplyPhysics(gameTime);
@@ -231,12 +231,12 @@ namespace Bricklayer.Client.Entities
                 if (Game.KeyState.IsKeyUp(Keys.Q) && Game.LastKeyState.IsKeyDown(Keys.Q))
                 {
                     Smiley = SmileyType.SmileyList[((Smiley.ID == 0 ? SmileyType.SmileyList.Count : Smiley.ID) - 1) % SmileyType.SmileyList.Count];
-                    Game.NetManager.SendMessage(new PlayerSmileyMessage(this, Smiley));
+                    Game.NetManager.Send(new PlayerSmileyMessage(this, Smiley));
                 }
                 else if (Game.KeyState.IsKeyUp(Keys.E) && Game.LastKeyState.IsKeyDown(Keys.E))
                 {
                     Smiley = SmileyType.SmileyList[(Smiley.ID + 1) % SmileyType.SmileyList.Count];
-                    Game.NetManager.SendMessage(new PlayerSmileyMessage(this, Smiley));
+                    Game.NetManager.Send(new PlayerSmileyMessage(this, Smiley));
                 }
 
                 if (Keys.G.IsKeyToggled(Game.KeyState, Game.LastKeyState))
@@ -247,7 +247,7 @@ namespace Bricklayer.Client.Entities
                     else if (Mode == PlayerMode.Normal)
                         Mode = PlayerMode.God;
                     if (oldMode != Mode)
-                        Game.NetManager.SendMessage(new PlayerModeMessage(this));
+                        Game.NetManager.Send(new PlayerModeMessage(this));
                 }
             }
 
@@ -723,7 +723,7 @@ namespace Bricklayer.Client.Entities
                         //Send message we are now jumping
                         PlayerStateMessage msg = new PlayerStateMessage(this);
                         msg.IsJumping = true;
-                        Game.NetManager.SendMessage(msg);
+                        Game.NetManager.Send(msg);
                     }
                     JumpTime += (float)gameTime.ElapsedGameTime.TotalSeconds; //Incriment jump timer
                 }
@@ -741,7 +741,7 @@ namespace Bricklayer.Client.Entities
                         //Tell others we are falling now
                         PlayerStateMessage msg = new PlayerStateMessage(this);
                         msg.IsJumping = false;
-                        Game.NetManager.SendMessage(msg);
+                        Game.NetManager.Send(msg);
                     }
                     JumpTime = 0.0f;   // Reached the apex of the jump
                     IsJumping = false;
@@ -751,7 +751,7 @@ namespace Bricklayer.Client.Entities
             {
                 //Tell others we have landed
                 if (JumpTime > 0 && IsMine)
-                    Game.NetManager.SendMessage(new PlayerStateMessage(this));
+                    Game.NetManager.Send(new PlayerStateMessage(this));
                 // Continues not jumping or cancels a jump in progress
                 JumpTime = 0.0f;
             }

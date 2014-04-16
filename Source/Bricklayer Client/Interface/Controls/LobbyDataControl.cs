@@ -7,7 +7,7 @@ using TomShane.Neoforce.Controls;
 namespace Bricklayer.Client.Interface
 {
     /// <summary>
-    /// Used for displaying a room's name, rating, online, etc, in the lobby 
+    /// A control for displaying a room's name, rating, online, etc, in the lobby 
     /// </summary>
     public class LobbyDataControl : Control
     {

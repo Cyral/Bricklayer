@@ -135,7 +135,5 @@ namespace Bricklayer.Client
             return (!last.IsKeyDown(key) && current.IsKeyDown(key));
         }
         #endregion
-
-
     }
 }

@@ -12,11 +12,13 @@ namespace Bricklayer.Client.World
     /// </summary>
     public class Tile
     {
+        //Constants
         public const int Width = 16, Height = 16, DrawHeight = 20, DrawWidth = 20;
         public const int BackgroundIndex = 0, ForegroundIndex = 1;
-        //Color that backgrounds shoud be darkened with
-        private static Color backgroundTint = new Color(160, 160, 160); 
 
+        private static Color backgroundTint = new Color(160, 160, 160); //Color that backgrounds shoud be darkened with
+
+        #region Properties
         /// <summary>
         /// The type of block occupying the tile
         /// </summary>
@@ -31,6 +33,7 @@ namespace Bricklayer.Client.World
         /// The layer (foreground or background) the block occupies
         /// </summary>
         public Layer Layer { get { return block.Layer; } }
+        #endregion
 
         /// <summary>
         /// Sets or creates a new block
@@ -39,6 +42,7 @@ namespace Bricklayer.Client.World
         {
             Block = block;
         }
+
         /// <summary>
         /// Handles updating the tile's logic
         /// </summary>
@@ -46,6 +50,7 @@ namespace Bricklayer.Client.World
         {
             //No default behavior
         }
+
         /// <summary>
         /// Handles drawing of a single tile
         /// </summary>
@@ -60,10 +65,12 @@ namespace Bricklayer.Client.World
                 drawPosition.X = (x * Tile.Width);
                 drawPosition.Y = ((y * Tile.Height) - (Tile.DrawHeight - Tile.Height)) + 1;
                 Rectangle source = Block.Source;
-                if (flat)
+
+                if (flat) //The flat flag is for only drawing the 2D face of the block, and not the top + right 3D edges
                 {
                     if (Block.Collision != BlockCollision.Impassable)
                         return; //Don't draw non solid blocks above the player 
+
                     source.Y += 4;
                     source.Width = Tile.Width;
                     source.Height = Tile.Height;
@@ -92,6 +99,7 @@ namespace Bricklayer.Client.World
                 }
             }
         }
+
         public bool Equals(Tile compareTo)
         {
             return Block.ID == compareTo.Block.ID;

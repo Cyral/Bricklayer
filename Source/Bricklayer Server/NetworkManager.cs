@@ -216,7 +216,7 @@ namespace Bricklayer.Server
         }
 
         /// <summary>
-        /// Disposes the connection and disconnects from a server
+        /// Disposes the connection and shuts down the server
         /// </summary>
         /// <param name="disposing">Disconnect?</param>
         private void Dispose(bool disposing)

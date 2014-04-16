@@ -14,9 +14,9 @@ namespace Bricklayer.Client.Interface
     /// </summary>
     public partial class MainWindow : Window
     {
-        public int TotalFrames { get; set; }
-        public int FPS { get; private set; }
-        public TimeSpan ElapsedTime { get; private set; }
+        internal int TotalFrames { get; set; }
+        internal int FPS { get; private set; }
+        internal TimeSpan ElapsedTime { get; private set; }
 
         protected override void Update(GameTime gameTime)
         {
@@ -24,21 +24,21 @@ namespace Bricklayer.Client.Interface
             {
                 case GameState.Login:
                     {
-                        GameScreen screen = (ScreenManager.Current as GameScreen);
+                        GameScreen screen = (ScreenManager.Current as GameScreen); //Get screen
                         break;
                     }
                 case GameState.Game:
                     {
-                        GameScreen screen = (ScreenManager.Current as GameScreen);
+                        GameScreen screen = (ScreenManager.Current as GameScreen); //Get screen
                         //Fps Counter
                         ElapsedTime += gameTime.ElapsedGameTime;
-
                         if (ElapsedTime > TimeSpan.FromSeconds(1))
                         {
                             ElapsedTime -= TimeSpan.FromSeconds(1);
                             FPS = TotalFrames;
                             TotalFrames = 0;
                         }
+
                         //Set Statusbar
                         StringBuilder sb = new StringBuilder();
                         sb.Append("Status: " + Game.NetManager.GetConnectionStatus().ToString());

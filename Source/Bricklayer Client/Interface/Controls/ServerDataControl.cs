@@ -7,7 +7,7 @@ using TomShane.Neoforce.Controls;
 namespace Bricklayer.Client.Interface
 {
     /// <summary>
-    /// Used for displaying a servers name, players online, motd, etc in the serverlist
+    /// A control for displaying a servers name, players online, motd, etc in the serverlist
     /// </summary>
     public class ServerDataControl : Control
     {

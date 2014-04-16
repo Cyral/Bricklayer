@@ -78,7 +78,7 @@ namespace Bricklayer.Client.Interface
         {
             //                Game.NetManager.SendMessage(new Bricklayer.Client.Networking.Messages.JoinRoomMessage(worldName));
             MainWindow.ScreenManager.SwitchScreen(new GameScreen(new Action((new Action(() =>  {
-                Game.NetManager.SendMessage(new Bricklayer.Client.Networking.Messages.CreateRoomMessage(txtName.Text, txtDescription.Text));
+                Game.NetManager.Send(new Bricklayer.Client.Networking.Messages.CreateRoomMessage(txtName.Text, txtDescription.Text));
             })))));
             Close();
         }

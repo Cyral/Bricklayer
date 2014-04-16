@@ -9,6 +9,9 @@ using Microsoft.Xna.Framework;
 
 namespace Bricklayer.Client
 {
+    /// <summary>
+    /// Represents a package containing textures, files, etc that can be loaded
+    /// </summary>
     public class ContentPack
     {
         /// <summary>

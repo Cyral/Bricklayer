@@ -10,9 +10,9 @@ namespace Bricklayer.Client.Networking
     /// </summary>
     public class ServerSaveData
     {
-        public string Name;
-        public string IP;
-        public int Port;
+        public string Name { get; set; }
+        public string IP { get; set; }
+        public int Port { get; set; }
 
         public ServerSaveData(string name, string ip, int port)
         {
