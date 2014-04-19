@@ -143,6 +143,10 @@
       <Project>{26f0f6fd-a386-4054-bc96-a3f17f9f8d59}</Project>
       <Name>Bricklayer Client</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Bricklayer Plugin API\Bricklayer Plugin API.csproj">
+      <Project>{e6055500-9c8c-436f-889b-27893779d3b9}</Project>
+      <Name>Bricklayer Plugin API</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Icon.ico" />

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Bricklayer.API;
 using Bricklayer.Client.Entities;
 using Bricklayer.Client.Networking.Messages;
 using Bricklayer.Client.World;
@@ -13,7 +14,7 @@ namespace Bricklayer.Server
     /// <summary>
     /// The main server entry point
     /// </summary>
-    public class Server
+    public class Server : IPluginHost
     {
         #region Properties
         /// <summary>
@@ -40,6 +41,10 @@ namespace Bricklayer.Server
         /// Lookup of remote unique identifiers to login data
         /// </summary>
         public static Dictionary<long, LoginMessage> Logins = new Dictionary<long, LoginMessage>();
+        /// <summary>
+        /// List of currently loaded plugins
+        /// </summary>
+        public List<IPlugin> Plugins { get; set; }
         #endregion
 
         #region Fields
@@ -55,8 +60,9 @@ namespace Bricklayer.Server
             //Write a welcome message
             Program.Write("Bricklayer ", ConsoleColor.Yellow);
             Program.WriteLine("Server started on port " + Config.Port + " with " + Config.MaxPlayers + " max players.");
-            Program.WriteLine("Waiting for new connections and updating world state...");
             Program.WriteBreak();
+
+            LoadPlugins();
 
             MsgHandler = new MessageHandler();
             NetManager = new NetworkManager(); //Create Networkmanager to handle networking, then start the server
@@ -70,8 +76,35 @@ namespace Bricklayer.Server
             Maps = new List<Map>();
             CreateMap("Main World", "A large world for anyone to play and\nbuild! [color:SkyBlue]--Join Now!--[/color]");
 
+            Program.WriteLine("Waiting for new connections and updating world state...\n");
             MsgHandler.ProcessNetworkMessages(); //Process messages for the rest of eternity
         }
+
+        /// <summary>
+        /// Register a plugin by adding it to the plugin list and telling it to start
+        /// </summary>
+        /// <param name="plugin">Plugin to register</param>
+        public void RegisterPlugin(IPlugin plugin)
+        {
+            Plugins.Add(plugin);
+            plugin.Load();
+        }
+
+        /// <summary>
+        /// Load plugins
+        /// </summary>
+        public void LoadPlugins()
+        {
+            Program.WriteLine("Loading plugins...", ConsoleColor.Green);
+
+            //Load plugins
+            Plugins = new List<IPlugin>();
+            IO.LoadPlugins(this);
+
+            Program.WriteLine(string.Format("{0} plugin{1} loaded.\n", Plugins.Count, Plugins.Count == 1 ? string.Empty : "s"), ConsoleColor.Green);
+        }
+
+
 
         #region Utilities
         /// <summary>
@@ -126,5 +159,6 @@ namespace Bricklayer.Server
             return 0;
         }
         #endregion
+
     }
 }

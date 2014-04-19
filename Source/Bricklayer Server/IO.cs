@@ -1,8 +1,10 @@
 ﻿#region Usings
 using System;
 using System.IO;
+using System.Linq;
+using System.Reflection;
+using Bricklayer.API;
 using Newtonsoft.Json;
-
 #endregion
 
 namespace Bricklayer.Server
@@ -71,6 +73,64 @@ namespace Bricklayer.Server
                 throw; //TODO: Add some form of handling
             }
         }
+
+        public static void LoadPlugins(Server server)
+        {
+            string[] files = Directory.GetFiles(Path.Combine(ServerDirectory, "Plugins"), "*.dll");
+            foreach (var file in files)
+            {
+                LoadPlugin(server, Path.Combine(Environment.CurrentDirectory, file));
+            }
+         }
+
+        private static void LoadPlugin(Server server, string file)
+        {
+            //Verify file name
+            if (!File.Exists(file) || !file.EndsWith(".dll", true, null))
+                return;
+
+            Assembly asm = null;
+
+            //Load file
+            try
+            {
+                asm = Assembly.LoadFile(file);
+            }
+            catch (Exception)
+            {
+                Program.WriteLine("Unable to load " + file, ConsoleColor.Red);
+            }
+
+            Type pluginInfo = null;
+            try
+            {
+                Type[] types = asm.GetTypes();
+                Assembly api = AppDomain.CurrentDomain.GetAssemblies().Single(x => x.GetName().Name.Equals("Bricklayer Plugin API"));
+                Type type = api.GetType("Bricklayer.API.IPlugin");
+
+                foreach (var t in types)
+                {
+                    if (type.IsAssignableFrom((Type)t))
+                    {
+                        pluginInfo = t;
+                        break;
+                    }
+                }
+
+                //Create instance of the plugin and add it to the server
+                if (pluginInfo != null)
+                {
+                    Object instance = Activator.CreateInstance(pluginInfo);
+                    IPlugin plugin = (IPlugin)instance;
+                    server.RegisterPlugin(plugin);
+                }
+            }
+            catch (Exception ex)
+            {
+                Program.WriteLine(ex.ToString(), ConsoleColor.Red);
+            }
+        }
         #endregion
+
     }
 }
