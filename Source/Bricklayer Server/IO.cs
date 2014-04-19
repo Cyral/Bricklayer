@@ -1,5 +1,6 @@
 ﻿#region Usings
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -73,13 +74,34 @@ namespace Bricklayer.Server
                 throw; //TODO: Add some form of handling
             }
         }
+        /// <summary>
+        /// Gets an MD5 of a given file
+        /// </summary>
+        public static string GetFileMD5(string file)
+        {
+            using (var md5 = System.Security.Cryptography.MD5.Create())
+                using (var stream = File.OpenRead(file))
+                    return BitConverter.ToString(md5.ComputeHash(stream)).Replace("-", "").ToLower();
+        }
 
         public static void LoadPlugins(Server server)
         {
             string[] files = Directory.GetFiles(Path.Combine(ServerDirectory, "Plugins"), "*.dll");
+
+            List<string> loadedFiles = new List<String>(); //Temporary check for loaded files
             foreach (var file in files)
             {
-                LoadPlugin(server, Path.Combine(Environment.CurrentDirectory, file));
+                //Don't load duplicate files
+                string md5 = GetFileMD5(file);
+                if (!loadedFiles.Contains(md5))
+                {
+                    LoadPlugin(server, Path.Combine(Environment.CurrentDirectory, file));
+                    loadedFiles.Add(md5);
+                }
+                else
+                {
+                    Program.WriteLine(string.Format("Duplicate plugin {0} ({1}) not loaded", Path.GetFileName(file), md5.Substring(0, 7)), ConsoleColor.Red);
+                }
             }
          }
 
