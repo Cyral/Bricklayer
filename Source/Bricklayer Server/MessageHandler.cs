@@ -180,7 +180,6 @@ namespace Bricklayer.Server
                         PlayerStateMessage state = new PlayerStateMessage(inc);
                         state.ID = sender.ID;
                         //Clamp position in bounds
-                        Console.WriteLine(state.Position.ToString());
                         state.Position = new Point((int)MathHelper.Clamp(state.Position.X, Tile.Width, (map.Width * Tile.Width) - (Tile.Width * 2)), (int)MathHelper.Clamp(state.Position.Y, Tile.Height, (map.Height * Tile.Height) - (Tile.Height * 2)));
                         sender.SimulationState.Position = state.Position.ToVector2();
                         sender.SimulationState.Velocity = state.Velocity.ToVector2();
