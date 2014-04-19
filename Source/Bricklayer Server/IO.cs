@@ -105,12 +105,11 @@ namespace Bricklayer.Server
             try
             {
                 Type[] types = asm.GetTypes();
-                Assembly api = AppDomain.CurrentDomain.GetAssemblies().Single(x => x.GetName().Name.Equals("Bricklayer Plugin API"));
-                Type type = api.GetType("Bricklayer.API.IPlugin");
+                Type pluginType = typeof(IPlugin);
 
                 foreach (var t in types)
                 {
-                    if (type.IsAssignableFrom((Type)t))
+                    if (pluginType.IsAssignableFrom((Type)t))
                     {
                         pluginInfo = t;
                         break;
