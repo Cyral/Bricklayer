@@ -17,27 +17,26 @@ namespace Bricklayer.Client.Entities
         public const int Width = 16, Height = 16;
 
         //Physics
-        float MoveSpeed = 35.0f;
-        float GodMoveSpeed = 10f;
-        float GroundDragFactor = 0.95f;
-        float AirDragFactor = 0.95f;
-        float MoveSlowDownFactor = .15f;
-        float GodMoveSlowDownFactor = .08f;
-
-        float MaxJumpTime = 0.23f;
-        float JumpLaunchVelocity = -3500.0f;
-        float GravityAcceleration = 1000.0f;
-        float MaxFallSpeed = 450.0f;
-        float JumpControlPower = 0.14f;
-
-        float MaxVelocity = 750;
-        float MaxGodVelocity = 500;
+        private const float MoveSpeed = 35.0f; //The factor to multiply movement by
+        private const float GodMoveSpeed = 10f; //The factor to multiply movement by
+        private const float GroundDragFactor = 0.94f; //The amount of drag to multiply velocity by
+        private const float AirDragFactor = 0.94f; //The amount of drag to multiply velocity by
+        private const float MoveSlowDownFactor = .15f; //The factor to slow down the player after they have stopped
+        private const float GodMoveSlowDownFactor = .08f; //The factor to slow down the player after they have stopped
+        private const float MaxJumpTime = 0.23f; //The maximum amount of time a player can jump for
+        private const float JumpLaunchVelocity = -3500.0f; //Velocity applied on jump to lift off
+        private const float GravityAcceleration = 1000.0f;
+        private const float MaxFallSpeed = 450.0f; //Maximum fall speed
+        private const float JumpControlPower = 0.14f;
+        private const float MaxVelocity = 700; //Maximum velocity
+        private const float MaxGodVelocity = 600; //Maximum velocity
+        private const float GodDirectionChangeVelocitySuppression = 2.5f; //Factor to divide a player's velocity when switching directions in godmode
 
         //Entity States
-        public EntityState SimulationState;
-        public EntityState DisplayState;
-        public EntityState PreviousState;
-        public PlayerMode Mode;
+        public EntityState SimulationState; //Current internal state (What game sees)
+        public EntityState DisplayState; //Current display state (What player sees)
+        public EntityState PreviousState; //Last internal state
+        public PlayerMode Mode; //Godmode or Regular?
         public FacingDirection Direction;
         public GravityDirection GravityDirection;
         public GravityDirection JumpDirection;
@@ -88,7 +87,6 @@ namespace Bricklayer.Client.Entities
         public Dictionary<Point, float> LastColors = new Dictionary<Point, float>();
         
         private float tagAlpha = 0; //Alpha color value for nametags
-        private double lastPositionsUpdate;
 
         public Player(Map map, Vector2 position, string name, long RUI, int ID)
         {
@@ -376,7 +374,7 @@ namespace Bricklayer.Client.Entities
                     if (Game.LastKeyState.IsKeyUp(Keys.A))
                     {
                         velocityChanged = true;
-                        SimulationState.Velocity.X = 0;
+                        SimulationState.Velocity.X /= GodDirectionChangeVelocitySuppression;
                     }
                 }
                 if (Game.KeyState.IsKeyUp(Keys.A) && Game.LastKeyState.IsKeyDown(Keys.A))
@@ -391,7 +389,7 @@ namespace Bricklayer.Client.Entities
                     if (Game.LastKeyState.IsKeyUp(Keys.D))
                     {
                         velocityChanged = true;
-                        SimulationState.Velocity.X = 0;
+                        SimulationState.Velocity.X /= GodDirectionChangeVelocitySuppression;
                     }
                 }
                 if (Game.KeyState.IsKeyUp(Keys.D) && Game.LastKeyState.IsKeyDown(Keys.D))
@@ -406,7 +404,7 @@ namespace Bricklayer.Client.Entities
                     if (Game.LastKeyState.IsKeyUp(Keys.W))
                     {
                         velocityChanged = true;
-                        SimulationState.Velocity.Y = 0;
+                        SimulationState.Velocity.Y /= GodDirectionChangeVelocitySuppression;
                     }
                 }
                 if (Game.KeyState.IsKeyUp(Keys.W) && Game.LastKeyState.IsKeyDown(Keys.W))
@@ -421,7 +419,7 @@ namespace Bricklayer.Client.Entities
                     if (Game.LastKeyState.IsKeyUp(Keys.S))
                     {
                         velocityChanged = true;
-                        SimulationState.Velocity.Y = 0;
+                        SimulationState.Velocity.Y /= GodDirectionChangeVelocitySuppression;
                     }
                 }
                 if (Game.KeyState.IsKeyUp(Keys.S) && Game.LastKeyState.IsKeyDown(Keys.S))
@@ -581,6 +579,11 @@ namespace Bricklayer.Client.Entities
                 SimulationState.Position += change;
                 SimulationState.Position = new Vector2(SimulationState.Position.X, (float)Math.Round(SimulationState.Position.Y));
 
+                //Stop velocity if player hits edge
+                if (SimulationState.Position.X < Tile.Width || SimulationState.Position.X > (Map.Width * Tile.Width) - (Tile.Width * 2))
+                    SimulationState.Velocity.X = 0;
+                if (SimulationState.Position.Y < Tile.Height || SimulationState.Position.Y > (Map.Height * Tile.Height) - (Tile.Height * 2))
+                    SimulationState.Velocity.Y = 0;
                 //Clamp position in bounds
                 SimulationState.Position.X = MathHelper.Clamp(SimulationState.Position.X, Tile.Width, (Map.Width * Tile.Width) - (Tile.Width * 2));
                 SimulationState.Position.Y = MathHelper.Clamp(SimulationState.Position.Y, Tile.Height, (Map.Height * Tile.Height) - (Tile.Height * 2));
