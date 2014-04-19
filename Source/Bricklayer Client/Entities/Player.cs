@@ -22,15 +22,20 @@ namespace Bricklayer.Client.Entities
         private const float GroundDragFactor = 0.94f; //The amount of drag to multiply velocity by
         private const float AirDragFactor = 0.94f; //The amount of drag to multiply velocity by
         private const float MoveSlowDownFactor = .15f; //The factor to slow down the player after they have stopped
-        private const float GodMoveSlowDownFactor = .08f; //The factor to slow down the player after they have stopped
+        private const float GodMoveSlowDownFactor = .1f; //The factor to slow down the player after they have stopped
         private const float MaxJumpTime = 0.23f; //The maximum amount of time a player can jump for
         private const float JumpLaunchVelocity = -3500.0f; //Velocity applied on jump to lift off
         private const float GravityAcceleration = 1000.0f;
         private const float MaxFallSpeed = 450.0f; //Maximum fall speed
         private const float JumpControlPower = 0.14f;
         private const float MaxVelocity = 700; //Maximum velocity
-        private const float MaxGodVelocity = 600; //Maximum velocity
-        private const float GodDirectionChangeVelocitySuppression = 2.5f; //Factor to divide a player's velocity when switching directions in godmode
+        private const float MaxGodVelocity = 550; //Maximum velocity
+
+        //Input settings
+        private Keys[] JumpKeys = new Keys[3] { Keys.Space, Keys.Up, Keys.W };
+        private Keys[] LeftKeys = new Keys[2] { Keys.Left, Keys.A };
+        private Keys[] RightKeys = new Keys[2] { Keys.Right, Keys.D };
+        private Keys[] DownKeys = new Keys[2] { Keys.Down, Keys.S };
 
         //Entity States
         public EntityState SimulationState; //Current internal state (What game sees)
@@ -137,7 +142,7 @@ namespace Bricklayer.Client.Entities
         private void DrawTag(SpriteBatch spriteBatch, float elapsed)
         {
             //Draw Tag and calculate it's color
-            bool showTag = Game.KeyState.IsKeyDown(Keys.LeftAlt);
+            bool showTag = Game.Input.AnyKeysDown(Keys.LeftAlt, Keys.RightAlt);
             if (IdleTime > 1.5f)
                 tagAlpha += elapsed * 2;
             else
@@ -221,23 +226,23 @@ namespace Bricklayer.Client.Entities
         /// <returns>True if the movement has changed, false otherwise</returns>
         private bool HandleInput()
         {
-            bool velocityChanged = false;
+            bool sendNewState = false;
 
             if (!(Bricklayer.Client.Interface.MainWindow.ScreenManager.Current as Bricklayer.Client.Interface.GameScreen).ChatBox.TextBox.Focused && !Game.IsMouseOnControl)
             {
                 //Change smilies
-                if (Game.KeyState.IsKeyUp(Keys.Q) && Game.LastKeyState.IsKeyDown(Keys.Q))
+                if (Game.Input.WasKeyPressed(Keys.Q))
                 {
                     Smiley = SmileyType.SmileyList[((Smiley.ID == 0 ? SmileyType.SmileyList.Count : Smiley.ID) - 1) % SmileyType.SmileyList.Count];
                     Game.NetManager.Send(new PlayerSmileyMessage(this, Smiley));
                 }
-                else if (Game.KeyState.IsKeyUp(Keys.E) && Game.LastKeyState.IsKeyDown(Keys.E))
+                else if (Game.Input.WasKeyPressed(Keys.E))
                 {
                     Smiley = SmileyType.SmileyList[(Smiley.ID + 1) % SmileyType.SmileyList.Count];
                     Game.NetManager.Send(new PlayerSmileyMessage(this, Smiley));
                 }
 
-                if (Keys.G.IsKeyToggled(Game.KeyState, Game.LastKeyState))
+                if (Game.Input.WasKeyPressed(Keys.G))
                 {
                     PlayerMode oldMode = Mode;
                     if (Mode == PlayerMode.God)
@@ -272,85 +277,72 @@ namespace Bricklayer.Client.Entities
                 //If jump key pressed/released or release/pressed, send message that the velocity has changed
                 //If the key is down, make sure we are jumping
                 if (GravityDirection == GravityDirection.Default || GravityDirection == GravityDirection.Down || GravityDirection == GravityDirection.Up)
-                    IsJumping = Game.KeyState.IsKeyDown(Keys.W) || Game.KeyState.IsKeyDown(Keys.Space) || Game.KeyState.IsKeyDown(Keys.Up);
+                    IsJumping = Game.Input.AnyKeysDown(JumpKeys);
                 else if (GravityDirection == GravityDirection.Left) //Different keys for different gravity arrows
-                    IsJumping = Game.KeyState.IsKeyDown(Keys.D) || Game.KeyState.IsKeyDown(Keys.Space) || Game.KeyState.IsKeyDown(Keys.Right);
+                    IsJumping = Game.Input.IsKeyDown(Keys.D) || Game.Input.IsKeyDown(Keys.Space) || Game.Input.IsKeyDown(Keys.Right);
                 else if (GravityDirection == GravityDirection.Right)
-                    IsJumping = Game.KeyState.IsKeyDown(Keys.A) || Game.KeyState.IsKeyDown(Keys.Space) || Game.KeyState.IsKeyDown(Keys.Left);
+                    IsJumping = Game.Input.IsKeyDown(Keys.A) || Game.Input.IsKeyDown(Keys.Space) || Game.Input.IsKeyDown(Keys.Left);
 
                 //Move right
-                if (Game.KeyState.IsKeyDown(Keys.Right) || Game.KeyState.IsKeyDown(Keys.D))
+                if (Game.Input.AnyKeysDown(RightKeys))
                 {
                     SimulationState.Movement = new Vector2(1, 0);
-                    if (Game.LastKeyState.IsKeyUp(Keys.Right) || Game.LastKeyState.IsKeyUp(Keys.D))
-                    {
-                        velocityChanged = true;
-                    }
+                    if (Game.Input.WasAllKeysUp(RightKeys))
+                        sendNewState = true;
                 }
-                if ((Game.KeyState.IsKeyUp(Keys.Right) && Game.LastKeyState.IsKeyDown(Keys.Right)) ||
-                    (Game.KeyState.IsKeyUp(Keys.D) && Game.LastKeyState.IsKeyDown(Keys.D)))
+                if (Game.Input.AnyKeysPressed(RightKeys))
                 {
                     SimulationState.Movement = new Vector2(0, SimulationState.Movement.Y);
-                    velocityChanged = true;
+                    sendNewState = true;
                 }
 
 
                 //Move left
-                if (Game.KeyState.IsKeyDown(Keys.Left) || Game.KeyState.IsKeyDown(Keys.A))
+                if (Game.Input.AnyKeysDown(LeftKeys))
                 {
                     SimulationState.Movement = new Vector2(-1, 0);
-                    if (Game.LastKeyState.IsKeyUp(Keys.Left) || Game.LastKeyState.IsKeyUp(Keys.A))
-                    {
-                        velocityChanged = true;
-                    }
+                    if (Game.Input.WasAllKeysUp(LeftKeys)) sendNewState = true;
                 }
-                if ((Game.KeyState.IsKeyUp(Keys.Left) && Game.LastKeyState.IsKeyDown(Keys.Left)) ||
-                    (Game.KeyState.IsKeyUp(Keys.A) && Game.LastKeyState.IsKeyDown(Keys.A)))
+                if (Game.Input.AnyKeysPressed(LeftKeys))
                 {
                     SimulationState.Movement = new Vector2(0, SimulationState.Movement.Y);
-                    velocityChanged = true;
+                    sendNewState = true;
                 }
+
 
                 if (GravityDirection == GravityDirection.Left || GravityDirection == GravityDirection.Right)
                 {
                     //Move up
-                    if (Game.KeyState.IsKeyDown(Keys.Up) || Game.KeyState.IsKeyDown(Keys.W))
+                    if (Game.Input.AnyKeysDown(JumpKeys))
                     {
                         SimulationState.Movement = new Vector2(0, -1);
-                        if (Game.LastKeyState.IsKeyUp(Keys.Up) || Game.LastKeyState.IsKeyUp(Keys.W))
-                        {
-                            velocityChanged = true;
-                        }
+                        if (Game.Input.WasAllKeysUp(JumpKeys)) sendNewState = true;
                     }
-                    if ((Game.KeyState.IsKeyUp(Keys.Up) && Game.LastKeyState.IsKeyDown(Keys.Up)) ||
-                        (Game.KeyState.IsKeyUp(Keys.W) && Game.LastKeyState.IsKeyDown(Keys.W)))
+                    if (Game.Input.AnyKeysPressed(JumpKeys))
                     {
                         SimulationState.Movement = new Vector2(SimulationState.Movement.X, 0);
-                        velocityChanged = true;
+                        sendNewState = true;
                     }
+
                     //Move Down
-                    if (Game.KeyState.IsKeyDown(Keys.Down) || Game.KeyState.IsKeyDown(Keys.S))
+                    if (Game.Input.AnyKeysDown(DownKeys))
                     {
                         SimulationState.Movement = new Vector2(0, 1);
-                        if (Game.LastKeyState.IsKeyUp(Keys.Down) || Game.LastKeyState.IsKeyUp(Keys.S))
-                        {
-                            velocityChanged = true;
-                        }
+                        if (Game.Input.WasAllKeysUp(DownKeys)) sendNewState = true;
                     }
-                    if ((Game.KeyState.IsKeyUp(Keys.Down) && Game.LastKeyState.IsKeyDown(Keys.Down)) ||
-                        (Game.KeyState.IsKeyUp(Keys.S) && Game.LastKeyState.IsKeyDown(Keys.S)))
+                    if (Game.Input.AnyKeysPressed(DownKeys))
                     {
                         SimulationState.Movement = new Vector2(SimulationState.Movement.X, 0);
-                        velocityChanged = true;
+                        sendNewState = true;
                     }
                 }
 
                 //Fixes a bug caused by quickly switching directions
-                if ((Game.LastKeyState.IsKeyDown(Keys.Left) && Game.KeyState.IsKeyDown(Keys.Right)) ||
-                    (Game.LastKeyState.IsKeyDown(Keys.A) && Game.KeyState.IsKeyDown(Keys.D)))
+                if ((Game.Input.WasKeyDown(Keys.Left) && Game.Input.WasKeyDown(Keys.Right)) ||
+                    (Game.Input.WasKeyDown(Keys.A) && Game.Input.WasKeyDown(Keys.D)))
                 {
                     SimulationState.Movement = new Vector2(1, 0);
-                    velocityChanged = true;
+                    sendNewState = true;
                 }
             }
             else if (Mode == PlayerMode.God) //Godmode flying
@@ -368,80 +360,51 @@ namespace Bricklayer.Client.Entities
                 SimulationState.Movement = Vector2.Zero;
 
                 //Move left
-                if (Game.KeyState.IsKeyDown(Keys.A))
+                if (Game.Input.AnyKeysDown(LeftKeys))
                 {
                     SimulationState.Movement = new Vector2(-1, SimulationState.Movement.Y);
-                    if (Game.LastKeyState.IsKeyUp(Keys.A))
-                    {
-                        velocityChanged = true;
-                        SimulationState.Velocity.X /= GodDirectionChangeVelocitySuppression;
-                    }
+                    if (Game.Input.WasAllKeysUp(LeftKeys)) sendNewState = true;
                 }
-                if (Game.KeyState.IsKeyUp(Keys.A) && Game.LastKeyState.IsKeyDown(Keys.A))
+                if (Game.Input.AnyKeysPressed(LeftKeys))
                 {
                     SimulationState.Movement = new Vector2(0, SimulationState.Movement.Y);
-                    velocityChanged = true;
+                    sendNewState = true;
                 }
                 //Move right
-                if (Game.KeyState.IsKeyDown(Keys.D))
+                if (Game.Input.AnyKeysDown(RightKeys))
                 {
                     SimulationState.Movement = new Vector2(1, SimulationState.Movement.Y);
-                    if (Game.LastKeyState.IsKeyUp(Keys.D))
-                    {
-                        velocityChanged = true;
-                        SimulationState.Velocity.X /= GodDirectionChangeVelocitySuppression;
-                    }
+                    if (Game.Input.WasAllKeysUp(RightKeys)) sendNewState = true;
                 }
-                if (Game.KeyState.IsKeyUp(Keys.D) && Game.LastKeyState.IsKeyDown(Keys.D))
+                if (Game.Input.AnyKeysPressed(RightKeys))
                 {
                     SimulationState.Movement = new Vector2(0, SimulationState.Movement.Y);
-                    velocityChanged = true;
+                    sendNewState = true;
                 }
                 //Move Up
-                if (Game.KeyState.IsKeyDown(Keys.W))
+                if (Game.Input.AnyKeysDown(JumpKeys))
                 {
                     SimulationState.Movement = new Vector2(SimulationState.Movement.X, -1);
-                    if (Game.LastKeyState.IsKeyUp(Keys.W))
-                    {
-                        velocityChanged = true;
-                        SimulationState.Velocity.Y /= GodDirectionChangeVelocitySuppression;
-                    }
+                    if (Game.Input.WasAllKeysUp(JumpKeys)) sendNewState = true;
                 }
-                if (Game.KeyState.IsKeyUp(Keys.W) && Game.LastKeyState.IsKeyDown(Keys.W))
+                if (Game.Input.AnyKeysPressed(JumpKeys))
                 {
                     SimulationState.Movement = new Vector2(SimulationState.Movement.X, 0);
-                    velocityChanged = true;
+                    sendNewState = true;
                 }
                 //Move Down
-                if (Game.KeyState.IsKeyDown(Keys.S))
+                if (Game.Input.AnyKeysDown(DownKeys))
                 {
                     SimulationState.Movement = new Vector2(SimulationState.Movement.X, 1);
-                    if (Game.LastKeyState.IsKeyUp(Keys.S))
-                    {
-                        velocityChanged = true;
-                        SimulationState.Velocity.Y /= GodDirectionChangeVelocitySuppression;
-                    }
+                    if (Game.Input.WasAllKeysUp(DownKeys)) sendNewState = true;
                 }
-                if (Game.KeyState.IsKeyUp(Keys.S) && Game.LastKeyState.IsKeyDown(Keys.S))
+                if (Game.Input.AnyKeysPressed(DownKeys))
                 {
                     SimulationState.Movement = new Vector2(SimulationState.Movement.X, 0);
-                    velocityChanged = true;
-                }
-                //Fixes a bug caused by quickly switching directions
-                if (Game.LastKeyState.IsKeyDown(Keys.A) && Game.KeyState.IsKeyDown(Keys.D))
-                {
-                    SimulationState.Movement = new Vector2(1, SimulationState.Movement.Y);
-                    velocityChanged = true;
-                }
-                //Fixes a bug caused by quickly switching directions
-                if (Game.LastKeyState.IsKeyDown(Keys.W) && Game.KeyState.IsKeyDown(Keys.S))
-                {
-                    SimulationState.Movement = new Vector2(SimulationState.Movement.X, 11);
-                    velocityChanged = true;
+                    sendNewState = true;
                 }
             }
-
-            return velocityChanged;
+            return sendNewState;
         }
         /// <summary>
         /// Apply client-side physics to the character, calculate velocity from movement and gravity, handle collisions

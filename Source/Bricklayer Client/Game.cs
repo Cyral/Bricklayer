@@ -51,9 +51,7 @@ namespace Bricklayer.Client
         public static int MyHue;
 
         //Input
-        public static MouseState MouseState, LastMouseState;
-        public static KeyboardState KeyState, LastKeyState;
-        public static Point MousePoint;
+        public static InputHandler Input;
         public static bool IsMouseOnControl;
 
         private SpriteBatch spriteBatch;
@@ -90,6 +88,7 @@ namespace Bricklayer.Client
             spriteBatch = Manager.Renderer.SpriteBatch as SpriteBatch; //Set the spritebatch to the Neoforce managed one
             DefaultFont = Manager.Skin.Fonts["Default8"].Resource; //Default font we can use for drawing later
 
+            Input = new InputHandler();
             NetManager = new NetworkManager();
             MsgHandler = new MessageHandler(this);
         }
@@ -113,8 +112,9 @@ namespace Bricklayer.Client
         /// </summary>
         protected override void LoadContent()
         {
-            //BlockType.LoadContent();
+            
         }
+
         public override void Exit()
         {
             //Make sure to explicitly dispose of the network manager so the server knows we have disconnected
@@ -125,6 +125,7 @@ namespace Bricklayer.Client
             }
             base.Exit();
         }
+
         /// <summary>
         /// Allows the game to run logic such as updating the world,
         /// checking for collisions, gathering input, and playing audio.
@@ -132,6 +133,8 @@ namespace Bricklayer.Client
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
+            //Update input states
+            Input.Update();
             //Process multiplayer
             if (NetManager.Client != null)
             {
@@ -139,12 +142,7 @@ namespace Bricklayer.Client
             }
 
             //Update input states
-            LastKeyState = KeyState;
-            LastMouseState = MouseState;
-            KeyState = Keyboard.GetState();
-            MouseState = Mouse.GetState();
-            MousePoint = MouseState.GetPositionPoint();
-            IsMouseOnControl = !CheckPosition(MousePoint);
+            IsMouseOnControl = !CheckPosition(Input.MousePosition.ToPoint());
 
             switch (CurrentGameState)
             {

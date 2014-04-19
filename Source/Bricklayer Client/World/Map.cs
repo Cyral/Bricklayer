@@ -304,33 +304,33 @@ namespace Bricklayer.Client.World
         private void HandleInput()
         {
             //Get positions
-            Point MousePosition = new Point((int)MainCamera.Position.X + Game.MousePoint.X, (int)MainCamera.Position.Y + Game.MousePoint.Y);
+            Point MousePosition = new Point((int)MainCamera.Position.X + (int)Game.Input.MousePosition.X, (int)MainCamera.Position.Y + (int)Game.Input.MousePosition.Y);
             Point GridPosition = new Point(MousePosition.X / Tile.Width, MousePosition.Y / Tile.Height);
 
             //If LeftButton Clicked
-            if (Game.MouseState.LeftButton == ButtonState.Pressed && Game.LastMouseState.RightButton == ButtonState.Released)
+            if (Game.Input.IsLeftClicked())
             {
 
             }
             //If RightButton Clicked
-            if (Game.MouseState.RightButton == ButtonState.Pressed && Game.LastMouseState.RightButton == ButtonState.Released)
+            if (Game.Input.IsRightClicked())
             {
 
             }
-            //If LeftButton Pressed
-            if (Game.MouseState.LeftButton == ButtonState.Pressed)
+            //If LeftButton Down
+            if (Game.Input.IsLeftDown())
             {
                 //Place a tile
                 BlockType block = SelectedBlock;
                 if (MousePosition.X > MainCamera.Left && MousePosition.Y > MainCamera.Top && MousePosition.X < MainCamera.Right && MousePosition.Y < MainCamera.Bottom)
                 {
                     //Find the layer
-                    Layer layer = Game.KeyState.IsKeyDown(Keys.LeftShift) && (SelectedBlock.Layer == Layer.Background || SelectedBlock.Layer == Layer.All) ? Layer.Background : Layer.Foreground;
+                    Layer layer = Game.Input.IsKeyDown(Keys.LeftShift) && (SelectedBlock.Layer == Layer.Background || SelectedBlock.Layer == Layer.All) ? Layer.Background : Layer.Foreground;
                     PlaceTile(GridPosition.X, GridPosition.Y, layer, block, true); //Place the tile
                 }
             }
-            //If RightButton Pressed
-            if (Game.MouseState.RightButton == ButtonState.Pressed)
+            //If RightButton Down
+            if (Game.Input.IsRightDown())
             {
 
             }
@@ -339,18 +339,7 @@ namespace Bricklayer.Client.World
             {
 
                 //Select block
-                int key = -1;
-
-                if (Keys.D1.IsKeyToggled(Game.KeyState, Game.LastKeyState)) key = 0;
-                else if (Keys.D2.IsKeyToggled(Game.KeyState, Game.LastKeyState)) key = 1;
-                else if (Keys.D3.IsKeyToggled(Game.KeyState, Game.LastKeyState)) key = 2;
-                else if (Keys.D4.IsKeyToggled(Game.KeyState, Game.LastKeyState)) key = 3;
-                else if (Keys.D5.IsKeyToggled(Game.KeyState, Game.LastKeyState)) key = 4;
-                else if (Keys.D6.IsKeyToggled(Game.KeyState, Game.LastKeyState)) key = 5;
-                else if (Keys.D7.IsKeyToggled(Game.KeyState, Game.LastKeyState)) key = 6;
-                else if (Keys.D8.IsKeyToggled(Game.KeyState, Game.LastKeyState)) key = 7;
-                else if (Keys.D9.IsKeyToggled(Game.KeyState, Game.LastKeyState)) key = 8;
-                else if (Keys.D0.IsKeyToggled(Game.KeyState, Game.LastKeyState)) key = 9;
+                int key = Game.Input.GetDigitPressed();
 
                 BlockType[] Foregrounds = BlockType.BlockList.Where(x => x.Layer == Layer.Foreground || x.Layer == Layer.All).ToArray<BlockType>();
                 if (key < Foregrounds.Length && key > -1)

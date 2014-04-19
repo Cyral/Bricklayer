@@ -49,7 +49,7 @@ namespace Bricklayer.Client.Interface
                         screen.StatsLabel.Text = sb.ToString();
 
                         //Handles opening and closing of the textbox
-                        if (Keys.T.IsKeyToggled(Game.KeyState, Game.LastKeyState) && !screen.ChatBox.TextBox.Focused)
+                        if (Game.Input.IsKeyPressed(Keys.T) && !screen.ChatBox.TextBox.Focused)
                         {
                             //If already focused, unfocus, else, focus the textbox
                             if (Manager.FocusedControl == screen.ChatBox.TextBox) 
@@ -61,7 +61,7 @@ namespace Bricklayer.Client.Interface
                                 Manager.FocusedControl = screen.ChatBox.TextBox;
                         }
                         //Handles pressing tab in the textbox to autocomplete names
-                        if (Keys.Tab.IsKeyToggled(Game.KeyState, Game.LastKeyState) && screen.ChatBox.TextBox.Focused)
+                        if (Game.Input.IsKeyPressed(Keys.Tab) && screen.ChatBox.TextBox.Focused)
                         {
                             string[] words = screen.ChatBox.TextBox.Text.Split(' ');
                             if (words.Length > 0)
