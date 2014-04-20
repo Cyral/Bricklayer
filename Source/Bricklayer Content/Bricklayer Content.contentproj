@@ -125,6 +125,11 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
+    <Compile Include="Content Packs\Default\textures\map\border.png">
+      <Name>border</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
     <Content Include="Skins\Bricklayer.skin">
       <Name>Bricklayer</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

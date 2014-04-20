@@ -93,7 +93,7 @@ namespace Bricklayer.Client.World
 
         #region Fields
         //Textures
-        public Texture2D tileSheet, smileySheet, backgroundTexture, godTexture, bodyTexture;
+        public Texture2D tileSheet, smileySheet, backgroundTexture, godTexture, bodyTexture, borderTexture;
         private const float cameraSpeed = .18f;
         private Random random = new Random();
         private int width, height;
@@ -148,6 +148,7 @@ namespace Bricklayer.Client.World
             tileSheet = ContentPack.Textures["map\\blocks"];
             //Background is it's own large texture to boost fps by drawing 1 large texture rather than hundreds of 16x16 background blocks per frame
             backgroundTexture = ContentPack.Textures["map\\background"];
+            borderTexture = ContentPack.Textures["map\\border"];
             smileySheet = ContentPack.Textures["entity\\smileys"];
             bodyTexture = ContentPack.Textures["entity\\body"];
             godTexture = ContentPack.Textures["entity\\godmode"];
@@ -158,7 +159,10 @@ namespace Bricklayer.Client.World
         private void CreateCamera()
         {
             if (Game != null)
-                MainCamera = new Camera(new Vector2(Game.GraphicsDevice.Viewport.Width - Interface.GameScreen.SidebarWidth, Game.GraphicsDevice.Viewport.Height - 24)) { MinBounds = new Vector2(0, 0), MaxBounds = new Vector2(Width * Tile.Width, (Height * Tile.Height)) };
+                MainCamera = new Camera(new Vector2(Game.GraphicsDevice.Viewport.Width - Interface.GameScreen.SidebarWidth, Game.GraphicsDevice.Viewport.Height - 24)) {
+                    MinBounds = new Vector2(-Game.GraphicsDevice.Viewport.Width, -Game.GraphicsDevice.Viewport.Height),
+                    MaxBounds = new Vector2((Width * Tile.Width) + Game.GraphicsDevice.Viewport.Width, (Height * Tile.Height) + Game.GraphicsDevice.Viewport.Height)
+                };
         }
         /// <summary>
         /// Generates a simple world with borders
@@ -353,10 +357,13 @@ namespace Bricklayer.Client.World
         {
             //Draw the background texture, wrapping it around the screen size
             spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointWrap, null, null, null, MainCamera.GetViewMatrix(Vector2.One));
-            spriteBatch.Draw(backgroundTexture, MainCamera.Position + new Vector2(-13, -3), new Rectangle((int)MainCamera.Left, (int)MainCamera.Top, (int)MainCamera.Right - (int)MainCamera.Left + 16, (int)MainCamera.Bottom - (int)MainCamera.Top + 3), Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
+            spriteBatch.Draw(borderTexture, MainCamera.Position + new Vector2(-13, -3), new Rectangle((int)MainCamera.Left, (int)MainCamera.Top, (int)MainCamera.Right - (int)MainCamera.Left + 16, (int)MainCamera.Bottom - (int)MainCamera.Top + 3), Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
             spriteBatch.End();
 
             spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp, null, null, null, MainCamera.GetViewMatrix(Vector2.One));
+            //Draw border background
+            Rectangle bgSource = new Rectangle(0, 0, Width * Tile.Width, Height * Tile.Height);
+            spriteBatch.Draw(backgroundTexture, bgSource, Color.White);
             //Draw tiles
             DrawTiles(spriteBatch);
             //Draw Players
