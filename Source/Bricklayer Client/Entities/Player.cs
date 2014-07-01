@@ -2,20 +2,21 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Bricklayer.Client.Networking.Messages;
+using Bricklayer.Common.Networking;
+using Bricklayer.Common.Entities;
 using Bricklayer.Client.World;
 using System.Collections.Generic;
+using Bricklayer.Common.World;
+using Map = Bricklayer.Client.World.Map;
+using Bricklayer.Common.Networking.Messages;
 
 namespace Bricklayer.Client.Entities
 {
     /// <summary>
     /// Represents a player/smiley in the game map
     /// </summary>
-    public class Player
+    public class Player : Common.Entities.Player
     {
-        //Constants
-        public const int Width = 16, Height = 16;
-
         //Physics
         private const float MoveSpeed = 35.0f; //The factor to multiply movement by
         private const float GodMoveSpeed = 10f; //The factor to multiply movement by
@@ -37,101 +38,44 @@ namespace Bricklayer.Client.Entities
         private Keys[] RightKeys = new Keys[2] { Keys.Right, Keys.D };
         private Keys[] DownKeys = new Keys[2] { Keys.Down, Keys.S };
 
-        //Entity States
-        public EntityState SimulationState; //Current internal state (What game sees)
-        public EntityState DisplayState; //Current display state (What player sees)
-        public EntityState PreviousState; //Last internal state
-        public PlayerMode Mode; //Godmode or Regular?
-        public FacingDirection Direction;
-        public GravityDirection GravityDirection;
-        public GravityDirection JumpDirection;
-
-        //Physic States
-        public bool IsJumping { get; set; }
-        public bool IsOnGround { get; set; }
-        public bool WasJumping { get; set; }
-        public float JumpTime { get; set; }
-        public float IdleTime { get; set; }
-        public bool IsIdle { get { return IdleTime > 0; } }
-        public bool VirtualJump { get; set; }
-
-        //Data
-        public byte ID { get; set; }
-        public int Index { get; set; }
-        public long RUI { get; set; }
-        public string Username { get; set; }
+        /// <summary>
+        /// Indicates if the player is the client's own
+        /// </summary>
         public bool IsMine { get { return ID == Game.MyID; } }
 
         /// <summary>
-        /// The currently occupied map the player is in
+        /// Collection of the last positions the player was, for creating a fade effect on the minimap
         /// </summary>
-        public Map Map { get; set; }
-        /// <summary>
-        /// The current smiley the player is using
-        /// </summary>
-        public SmileyType Smiley { get; set; }
-        /// <summary>
-        /// The color the body should be tinted
-        /// </summary>
-        public Color Tint { get; set; } //Hue-Hue
-
-        /// <summary>
-        /// The rectangular collision bounds of the player
-        /// </summary>
-        public Rectangle Bounds
-        {
-            get
-            {
-                return new Rectangle((int)SimulationState.Position.X, (int)SimulationState.Position.Y, Width, Height);
-            }
-        }
-        /// <summary>
-        /// The position on the grid a player is occupying (based of DisplayState)
-        /// </summary>
-        public Point GridPosition { get { return new Point((int)Math.Round(DisplayState.Position.X / Tile.Width), (int)Math.Round(DisplayState.Position.Y / Tile.Height)); } }
         public Dictionary<Point, float> LastColors = new Dictionary<Point, float>();
-        
         private float tagAlpha = 0; //Alpha color value for nametags
 
-        public Player(Map map, Vector2 position, string name, long RUI, int ID)
+        public Player(Map map, Vector2 position, string name, int id)
+            : base(map, position, name, id)
         {
-            this.Map = map;
-            Smiley = SmileyType.Default;
-            Mode = PlayerMode.Normal;
-            Tint = Color.White;
 
-            SimulationState = new EntityState();
-            DisplayState = new EntityState();
-            PreviousState = new EntityState();
-
-            SimulationState.Position = PreviousState.Position = DisplayState.Position = position;
-
-            this.RUI = RUI;
-            this.ID = (byte)ID;
-            this.Username = name;
-            Index = map.Players.Count;
         }
+
         public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
             float elapsed = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
             //Draw godmode glow
             if (Mode == PlayerMode.God)
-                spriteBatch.Draw(Map.godTexture, new Vector2((float)Math.Round(DisplayState.Position.X), (float)Math.Round(DisplayState.Position.Y) - 1) - new Vector2(Map.godTexture.Width / 2, Map.godTexture.Height / 2) + new Vector2(Width / 2, Height / 2), Tint);
+                spriteBatch.Draw(((Map)Map).godTexture, new Vector2((float)Math.Round(DisplayState.Position.X), (float)Math.Round(DisplayState.Position.Y) - 1) - new Vector2(((Map)Map).godTexture.Width / 2, ((Map)Map).godTexture.Height / 2) + new Vector2(Width / 2, Height / 2), Tint);
             //Draw player body
-            spriteBatch.Draw(Map.bodyTexture, new Vector2((float)Math.Round(DisplayState.Position.X), (float)Math.Round(DisplayState.Position.Y) - 1), Tint);
+            spriteBatch.Draw(((Map)Map).bodyTexture, new Vector2((float)Math.Round(DisplayState.Position.X), (float)Math.Round(DisplayState.Position.Y) - 1), Tint);
             //Draw player smiley
-            spriteBatch.Draw(Map.smileySheet, new Vector2((float)Math.Round(DisplayState.Position.X), (float)Math.Round(DisplayState.Position.Y) - 1), (Direction == FacingDirection.Left ? Smiley.LeftSource : Smiley.RightSource), Color.White);
+            spriteBatch.Draw(((Map)Map).smileySheet, new Vector2((float)Math.Round(DisplayState.Position.X), (float)Math.Round(DisplayState.Position.Y) - 1), (Direction == FacingDirection.Left ? Smiley.LeftSource : Smiley.RightSource), Color.White);
 
             if (Mode == PlayerMode.Normal)
             {
                 //Kinda a "hack fix", but instead of sorting tiles into layers to solve the issue of the "3D" part of the character
                 //Being overlayed incorrectly, just draw the top, right, and top right tiles again
                 if (((int)DisplayState.Position.Y / Tile.Height) - 1 > 0)
-                    Map.Tiles[(int)DisplayState.Position.X / Tile.Width, ((int)DisplayState.Position.Y / Tile.Height) - 1, 1].Draw(spriteBatch, Map.tileSheet, Vector2.Zero, (int)DisplayState.Position.X / Tile.Width, ((int)DisplayState.Position.Y / Tile.Height) - 1, 1, true);
-                Map.Tiles[((int)DisplayState.Position.X / Tile.Width) + 1, (int)DisplayState.Position.Y / Tile.Height, 1].Draw(spriteBatch, Map.tileSheet, Vector2.Zero, ((int)DisplayState.Position.X / Tile.Width) + 1, (int)DisplayState.Position.Y / Tile.Height, 1, true);
+                    Map.Tiles[(int)DisplayState.Position.X / Tile.Width, ((int)DisplayState.Position.Y / Tile.Height) - 1, 1].Draw(spriteBatch, ((Map)Map).tileSheet, Vector2.Zero, (int)DisplayState.Position.X / Tile.Width, ((int)DisplayState.Position.Y / Tile.Height) - 1, 1, true);
+                Map.Tiles[((int)DisplayState.Position.X / Tile.Width) + 1, (int)DisplayState.Position.Y / Tile.Height, 1].Draw(spriteBatch, ((Map)Map).tileSheet, Vector2.Zero, ((int)DisplayState.Position.X / Tile.Width) + 1, (int)DisplayState.Position.Y / Tile.Height, 1, true);
                 if (((int)DisplayState.Position.Y / Tile.Height) - 1 > 0)
-                    Map.Tiles[((int)DisplayState.Position.X / Tile.Width) + 1, ((int)DisplayState.Position.Y / Tile.Height) - 1, 1].Draw(spriteBatch, Map.tileSheet, Vector2.Zero, ((int)DisplayState.Position.X / Tile.Width) + 1, ((int)DisplayState.Position.Y / Tile.Height) - 1, 1, true);
+                    Map.Tiles[((int)DisplayState.Position.X / Tile.Width) + 1, ((int)DisplayState.Position.Y / Tile.Height) - 1, 1].Draw(spriteBatch, ((Map)Map).tileSheet, Vector2.Zero, ((int)DisplayState.Position.X / Tile.Width) + 1, ((int)DisplayState.Position.Y / Tile.Height) - 1, 1, true);
             }
             //Draw the player tag above them
             DrawTag(spriteBatch, elapsed);
@@ -178,7 +122,7 @@ namespace Bricklayer.Client.Entities
             PreviousState = SimulationState;
             SimulationState.Bounds = Bounds;
             //Handle Movement and Collision
-            if (IsMine && Map.Game.IsActive)
+            if (IsMine && ((Map)Map).Game.IsActive)
             {
                 if (HandleInput())
                 {
@@ -597,8 +541,8 @@ namespace Bricklayer.Client.Entities
             {
                 for (int x = leftTile; x <= rightTile; ++x)
                 {
-                    Rectangle tileBounds = Map.GetBounds(x, y);
-                    BlockCollision collision = Map.GetCollision(x, y);
+                    Rectangle tileBounds = ((Map)Map).GetTileBounds(x, y);
+                    BlockCollision collision = ((Map)Map).GetCollision(x, y);
                     Vector2 depth;
                     bool intersects = TileIntersectsPlayer(Bounds, tileBounds, direction, out depth);
                     HandleCollisions(gameTime, direction, collision, tileBounds, depth, intersects, x, y);

@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.Xna.Framework;
+﻿using System.Collections.Generic;
 using Bricklayer.Client.Networking;
-using TomShane.Neoforce.Controls;
+using Bricklayer.Common;
+using Bricklayer.Common.Data;
+using Microsoft.Xna.Framework;
 using Cyral.Extensions;
+using TomShane.Neoforce.Controls;
 
 namespace Bricklayer.Client.Interface
 {
@@ -50,8 +49,8 @@ namespace Bricklayer.Client.Interface
             NameTxt.Refresh();
             NameTxt.TextChanged += new TomShane.Neoforce.Controls.EventHandler(delegate(object o, TomShane.Neoforce.Controls.EventArgs e)
             {
-                if (NameTxt.Text.Length > Settings.MaxNameLength) //Clamp length
-                    NameTxt.Text = NameTxt.Text.Truncate(Settings.MaxNameLength);
+                if (NameTxt.Text.Length > GlobalSettings.MaxNameLength) //Clamp length
+                    NameTxt.Text = NameTxt.Text.Truncate(GlobalSettings.MaxNameLength);
                 Game.Username = NameTxt.Text;
             });
             Add(NameTxt);
@@ -60,7 +59,7 @@ namespace Bricklayer.Client.Interface
             ColorLbl.Init();
             Add(ColorLbl);
 
-            BodyClr = new ColorPicker(Manager) { Left = ColorLbl.Right + 4, Top = TopPanel.Bottom + 8, Width = 128, Saturation = IO.ColorSaturation, Value = IO.ColorValue };
+            BodyClr = new ColorPicker(Manager) { Left = ColorLbl.Right + 4, Top = TopPanel.Bottom + 8, Width = 128, Saturation = GlobalSettings.ColorSaturation, Value = GlobalSettings.ColorValue };
             BodyClr.Init();
             BodyClr.ValueChanged += new TomShane.Neoforce.Controls.EventHandler(delegate(object o, TomShane.Neoforce.Controls.EventArgs e)
             {

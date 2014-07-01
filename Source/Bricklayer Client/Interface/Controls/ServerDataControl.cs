@@ -3,6 +3,7 @@ using System.Threading;
 using Microsoft.Xna.Framework;
 using Bricklayer.Client.Networking;
 using TomShane.Neoforce.Controls;
+using Bricklayer.Common.Data;
 
 namespace Bricklayer.Client.Interface
 {

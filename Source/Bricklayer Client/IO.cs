@@ -1,19 +1,21 @@
 ﻿#region Usings
 using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Xml;
-using Microsoft.Xna.Framework.Graphics;
-using Bricklayer.Client.Networking;
-using Newtonsoft.Json;
-using Bricklayer.Client;
+using Bricklayer.Common;
+using Bricklayer.Common.Data;
 using Cyral.Extensions;
+using Microsoft.Xna.Framework.Graphics;
+using Newtonsoft.Json;
 #endregion
 
 namespace Bricklayer.Client
 {
+    /// <summary>
+    /// Handles disk saving/loading operations
+    /// </summary>
     public class IO
     {
         public static readonly string AssemblyVersion = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
@@ -26,9 +28,6 @@ namespace Bricklayer.Client
         private static readonly int fileBufferSize = 65536;
         private static readonly JsonSerializerSettings serializationSettings = new JsonSerializerSettings() { Formatting = Newtonsoft.Json.Formatting.Indented };
 
-        public const int ColorValue = 250;
-        public const int ColorSaturation = 210;
-
         public static List<ContentPack> ContentPacks = new List<ContentPack>();
 
         static IO()
@@ -38,6 +37,7 @@ namespace Bricklayer.Client
             Directories.Add("Screenshots", MainDirectory + "\\Screenshots\\");
             Directories.Add("Content Packs", MainDirectory + "\\Content Packs\\");
         }
+
         /// <summary>
         /// Checks to make sure the application files are there, if not it will create them
         /// </summary>
@@ -51,6 +51,7 @@ namespace Bricklayer.Client
                 if (!Directory.Exists(kv.Value))
                     Directory.CreateDirectory(kv.Value);
         }
+
         /// <summary>
         /// Opens the settings file and loads the values
         /// </summary>
@@ -81,6 +82,7 @@ namespace Bricklayer.Client
                 ApplySettings(Settings.GetDefaultSettings(), game);
             }
         }
+
         /// <summary>
         /// Applies loading settings (Handles logic)
         /// </summary>
@@ -90,20 +92,21 @@ namespace Bricklayer.Client
             Game.Username = settings.Username;
             Game.ContentPackName = settings.ContentPack;
             Game.MyHue = settings.Color;
-            Game.MyColor = Cyral.Extensions.Xna.ColorExtensions.ColorFromHSV(settings.Color, ColorSaturation, ColorValue);
+            Game.MyColor = Cyral.Extensions.Xna.ColorExtensions.ColorFromHSV(settings.Color, GlobalSettings.ColorSaturation, GlobalSettings.ColorValue);
             Game.Resolution = new Microsoft.Xna.Framework.Rectangle(0, 0, settings.Resolution.X, settings.Resolution.Y);
             game.Graphics.PreferredBackBufferWidth = Game.Resolution.Width;
             game.Graphics.PreferredBackBufferHeight = Game.Resolution.Height;
             game.Graphics.SynchronizeWithVerticalRetrace = settings.UseVSync;
             game.Graphics.ApplyChanges();
         }
+
         /// <summary>
         /// Saves settings to the settings file
         /// </summary>
         public static void SaveSettings(Settings settings)
         {
-            if (settings.Username.Length > Settings.MaxNameLength) //Clamp name length
-                settings.Username = settings.Username.Truncate(Settings.MaxNameLength);
+            if (settings.Username.Length > GlobalSettings.MaxNameLength) //Clamp name length
+                settings.Username = settings.Username.Truncate(GlobalSettings.MaxNameLength);
             try
             {
                 //If server config does not exist, create it
@@ -120,6 +123,7 @@ namespace Bricklayer.Client
                 throw; //TODO: Add some form of handling
             }
         }
+
         /// <summary>
         /// Finds content packs and loads the selected one
         /// </summary>
@@ -177,8 +181,9 @@ namespace Bricklayer.Client
                 System.Windows.Forms.MessageBox.Show(e.ToString());
             }
         }
+
         /// <summary>
-        /// Read a list of servers from the json server config file
+        /// Reads a list of servers from the json server config file
         /// </summary>
         public static List<ServerSaveData> ReadServers()
         {

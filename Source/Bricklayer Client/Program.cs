@@ -1,4 +1,5 @@
 using System;
+using Bricklayer.Common;
 
 namespace Bricklayer.Client
 {

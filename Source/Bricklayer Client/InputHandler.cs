@@ -30,7 +30,7 @@ namespace Bricklayer.Client
         /// </summary>
         public Point MouseGridPosition { get { 
             Point position = CurrentMouseState.GetPositionPoint();
-            return new Point(position.X / Bricklayer.Client.World.Tile.Width, Bricklayer.Client.World.Tile.Height);
+            return new Point(position.X / Bricklayer.Common.World.Tile.Width, Bricklayer.Common.World.Tile.Height);
             }
         }
         #endregion

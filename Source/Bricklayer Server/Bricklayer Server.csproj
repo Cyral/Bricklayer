@@ -126,6 +126,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Entities\Player.cs" />
     <Compile Include="IO.cs" />
     <Compile Include="MessageHandler.cs" />
     <Compile Include="NetworkManager.cs" />
@@ -134,14 +135,15 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Settings.cs" />
+    <Compile Include="World\Map.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\app.manifest" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Bricklayer Client\Bricklayer Client.csproj">
-      <Project>{26f0f6fd-a386-4054-bc96-a3f17f9f8d59}</Project>
-      <Name>Bricklayer Client</Name>
+    <ProjectReference Include="..\Bricklayer Common\Bricklayer Common.csproj">
+      <Project>{3085f8da-c9da-4f9b-8180-98f2a7bd67e2}</Project>
+      <Name>Bricklayer Common</Name>
     </ProjectReference>
     <ProjectReference Include="..\Bricklayer Plugin API\Bricklayer Plugin API.csproj">
       <Project>{e6055500-9c8c-436f-889b-27893779d3b9}</Project>

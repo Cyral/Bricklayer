@@ -19,7 +19,7 @@ namespace Bricklayer.Client.Interface
         public string Name;
         public string Intro;
         public int Online;
-        public List<Bricklayer.Client.Networking.LobbySaveData> Rooms;
+        public List<Bricklayer.Common.Data.LobbySaveData> Rooms;
 
         public override void Add(ScreenManager screenManager)
         {

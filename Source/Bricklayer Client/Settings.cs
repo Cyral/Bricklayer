@@ -10,8 +10,6 @@ namespace Bricklayer.Client
     /// </summary>
     public class Settings
     {
-        public const int MaxNameLength = 20;
-        public const string NameRegex = "";
         /// <summary>
         /// The name of the current content pack
         /// </summary>

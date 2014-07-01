@@ -3,10 +3,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Bricklayer.API;
-using Bricklayer.Client.Entities;
-using Bricklayer.Client.Networking.Messages;
-using Bricklayer.Client.World;
-
+using Bricklayer.Common.Entities;
+using Bricklayer.Common.Networking.Messages;
+using Bricklayer.Common.World;
+using Player = Bricklayer.Server.Entities.Player;
+using Map = Bricklayer.Server.World.Map;
 #endregion
 
 namespace Bricklayer.Server
@@ -104,8 +105,6 @@ namespace Bricklayer.Server
             Program.WriteLine(string.Format("{0} plugin{1} loaded.\n", Plugins.Count, Plugins.Count == 1 ? string.Empty : "s"), ConsoleColor.Green);
         }
 
-
-
         #region Utilities
         /// <summary>
         /// Creates a new map and adds it to the room list
@@ -138,7 +137,7 @@ namespace Bricklayer.Server
             {
                 foreach (Player player in map.Players)
                 {
-                    if (player.RUI == remoteUniqueIdentifier)
+                    if (player.RemoteUniqueIdentifier == remoteUniqueIdentifier)
                         found = player;
                 }
             }

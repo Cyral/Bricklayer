@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Bricklayer.Client.Networking;
+using Bricklayer.Common.Data;
 using TomShane.Neoforce.Controls;
 
 namespace Bricklayer.Client.Interface

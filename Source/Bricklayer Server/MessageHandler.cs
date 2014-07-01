@@ -1,14 +1,17 @@
 ﻿#region Usings
 using System;
 using System.Collections.Generic;
-using Bricklayer.Client.Entities;
-using Bricklayer.Client.Networking;
-using Bricklayer.Client.Networking.Messages;
-using Bricklayer.Client.World;
+using Bricklayer.Common.Data;
+using Bricklayer.Common.Entities;
+using Bricklayer.Common.Networking;
+using Bricklayer.Common.Networking.Messages;
+using Bricklayer.Common.World;
 using Cyral.Extensions;
 using Cyral.Extensions.Xna;
 using Lidgren.Network;
 using Microsoft.Xna.Framework;
+using Map = Bricklayer.Server.World.Map;
+using Player = Bricklayer.Server.Entities.Player;
 #endregion
 
 namespace Bricklayer.Server
@@ -129,6 +132,7 @@ namespace Bricklayer.Server
                 System.Threading.Thread.Sleep(Server.Config.Sleep);
             }
         }
+
         /// <summary>
         /// Handles all actions for recieving data messages (Such as movement, block placing, etc)
         /// </summary>
@@ -138,7 +142,7 @@ namespace Bricklayer.Server
             Player sender = Server.PlayerFromRUI(inc.SenderConnection.RemoteUniqueIdentifier, true);
             Map map = null;
             if (sender != null)
-                map = sender.Map;
+                map = (Map)sender.Map;
             MessageTypes type = (MessageTypes)Enum.Parse(typeof(MessageTypes), inc.ReadByte().ToString());
             switch (type)
             {
@@ -298,7 +302,7 @@ namespace Bricklayer.Server
         /// <summary>
         /// Rebuilds the indexes of all players, by changing their index property to the correct index in the map's player list
         /// </summary>
-        private static void RebuildIndexes(Map map)
+        private static void RebuildIndexes(Bricklayer.Common.World.Map map)
         {
             for (int i = 0; i < map.Players.Count; i++)
                 map.Players[i].Index = i;
