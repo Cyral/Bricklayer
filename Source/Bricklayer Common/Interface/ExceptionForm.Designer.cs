@@ -109,7 +109,6 @@ namespace Bricklayer.Common
             this.Name = "ExceptionForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Bricklayer Error";
-            this.Load += new System.EventHandler(this.ExceptionForm_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 

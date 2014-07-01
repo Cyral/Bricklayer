@@ -66,8 +66,8 @@ namespace Bricklayer.Common
             sb.AppendLine("");
             sb.AppendLine(exception.ToString());
 
-            errorBox.Invoke(new Action(() => errorBox.Text = sb.ToString()));
-            //errorBox.Text = sb.ToString();
+            if (errorBox != null)
+                errorBox.Invoke(new Action(() => errorBox.Text = sb.ToString()));
         }
 
         #region Get System Info
@@ -140,10 +140,5 @@ namespace Bricklayer.Common
             errorBox.SelectAll();
         }
         #endregion
-
-        private void ExceptionForm_Load(object sender, EventArgs e)
-        {
-
-        }
     }
 }
