@@ -42,7 +42,7 @@ namespace Bricklayer.Server
             listenerThread = new Thread(() => Listen()); //Start the TcpClient on a new thread
             listenerThread.Name = "PingListener";
             listenerThread.Start();
-            Program.WriteLine("PingListener started, Listening for query requests.\n", ConsoleColor.Green); //Log message
+            Log.WriteLine(ConsoleColor.Green, "PingListener started, Listening for query requests.\n"); //Log message
         }
         /// <summary>
         /// Listens for ping requests, and sends back statistics
@@ -94,7 +94,7 @@ namespace Bricklayer.Server
             }
             catch (Exception e)
             {
-                Console.WriteLine("PingListener Error: {0}", e);
+                Console.WriteLine(LogType.Error, "PingListener Error: {0}", e);
             }
         }
         #endregion

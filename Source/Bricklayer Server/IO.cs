@@ -104,7 +104,7 @@ namespace Bricklayer.Server
                 }
                 else
                 {
-                    Program.WriteLine(string.Format("Duplicate plugin {0} ({1}) not loaded", Path.GetFileName(file), md5.Substring(0, 7)), ConsoleColor.Red);
+                    Log.WriteLine(string.Format("Duplicate plugin {0} ({1}) not loaded", Path.GetFileName(file), md5.Substring(0, 7)), ConsoleColor.Red);
                 }
             }
          }
@@ -124,7 +124,7 @@ namespace Bricklayer.Server
             }
             catch (Exception)
             {
-                Program.WriteLine("Unable to load " + file, ConsoleColor.Red);
+                Log.WriteLine(LogType.Error, "Unable to load {0}", file);
             }
 
             Type pluginInfo = null;
@@ -152,7 +152,7 @@ namespace Bricklayer.Server
             }
             catch (Exception ex)
             {
-                Program.WriteLine(ex.ToString(), ConsoleColor.Red);
+                Log.WriteLine(ex.ToString(), ConsoleColor.Red);
             }
         }
         #endregion

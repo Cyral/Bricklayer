@@ -126,6 +126,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Log.cs" />
     <Compile Include="Entities\Player.cs" />
     <Compile Include="IO.cs" />
     <Compile Include="MessageHandler.cs" />
