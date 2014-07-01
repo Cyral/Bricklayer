@@ -40,8 +40,8 @@ namespace Bricklayer.Client.Interface
             txtName.Init();
             txtName.TextChanged += new TomShane.Neoforce.Controls.EventHandler(delegate(object o, TomShane.Neoforce.Controls.EventArgs e)
             {
-                if (txtName.Text.Length > Bricklayer.Client.Networking.Messages.CreateRoomMessage.MaxNameLength)
-                    txtName.Text = txtName.Text.Truncate(Bricklayer.Client.Networking.Messages.CreateRoomMessage.MaxNameLength);
+                if (txtName.Text.Length > Bricklayer.Common.Networking.Messages.CreateRoomMessage.MaxNameLength)
+                    txtName.Text = txtName.Text.Truncate(Bricklayer.Common.Networking.Messages.CreateRoomMessage.MaxNameLength);
             });
             Add(txtName);
 
@@ -54,10 +54,10 @@ namespace Bricklayer.Client.Interface
             txtDescription.TextChanged += new TomShane.Neoforce.Controls.EventHandler(delegate(object o, TomShane.Neoforce.Controls.EventArgs e)
             {
                 //Filter the text by checking for length and lines
-                if (txtDescription.Text.Length > Bricklayer.Client.Networking.Messages.CreateRoomMessage.MaxDescriptionLength)
-                    txtDescription.Text = txtDescription.Text.Truncate(Bricklayer.Client.Networking.Messages.CreateRoomMessage.MaxDescriptionLength);
+                if (txtDescription.Text.Length > Bricklayer.Common.Networking.Messages.CreateRoomMessage.MaxDescriptionLength)
+                    txtDescription.Text = txtDescription.Text.Truncate(Bricklayer.Common.Networking.Messages.CreateRoomMessage.MaxDescriptionLength);
                 int newLines = txtDescription.Text.Count(c => c == '\n');
-                if (newLines >= Bricklayer.Client.Networking.Messages.CreateRoomMessage.MaxDescriptionLines)
+                if (newLines >= Bricklayer.Common.Networking.Messages.CreateRoomMessage.MaxDescriptionLines)
                 {
                     txtDescription.Text = txtDescription.Text.Substring(0, txtDescription.Text.Length - 1);
                     txtDescription.CursorPosition = 0;
@@ -78,7 +78,7 @@ namespace Bricklayer.Client.Interface
         {
             //                Game.NetManager.SendMessage(new Bricklayer.Client.Networking.Messages.JoinRoomMessage(worldName));
             MainWindow.ScreenManager.SwitchScreen(new GameScreen(new Action((new Action(() =>  {
-                Game.NetManager.Send(new Bricklayer.Client.Networking.Messages.CreateRoomMessage(txtName.Text, txtDescription.Text));
+                Game.NetManager.Send(new Bricklayer.Common.Networking.Messages.CreateRoomMessage(txtName.Text, txtDescription.Text));
             })))));
             Close();
         }

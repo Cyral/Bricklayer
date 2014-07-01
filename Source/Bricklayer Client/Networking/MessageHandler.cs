@@ -1,11 +1,15 @@
 ﻿using System.Diagnostics;
 using System.Linq;
-using Cyral.Extensions.Xna;
-using Lidgren.Network;
 using Bricklayer.Client.Entities;
 using Bricklayer.Client.Interface;
-using Bricklayer.Client.Networking.Messages;
 using Bricklayer.Client.World;
+using Bricklayer.Common.Entities;
+using Bricklayer.Common.Networking.Messages;
+using Bricklayer.Common.World;
+using Cyral.Extensions.Xna;
+using Lidgren.Network;
+using Map = Bricklayer.Client.World.Map;
+using Player = Bricklayer.Client.Entities.Player;
 
 namespace Bricklayer.Client.Networking
 {
@@ -115,7 +119,7 @@ namespace Bricklayer.Client.Networking
                     {
                         PlayerJoinMessage user = new PlayerJoinMessage(im);
                         //Add player to map
-                        Map.Players.Add(new Player(Map, Map.Spawn, user.Username, 1, user.ID) { Tint = user.Color });
+                        Map.Players.Add(new Player(Map, Map.Spawn, user.Username, user.ID) { Tint = user.Color });
                         //Add user to userlist
                         (MainWindow.ScreenManager.Current as GameScreen).PlayerList.Items.Add(user.Username);
                         if (user.ID != Game.MyID && recievedInit) //Broadcast join message to chat
@@ -137,8 +141,8 @@ namespace Bricklayer.Client.Networking
                         //Remove player
                         if (user.ID != Game.MyID)
                         {
-                            Player player = Map.PlayerFromID(user.ID);
-                            Map.Players.Remove(Map.PlayerFromID(user.ID));
+                            Player player = (Player)Map.PlayerFromID(user.ID);
+                            Map.Players.Remove((Player)Map.PlayerFromID(user.ID));
                             (MainWindow.ScreenManager.Current as GameScreen).PlayerList.Items.Remove(player.Username);
                             (MainWindow.ScreenManager.Current as GameScreen).SystemChat(player.Username + " [color:LightGray]has[/color] [color:IndianRed]left.[/color]");
                             //Rebuild indexes
@@ -156,7 +160,7 @@ namespace Bricklayer.Client.Networking
                         if (Game.CurrentGameState == GameState.Game)
                         {
                             PlayerStateMessage user = new PlayerStateMessage(im);
-                            Player player = Map.PlayerFromID(user.ID);
+                            Player player = (Player)Map.PlayerFromID(user.ID);
                             player.SimulationState.Position = user.Position.ToVector2();
                             player.SimulationState.Velocity = user.Velocity.ToVector2();
                             player.SimulationState.Movement = user.Movement.ToVector2();
@@ -182,7 +186,7 @@ namespace Bricklayer.Client.Networking
                         if (Game.CurrentGameState == GameState.Game)
                         {
                             PlayerSmileyMessage msg = new PlayerSmileyMessage(im);
-                            Player p = Map.PlayerFromID(msg.ID);
+                            Player p = (Player)Map.PlayerFromID(msg.ID);
                             p.Smiley = msg.Smiley;
                         }
                         break;
@@ -209,6 +213,10 @@ namespace Bricklayer.Client.Networking
                     {
                         Game.Map = new Bricklayer.Client.World.Map(game, 1, 1);
                         InitMessage msg = new InitMessage(im, Map);
+
+                        Game.Map.Minimap = new Minimap(Game.Map, msg.Width, msg.Height) { Position = new Microsoft.Xna.Framework.Vector2(8, 8) };
+                        Game.Map.CreateCamera();
+
                         Game.CurrentGameState = GameState.Game;
                         (MainWindow.ScreenManager.Current as GameScreen).Show();
                         (MainWindow.ScreenManager.Current as GameScreen).SystemChat("Connected to [color:LightGray]" + Game.Host + ":" + Game.Port + "[/color]");

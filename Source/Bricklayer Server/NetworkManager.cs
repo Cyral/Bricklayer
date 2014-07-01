@@ -1,11 +1,15 @@
 ﻿#region Usings
 using System.Collections.Generic;
 using System.Linq;
-using Bricklayer.Client.Entities;
-using Bricklayer.Client.Networking;
-using Bricklayer.Client.Networking.Messages;
-using Bricklayer.Client.World;
+using Bricklayer.Common.Entities;
+using Bricklayer.Common.Networking;
+using Bricklayer.Common.Networking.Messages;
+using Bricklayer.Common.World;
+using Bricklayer.Common.Data;
 using Lidgren.Network;
+using Player = Bricklayer.Server.Entities.Player;
+using System.Threading;
+using System;
 #endregion
 
 namespace Bricklayer.Server
@@ -57,7 +61,7 @@ namespace Bricklayer.Server
 
             //Attempt to port-forward over UPnP
             try { NetServer.UPnP.ForwardPort(port, "Bricklayer Port-Forwarding"); }
-            catch { }
+            catch (Exception e) { Program.WriteLine(e.ToString()); }
         }
 
         /// <summary>
@@ -98,7 +102,7 @@ namespace Bricklayer.Server
         public void Send(IMessage gameMessage, Player player)
         {
             Send(gameMessage, (NetConnection)NetServer.Connections.Where(
-                x => x.RemoteUniqueIdentifier == player.RUI &&
+                x => x.RemoteUniqueIdentifier == player.RemoteUniqueIdentifier &&
                 Server.PlayerFromRUI(x.RemoteUniqueIdentifier, true).Map.ID == player.Map.ID)
                .ElementAt(0));
         }
@@ -121,7 +125,7 @@ namespace Bricklayer.Server
         public void BroadcastExcept(IMessage gameMessage, Player player)
         {
             BroadcastExcept(gameMessage,
-                (NetConnection)NetServer.Connections.Where(x => x.RemoteUniqueIdentifier == player.RUI
+                (NetConnection)NetServer.Connections.Where(x => x.RemoteUniqueIdentifier == player.RemoteUniqueIdentifier
                 && Server.PlayerFromRUI(x.RemoteUniqueIdentifier, true).Map.ID == player.Map.ID)
                 .ElementAt(0));
         }

@@ -1,17 +1,13 @@
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
+using Bricklayer.Client.Entities;
+using Bricklayer.Client.Interface;
+using Bricklayer.Client.Networking;
+using Bricklayer.Client.World;
 using Cyral.Extensions.Xna;
 using Lidgren.Network;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using Bricklayer.Client.Entities;
-using Bricklayer.Client.Interface;
-using Bricklayer.Client.Networking;
-using Bricklayer.Client.Networking.Messages;
-using Bricklayer.Client.World;
 using TomShane.Neoforce.Controls;
 
 namespace Bricklayer.Client
@@ -46,7 +42,7 @@ namespace Bricklayer.Client
         public static string Username;
         public static byte MyID;
         public static byte MyIndex;
-        public static Player Me { get { return Map.Players[MyIndex]; } }
+        public static Player Me { get { return (Player)Map.Players[MyIndex]; } }
         public static Color MyColor;
         public static int MyHue;
 

@@ -5,7 +5,8 @@ using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
-using Bricklayer.Client.Networking;
+using Bricklayer.Common.Data;
+using Bricklayer.Common.Networking;
 #endregion
 
 namespace Bricklayer.Server

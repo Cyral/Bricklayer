@@ -11,20 +11,22 @@ using Newtonsoft.Json;
 namespace Bricklayer.Server
 {
     /// <summary>
-    /// Handles disk operations such as saving maps and loading settings
+    /// Handles disk saving/loading operations
     /// </summary>
     public class IO
     {
         #region Fields
         /// <summary>
         /// The current directory the server executable lies in
-        /// Rather than loading from a static folder such as the client, the server
-        /// Will load settings/maps from it's current folder, meaning you can drag and drop the server
-        /// Into any folder to run it
+        /// rather than loading from a static folder such as the client, the server
+        /// will load settings/maps from it's current folder, meaning you can drag and drop the server
+        /// into any folder to run it
         /// </summary>
         public static readonly string ServerDirectory =
             Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+
         //Files
+        private static readonly string pluginFolder = Path.Combine(ServerDirectory, "Plugins");
         private static readonly string configFile = ServerDirectory + "\\server.config";
         private static readonly JsonSerializerSettings serializationSettings = 
             new JsonSerializerSettings() { Formatting = Newtonsoft.Json.Formatting.Indented };
@@ -86,7 +88,9 @@ namespace Bricklayer.Server
 
         public static void LoadPlugins(Server server)
         {
-            string[] files = Directory.GetFiles(Path.Combine(ServerDirectory, "Plugins"), "*.dll");
+            if (!Directory.Exists(pluginFolder))
+                Directory.CreateDirectory(pluginFolder);
+            string[] files = Directory.GetFiles(pluginFolder, "*.dll");
 
             List<string> loadedFiles = new List<String>(); //Temporary check for loaded files
             foreach (var file in files)

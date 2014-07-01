@@ -70,7 +70,7 @@ namespace Bricklayer.Client.Interface
                                 string lastWord = words[words.Length - 1];
                                 int index = screen.ChatBox.TextBox.Text.Length - lastWord.Length;
                                 //See if any players start with it (And if we already typed the username, don't worry about it)
-                                Player player = Game.Map.Players.FirstOrDefault(p => p.Username.ToUpper(System.Globalization.CultureInfo.InvariantCulture).StartsWith(lastWord.ToUpper(System.Globalization.CultureInfo.InvariantCulture)) && p.Username != lastWord);
+                                Player player = (Player)Game.Map.Players.FirstOrDefault(p => p.Username.ToUpper(System.Globalization.CultureInfo.InvariantCulture).StartsWith(lastWord.ToUpper(System.Globalization.CultureInfo.InvariantCulture)) && p.Username != lastWord);
                                 if (player != null && player != Game.Me)
                                 {
                                     //If so, set the textbox to autocomplete it, and set the caret to the end of the word

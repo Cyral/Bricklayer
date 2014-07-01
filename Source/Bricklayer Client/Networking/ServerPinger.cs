@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Net.Sockets;
 using System.Text;
 using System.Timers;
+using Bricklayer.Common.Data;
 
 namespace Bricklayer.Client.Networking
 {

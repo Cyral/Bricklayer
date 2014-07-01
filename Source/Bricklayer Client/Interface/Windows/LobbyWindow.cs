@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Microsoft.Xna.Framework;
-using Bricklayer.Client.Networking;
-using TomShane.Neoforce.Controls;
-using Bricklayer.Client.Networking.Messages;
+using Bricklayer.Common.Data;
+using Bricklayer.Common.Networking.Messages;
 using Cyral.Extensions;
+using TomShane.Neoforce.Controls;
 
 namespace Bricklayer.Client.Interface
 {
@@ -149,7 +147,7 @@ namespace Bricklayer.Client.Interface
             {
                 MainWindow.ScreenManager.SwitchScreen(new GameScreen(new Action((new Action(() =>
                 {
-                    Game.NetManager.Send(new Bricklayer.Client.Networking.Messages.JoinRoomMessage(
+                    Game.NetManager.Send(new Bricklayer.Common.Networking.Messages.JoinRoomMessage(
                         (RoomListCtrl.Items[index] as LobbyDataControl).Data.ID));
                 })))));
             }
@@ -216,7 +214,7 @@ namespace Bricklayer.Client.Interface
             LobbyScreen screen = Interface.MainWindow.ScreenManager.Current as LobbyScreen;
             infoText = infoText.Replace("$Online", screen.Online.ToString());
             infoText = infoText.Replace("$Name", screen.Name);
-            infoText = infoText.Replace("$Rooms", screen.Rooms.Count().ToString());
+            infoText = infoText.Replace("$Rooms", screen.Rooms.Count.ToString());
             return infoText;
         }
     }

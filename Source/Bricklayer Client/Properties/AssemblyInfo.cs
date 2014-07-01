@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Resources;
+using Bricklayer.Common;
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
@@ -37,18 +38,3 @@ using System.Resources;
 //
 [assembly: AssemblyVersion("0.0.2.2")]
 [assembly: AssemblyVersionName("Alpha","a")]
-
-#region Custom Attributes
-[AttributeUsage(AttributeTargets.Assembly)]
-public class AssemblyVersionName : Attribute {
-    public const string Prefix = "v";
-    public readonly string Name, ShortName;
-    public AssemblyVersionName(string name, string shortName) { Name = name; ShortName = shortName; }
-    public static string GetVersion()
-    {
-        Version version = Assembly.GetEntryAssembly().GetName().Version;
-        AssemblyVersionName name = Assembly.GetEntryAssembly().GetCustomAttributes(typeof(AssemblyVersionName), false).Cast<AssemblyVersionName>().ToList<AssemblyVersionName>()[0];
-        return AssemblyVersionName.Prefix + version + name.ShortName;
-    }
-}
-#endregion

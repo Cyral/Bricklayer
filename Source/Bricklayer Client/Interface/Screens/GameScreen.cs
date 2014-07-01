@@ -84,7 +84,7 @@ namespace Bricklayer.Client.Interface
             Window.Remove(Bar);
             Window.Remove(Sidebar);
             Manager.Remove(ChatBox);
-            Game.NetManager.Send(new Bricklayer.Client.Networking.Messages.PlayerLeaveMessage(Game.MyID));
+            Game.NetManager.Send(new Bricklayer.Common.Networking.Messages.PlayerLeaveMessage(Game.MyID));
             Game.Map = null;
         }
         #region Chat Helper Methods
@@ -97,8 +97,8 @@ namespace Bricklayer.Client.Interface
             //Trim to max length
             if (txtBox.Text.StartsWith(Game.Username + ": "))
                 txtBox.Text = txtBox.Text.Substring((Game.Username + ": ").Length);
-            if (txtBox.Text.Length > Networking.Messages.ChatMessage.MaxLength)
-                txtBox.Text = txtBox.Text.Truncate(Networking.Messages.ChatMessage.MaxLength);
+            if (txtBox.Text.Length > Bricklayer.Common.Networking.Messages.ChatMessage.MaxLength)
+                txtBox.Text = txtBox.Text.Truncate(Bricklayer.Common.Networking.Messages.ChatMessage.MaxLength);
         }
         /// <summary>
         /// Adds a system chat message to the chat box
@@ -131,7 +131,7 @@ namespace Bricklayer.Client.Interface
         {
             e.Message.Text = WrapText(ChatBox.GetFont(), Game.Username + ": " + e.Message.Text, ChatBox.Width - 24);
             ConsoleMessage c = new ConsoleMessage(e.Message.Text, 0);
-            Game.NetManager.Send(new Networking.Messages.ChatMessage(Game.Me, e.Message.Text.Substring((Game.Username + ": ").Length)));
+            Game.NetManager.Send(new Bricklayer.Common.Networking.Messages.ChatMessage(Game.Me, e.Message.Text.Substring((Game.Username + ": ").Length)));
             string[] texts = c.Text.Split(new string[1] { TomShane.Neoforce.Controls.Manager.StringNewline }, System.StringSplitOptions.None);
             ConsoleMessage[] msgs = new ConsoleMessage[texts.Length];
 

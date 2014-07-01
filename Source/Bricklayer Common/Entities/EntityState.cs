@@ -1,0 +1,19 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using Microsoft.Xna.Framework;
+
+namespace Bricklayer.Common.Entities
+{
+    /// <summary>
+    /// Represents the current state of an entity (Its position, velocity, etc)
+    /// </summary>
+    public struct EntityState
+    {
+        public Vector2 Position;
+        public Vector2 Velocity;
+        public Vector2 Movement;
+        public Rectangle Bounds;
+    }
+}

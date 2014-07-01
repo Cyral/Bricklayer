@@ -6,7 +6,7 @@ using System.Net;
 using System.Text;
 using System.Threading;
 using Lidgren.Network;
-using Bricklayer.Client.Networking.Messages;
+using Bricklayer.Common.Networking.Messages;
 using Timer = System.Timers.Timer;
 
 namespace Bricklayer.Client.Networking
