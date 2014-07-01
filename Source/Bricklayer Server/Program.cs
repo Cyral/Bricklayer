@@ -51,48 +51,6 @@ namespace Bricklayer.Server
             #endif
         }
 
-        #region Console Helpers
-        /// <summary>
-        /// Writes text to the console on a new line
-        /// </summary>
-        public static void WriteLine(string text)
-        {
-            Console.WriteLine(text);
-        }
-        /// <summary>
-        /// Writes text to the console on a new line, with optional color
-        /// </summary>
-        public static void WriteLine(string text, ConsoleColor color)
-        {
-            Console.ForegroundColor = color;
-            Console.WriteLine(text);
-            Console.ForegroundColor = ConsoleColor.White;
-        }
-        /// <summary>
-        /// Writes text to the console
-        /// </summary>
-        public static void Write(string text)
-        {
-            Console.Write(text);
-        }
-        /// <summary>
-        /// Writes text to the console with optional color
-        /// </summary>
-        public static void Write(string text, ConsoleColor color)
-        {
-            Console.ForegroundColor = color;
-            Console.Write(text);
-            Console.ForegroundColor = ConsoleColor.White;
-        }
-        /// <summary>
-        /// Writes a line break/new line to the console
-        /// </summary>
-        public static void WriteBreak()
-        {
-            Console.Write(Environment.NewLine);
-        }
-        #endregion
-
         #region Console Events
         //Console Events
         private static ConsoleEventDelegate consoleHandler;

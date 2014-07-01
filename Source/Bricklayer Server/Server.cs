@@ -39,7 +39,7 @@ namespace Bricklayer.Server
         /// </summary>
         public static List<Map> Maps { get; set; }
         /// <summary>
-        /// Lookup of remote unique identifiers to login data
+        /// Lookup of remote unique identifiers to login data, used in the lobby when players are not in a room
         /// </summary>
         public static Dictionary<long, LoginMessage> Logins = new Dictionary<long, LoginMessage>();
         /// <summary>
@@ -59,9 +59,9 @@ namespace Bricklayer.Server
             IO.LoadSettings(); //Load settings
 
             //Write a welcome message
-            Program.Write("Bricklayer ", ConsoleColor.Yellow);
-            Program.WriteLine("Server started on port " + Config.Port + " with " + Config.MaxPlayers + " max players.");
-            Program.WriteBreak();
+            Log.Write(ConsoleColor.Yellow, "Bricklayer ");
+            Log.WriteLine("Server started on port {0} with {1} max players.", Config.Port, Config.MaxPlayers);
+            Log.WriteBreak();
 
             LoadPlugins();
 
@@ -77,7 +77,7 @@ namespace Bricklayer.Server
             Maps = new List<Map>();
             CreateMap("Main World", "A large world for anyone to play and\nbuild! [color:SkyBlue]--Join Now!--[/color]");
 
-            Program.WriteLine("Waiting for new connections and updating world state...\n");
+            Log.WriteLine(LogType.Server, "Waiting for new connections and updating world state...\n");
             MsgHandler.ProcessNetworkMessages(); //Process messages for the rest of eternity
         }
 
@@ -96,13 +96,13 @@ namespace Bricklayer.Server
         /// </summary>
         public void LoadPlugins()
         {
-            Program.WriteLine("Loading plugins...", ConsoleColor.Green);
+            Log.WriteLine("Loading plugins...", ConsoleColor.Green);
 
             //Load plugins
             Plugins = new List<IPlugin>();
             IO.LoadPlugins(this);
 
-            Program.WriteLine(string.Format("{0} plugin{1} loaded.\n", Plugins.Count, Plugins.Count == 1 ? string.Empty : "s"), ConsoleColor.Green);
+            Log.WriteLine(string.Format("{0} plugin{1} loaded.\n", Plugins.Count, Plugins.Count == 1 ? string.Empty : "s"), ConsoleColor.Green);
         }
 
         #region Utilities
@@ -154,7 +154,7 @@ namespace Bricklayer.Server
             for (int i = 0; i < Config.MaxPlayers; i++)
                 if (!map.Players.Any(x => x.ID == i))
                     return (byte)i;
-            Program.WriteLine("Could not find empty ID!", ConsoleColor.Red);
+            Log.WriteLine("Could not find empty ID!", ConsoleColor.Red);
             return 0;
         }
         #endregion

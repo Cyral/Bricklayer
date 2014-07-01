@@ -53,9 +53,8 @@ namespace Bricklayer.Server
                                     //If the player would like to login
                                     case MessageTypes.Login:
                                         {
-                                            Program.WriteLine(string.Format("Incoming login request (RUI: {0} IP: {1})",
-                                                inc.SenderConnection.RemoteUniqueIdentifier, inc.SenderEndPoint.Address),
-                                                ConsoleColor.Green); //Log message
+                                            Log.WriteLine(LogType.Server, "Login request (RUI: {0} IP: {1})", 
+                                                inc.SenderConnection.RemoteUniqueIdentifier, inc.SenderEndPoint.Address); //Log message
 
                                             //If the player isn't already connected, allow them to join
                                             if (!Server.Logins.ContainsKey(inc.SenderConnection.RemoteUniqueIdentifier))
@@ -84,20 +83,20 @@ namespace Bricklayer.Server
                         //NOTE: Disconnecting and Disconnected are not instant unless client is shutdown with Disconnect()
                         case NetIncomingMessageType.StatusChanged:
                             {
+                                //Find player name
                                 string name = Server.Logins.ContainsKey(inc.SenderConnection.RemoteUniqueIdentifier) ?
                                     Server.Logins[inc.SenderConnection.RemoteUniqueIdentifier].Username + " (" + inc.SenderConnection.RemoteUniqueIdentifier + ")" :
                                     "Unknown (" + inc.SenderConnection.RemoteUniqueIdentifier + ")";
 
-                                Program.Write(string.Format("{0} status changed: ", name));
-                                Program.WriteLine(inc.SenderConnection.Status.ToString(), ConsoleColor.Cyan);
+                                //The lines below can get spammy, used to show when statuses change
+                                //Log.WriteLine(LogType.Status, "Status: {0} changed: {1}", name, inc.SenderConnection.Status.ToString());
 
                                 //When a players connection is finalized
                                 if (inc.SenderConnection.Status == NetConnectionStatus.Connected)
                                 {
+                                    //Log message
                                     LoginMessage login = Server.Logins[inc.SenderConnection.RemoteUniqueIdentifier];
-                                    Program.WriteLine("\tUsername: " + login.Username);
-                                    Program.WriteLine("\tRemote Unique Identifier: " + inc.SenderConnection.RemoteUniqueIdentifier);
-                                    Program.WriteLine("\tIP: " + inc.SenderEndPoint.Address);
+                                    Log.WriteLine(LogType.Server, "User {0} authenticated (RUI: {1}, IP: {2})", login.Username, inc.SenderConnection.RemoteUniqueIdentifier, inc.SenderEndPoint.Address);
                                     break;
                                 }
                                 //When a client disconnects
@@ -105,7 +104,7 @@ namespace Bricklayer.Server
                                 {
                                     if (sender != null)
                                     {
-                                        Program.WriteLine(sender.Username + " has left room: " + sender.Map.Name + " (disconnected).", ConsoleColor.Red);
+                                        Log.WriteLine(LogType.Server, ConsoleColor.Red, "{0} disconnected. (Room: {1})", sender.Username, sender.Map.Name);
                                         if (sender.Map.Players.Contains(sender))
                                         {
                                             //Remove player
@@ -118,7 +117,7 @@ namespace Bricklayer.Server
                                     }
                                     else
                                     {
-                                        Program.WriteLine(Server.Logins[inc.SenderConnection.RemoteUniqueIdentifier].Username + " has left lobby (disconnected).", ConsoleColor.Red);
+                                        Log.WriteLine(LogType.Server, ConsoleColor.Red, "{0} disconnected.", Server.Logins[inc.SenderConnection.RemoteUniqueIdentifier].Username);
                                     }
                                     Server.Logins.Remove(inc.SenderConnection.RemoteUniqueIdentifier);
                                 }
@@ -169,7 +168,7 @@ namespace Bricklayer.Server
                     {
                         PlayerLeaveMessage user = new PlayerLeaveMessage(inc);
                         user.ID = sender.ID;
-                        Program.WriteLine(sender.Username + " has left room: " + sender.Map.Name + " (Exited to lobby)", ConsoleColor.Magenta);
+                        Log.WriteLine(LogType.Room, "{0} has left: {1}", sender.Username, sender.Map.Name);
                         //Remove player
                         map.Players.Remove(sender);
                         RebuildIndexes(map);
@@ -212,10 +211,14 @@ namespace Bricklayer.Server
                     {
                         ChatMessage chat = new ChatMessage(inc);
                         chat.ID = sender.ID;
+
                         //Verify length
                         if (chat.Message.Length > ChatMessage.MaxLength)
                             chat.Message = chat.Message.Truncate(ChatMessage.MaxLength);
                         NetManager.BroadcastExcept(chat, sender);
+
+                        //Log message
+                        Log.WriteLine(LogType.Chat, ConsoleColor.Gray, "<{0}> {1}", sender.Username, chat.Message);
                         break;
                     }
                 //When a player changes smiley
@@ -258,7 +261,7 @@ namespace Bricklayer.Server
                             NetManager.Send(new PlayerJoinMessage(sender.Username, sender.ID, true, sender.Tint), sender);
 
                             //Log message
-                            Program.WriteLine(string.Format("{0} joined room: {1}", login.Username, Maps[newMap].Name), ConsoleColor.Magenta);
+                            Log.WriteLine(LogType.Room, "{0} joined: {1}", login.Username, Maps[newMap].Name);
                             //Send message to everyone notifying of new user
                             NetManager.BroadcastExcept(new PlayerJoinMessage(sender.Username, sender.ID, false, sender.Tint), sender);
                             //Let new player know of all existing players and their states (Mode, Position, Smiley)
@@ -274,7 +277,6 @@ namespace Bricklayer.Server
                                         NetManager.Send(new PlayerSmileyMessage(player, player.Smiley), sender);
                                 }
                             }
-                            Program.WriteLine(string.Format("\tMap ID/Player Index: {0}/{1}", sender.ID, sender.Index));
                         }
                         break;
                     }
@@ -292,8 +294,7 @@ namespace Bricklayer.Server
                             NetManager.Send(new InitMessage(sender.Map), sender);
                             NetManager.Send(new PlayerJoinMessage(sender.Username, sender.ID, true, sender.Tint), sender);
                             //Log message
-                            Program.WriteLine(string.Format("{0} created room: {1}", login.Username, newMap.Name), ConsoleColor.Magenta);
-                            Program.WriteLine(string.Format("\tMap ID/Player Index: {0}/{1}", sender.ID, sender.Index));
+                            Log.WriteLine(LogType.Room, "{0} created room: {1}", login.Username, newMap.Name);
                         }
                         break;
                     }

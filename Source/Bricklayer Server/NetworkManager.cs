@@ -61,7 +61,7 @@ namespace Bricklayer.Server
 
             //Attempt to port-forward over UPnP
             try { NetServer.UPnP.ForwardPort(port, "Bricklayer Port-Forwarding"); }
-            catch (Exception e) { Program.WriteLine(e.ToString()); }
+            catch (Exception e) { Log.WriteLine(e.ToString()); }
         }
 
         /// <summary>
