@@ -94,7 +94,7 @@ namespace Bricklayer.Server
             }
             catch (Exception e)
             {
-                Console.WriteLine(LogType.Error, "PingListener Error: {0}", e);
+                Log.WriteLine(LogType.Error, "PingListener Error: {0}", e);
             }
         }
         #endregion
