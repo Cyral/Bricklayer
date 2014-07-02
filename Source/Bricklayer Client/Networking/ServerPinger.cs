@@ -20,9 +20,9 @@ namespace Bricklayer.Client.Networking
         {
             ServerPingData pingData = new ServerPingData();
             error = string.Empty;
-            //Add timer to handle timeouts
-            Timer timeoutTimer = new Timer(3000);
-            //Attemp to contact the server
+            // Add timer to handle timeouts
+            // @FER22F - DEPRECATED: Timer timeoutTimer = new Timer(3000);
+            // Attemp to contact the server
             try
             {
                 client = new TcpClient(host, port);
@@ -37,8 +37,11 @@ namespace Bricklayer.Client.Networking
 
                 Debug.WriteLine("ServerPinger Sent: " + data.ToString());
 
+                // Gets the size of the message from the server. 65535 is the max
+                int size = (stream.ReadByte() << 8) + stream.ReadByte();
+
                 //Buffer to store the response bytes.
-                data = new byte[256];
+                data = new byte[size];
 
                 //Read the first batch of the TcpServer response bytes
                 int bytes = stream.Read(data, 0, data.Length);
