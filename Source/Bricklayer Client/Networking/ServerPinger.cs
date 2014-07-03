@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.IO;
 using System.Net.Sockets;
 using System.Text;
 using System.Timers;
@@ -20,38 +21,57 @@ namespace Bricklayer.Client.Networking
         {
             ServerPingData pingData = new ServerPingData();
             error = string.Empty;
-            // Add timer to handle timeouts
-            // @FER22F - DEPRECATED: Timer timeoutTimer = new Timer(3000);
-            // Attemp to contact the server
+            //Attempt to contact the server
             try
             {
-                client = new TcpClient(host, port);
-                //Send a single message notifying the server we would like it's stats (0 is the ping request ID)
-                data = new byte[1] { 0x00 };
+                using (TcpClient client = new TcpClient())
+                {
+                    IAsyncResult ar = client.BeginConnect(host, port, null, null);
+                    System.Threading.WaitHandle wh = ar.AsyncWaitHandle;
+                    try
+                    {
+                        if (!ar.AsyncWaitHandle.WaitOne(TimeSpan.FromSeconds(Common.GlobalSettings.ConnectTimeout), false))
+                        {
+                            client.Close();
+                            error = "Connection timed out, could not connect.";
+                            pingData.Error = true;
+                            return pingData;
+                        }
 
-                //Get a client stream for reading and writing
-                stream = client.GetStream();
+                        client.EndConnect(ar);
+                    }
+                    finally
+                    {
+                        wh.Close();
+                    }
+                    //Send a single message notifying the server we would like it's stats (0 is the ping request ID)
+                    data = new byte[1] { 0x00 };
 
-                //Send the message to the connected TcpServer.
-                stream.Write(data, 0, data.Length);
+                    //Get a client stream for reading and writing
+                    stream = client.GetStream();
 
-                Debug.WriteLine("ServerPinger Sent: " + data.ToString());
+                    //Send the message to the connected TcpServer.
+                    stream.Write(data, 0, data.Length);
 
-                // Gets the size of the message from the server. 65535 is the max
-                int size = (stream.ReadByte() << 8) + stream.ReadByte();
+                    Debug.WriteLine("ServerPinger Sent: " + data.ToString());
 
-                //Buffer to store the response bytes.
-                data = new byte[size];
+                    //Buffer to store the response bytes.
+                    data = new byte[256];
 
-                //Read the first batch of the TcpServer response bytes
-                int bytes = stream.Read(data, 0, data.Length);
+                    //Read the first batch of the TcpServer response bytes
+                    int bytes = stream.Read(data, 0, data.Length);
 
-                //TODO: This way of reading the recieved info is prone to errors
-                //Someone needs to find a way to use methods like ReadString(), ReadByte(), etc for this section
-                //This is a total hack and needs to be changed!
-                pingData.Online = int.Parse(Encoding.ASCII.GetString(data).Substring(0,1));
-                pingData.MaxOnline = int.Parse(Encoding.ASCII.GetString(data).Substring(1, 1));
-                pingData.Description = Encoding.ASCII.GetString(data).Substring(2).Replace("\0","");
+                    using (MemoryStream ms = new MemoryStream(data))
+                    {
+                        using (StreamReader reader = new StreamReader(ms))
+                        {
+                            pingData.Online = (int)byte.Parse(reader.ReadLine());
+                            pingData.MaxOnline = (int)byte.Parse(reader.ReadLine());
+                            pingData.Description = reader.ReadLine();
+                        }
+                    }
+                    client.Close();
+                } 
             }
             catch (Exception e)
             {

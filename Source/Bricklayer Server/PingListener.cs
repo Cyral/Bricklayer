@@ -3,6 +3,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
+using System.Linq;
 using System.Net.Sockets;
 using System.Threading;
 using Bricklayer.Common.Data;
@@ -45,20 +46,6 @@ namespace Bricklayer.Server
             Log.WriteLine(ConsoleColor.Green, "PingListener started, Listening for query requests.\n"); //Log message
         }
 
-        public IPAddress LocalIPAddress()
-        {
-            IPHostEntry host;
-            host = Dns.GetHostEntry(Dns.GetHostName());
-            foreach (IPAddress ip in host.AddressList)
-            {
-                if (ip.AddressFamily == AddressFamily.InterNetwork && ip.ToString().Split('.')[0] == "192")
-                {
-                    return ip;
-                }
-            }
-            return null;
-        }
-
         /// <summary>
         /// Listens for ping requests, and sends back statistics
         /// </summary>
@@ -66,12 +53,7 @@ namespace Bricklayer.Server
         {
             try
             {
-                IPAddress IP = LocalIPAddress();
-                //IP = IPAddress.Parse("127.0.0.1");
-
-                Log.WriteLine(ConsoleColor.Yellow, "Starting Ping in IP " + IP.ToString());
-
-                server = new TcpListener(IP, port); //Create a TcpListener to listen for requests
+                server = new TcpListener(IPAddress.Any, port); //Create a TcpListener to listen for requests
                 server.Start(); //Start listening for client requests.
 
                 byte[] bytes = new byte[1]; //Single byte buffer for reading data (should not exceed 1 byte)
@@ -84,9 +66,8 @@ namespace Bricklayer.Server
                     int i;
 
                     //Loop to receive all the data sent by the client
-                    while (stream.CanRead)
+                    while ((i = stream.Read(bytes, 0, bytes.Length)) != 0)
                     {
-                        i = stream.Read(bytes, 0, bytes.Length);
                         Debug.WriteLine(String.Format("PingListener: Data Received: {0}", bytes.ToString()));
                         //If ping request recieved, send back the data (0 is the ping packet id)
                         if ((byte)bytes[0] == 0x00)
@@ -99,22 +80,11 @@ namespace Bricklayer.Server
                             {
                                 using (StreamWriter writer = new StreamWriter(ms))
                                 {
-                                    writer.Write((byte)pingData.Online);
-                                    writer.Write((byte)pingData.MaxOnline);
-                                    writer.Write(pingData.Description);
+                                    writer.WriteLine((byte)pingData.Online);
+                                    writer.WriteLine((byte)pingData.MaxOnline);
+                                    writer.WriteLine(pingData.Description);
                                 }
                                 byte[] msg = ms.ToArray();
-
-                                //(stream.ReadByte() << 8) + stream.ReadByte();
-                                if (msg.Length > 65535)
-                                {
-                                    throw new OverflowException("Please make your description smaller");
-                                }
-
-                                // Writes the size of the message, up to 65535
-                                stream.WriteByte((byte)(msg.Length >> 8));
-                                stream.WriteByte((byte)(msg.Length % 255));
-                                
                                 stream.Write(msg, 0, msg.Length);
                             }
                         }
@@ -126,13 +96,7 @@ namespace Bricklayer.Server
             }
             catch (Exception e)
             {
-                Log.WriteLine(LogType.Error, "PingListener Error: \"{0}\"", e.Message);
-                Debug.WriteLine(e.ToString());
-            }
-            finally
-            {
-                server.Stop();
-                this.Start();
+                Log.WriteLine(LogType.Error, "PingListener Error: {0}", e);
             }
         }
         #endregion

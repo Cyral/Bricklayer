@@ -14,5 +14,7 @@ namespace Bricklayer.Common
         //Player color constants
         public const int ColorValue = 250;
         public const int ColorSaturation = 210;
+
+        public const int ConnectTimeout = 3;
     }
 }
