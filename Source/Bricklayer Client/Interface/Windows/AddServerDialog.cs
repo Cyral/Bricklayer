@@ -52,7 +52,9 @@ namespace Bricklayer.Client.Interface
             NameTxt.TextChanged += NameTxt_TextChanged;
             Add(NameTxt);
 
-            AddressLbl = new Label(manager) { Left = 8, Top = NameTxt.Bottom + 8, Text = "Address: (Default port is 14242)", Width = this.ClientWidth - 16 };
+            AddressLbl = new Label(manager) { Left = 8, Top = NameTxt.Bottom + 8,
+                Text = string.Format("Address: (Default port is {0})", Bricklayer.Common.GlobalSettings.DefaultPort), 
+                Width = this.ClientWidth - 16 };
             AddressLbl.Init();
             Add(AddressLbl);
 

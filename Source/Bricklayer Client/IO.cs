@@ -192,17 +192,24 @@ namespace Bricklayer.Client
             if (!File.Exists(fileName))
             {
                 //If server config does not exist, create it and write the default server to it
-                WriteServers(new List<ServerSaveData>() { new ServerSaveData("Local Server", "127.0.0.1", 14242) }); 
+                WriteServers(new List<ServerSaveData>() { CreateDefaultServer() }); 
             }
             string json = File.ReadAllText(fileName);
             if (string.IsNullOrWhiteSpace(json))
             {
-                WriteServers(new List<ServerSaveData>() { new ServerSaveData("Local Server", "127.0.0.1", 14242) });
+                WriteServers(new List<ServerSaveData>() { CreateDefaultServer() });
                 json = File.ReadAllText(fileName);
             }
             servers = JsonConvert.DeserializeObject<List<ServerSaveData>>(json);
             return servers;
         }
+
+        private static ServerSaveData CreateDefaultServer()
+        {
+            return new ServerSaveData("Local Server", "127.0.0.1", GlobalSettings.DefaultPort);
+        }
+
+
         /// <summary>
         /// Save servers into a configurable json file
         /// </summary>

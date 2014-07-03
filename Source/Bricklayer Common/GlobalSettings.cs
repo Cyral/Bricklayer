@@ -12,9 +12,13 @@ namespace Bricklayer.Common
         public const string NameRegex = "";
 
         //Player color constants
-        public const int ColorValue = 250;
-        public const int ColorSaturation = 210;
+        public const int
+            ColorValue = 250,
+            ColorSaturation = 210;
 
-        public const int ConnectTimeout = 3;
+        //Connection constants
+        public const int
+             ConnectTimeout = 3,
+             DefaultPort = 14242;
     }
 }
