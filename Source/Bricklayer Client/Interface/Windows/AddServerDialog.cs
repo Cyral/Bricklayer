@@ -111,9 +111,8 @@ namespace Bricklayer.Client.Interface
                     SaveBtn.Enabled = false;
                 }
                 //Validate port (if any)
-                if (address.Length > 1)
+                if (address.Length > 1 && int.TryParse(address[1], out port))
                 {
-                    port = int.Parse(address[1]);
                     if (!(port > 0 && port < 65535))
                     {
                         AddressTxt.TextColor = Color.Red;
