@@ -23,7 +23,6 @@ namespace Bricklayer.Client.Interface
         private ImageBox BodyImg, SmileyImg;
         private ColorPicker BodyClr;
 
-
         public ServerWindow(Manager manager) : base(manager)
         {
             //Setup server pinger/query
@@ -44,16 +43,16 @@ namespace Bricklayer.Client.Interface
             NameLbl.Init();
             Add(NameLbl);
 
-            NameTxt = new TextBox(Manager) { Left = NameLbl.Right + 4, Top = TopPanel.Bottom + 8, Width = 150, Text = Game.Username};
+            NameTxt = new TextBox(Manager) { Left = NameLbl.Right + 4, Top = TopPanel.Bottom + 8, Width = 150, Text = Game.Username };
             NameTxt.Init();
             NameTxt.Refresh();
             NameTxt.TextChanged += new TomShane.Neoforce.Controls.EventHandler(delegate(object o, TomShane.Neoforce.Controls.EventArgs e)
             {
-                if (NameTxt.Text.Length > GlobalSettings.MaxNameLength) //Clamp length
-                    NameTxt.Text = NameTxt.Text.Truncate(GlobalSettings.MaxNameLength);
-                Game.Username = NameTxt.Text;
+                //Validate Username
+                validateUsername();
             });
             Add(NameTxt);
+
 
             ColorLbl = new Label(Manager) { Left = NameTxt.Right + 8, Top = TopPanel.Bottom + 10, Width = 36, Text = "Color:" };
             ColorLbl.Init();
@@ -162,6 +161,22 @@ namespace Bricklayer.Client.Interface
             });
             BottomPanel.Add(RefreshBtn);
             MainWindow.ScreenManager.FadeIn();
+            validateUsername();
+        }
+
+        private void validateUsername()
+        {
+            if (!GlobalSettings.NameRegex.IsMatch(NameTxt.Text))
+            {
+                NameTxt.TextColor = Color.Red;
+                JoinBtn.Enabled = false;
+            }
+            else
+            {
+                NameTxt.TextColor = MainWindow.DefaultTextColor;
+                JoinBtn.Enabled = true;
+                Game.Username = NameTxt.Text;
+            }
         }
         public void AddServer(ServerSaveData server)
         {
@@ -187,14 +202,14 @@ namespace Bricklayer.Client.Interface
                 ServerListCtrl.ItemIndex = 0;
         }
 
-        internal void Disconnected()
+        internal void Disconnected(string message, string title)
         {
             //Re-enable join button and display error if couldnt connect
             if (!JoinBtn.Enabled)
             {
                 JoinBtn.Enabled = true;
                 JoinBtn.Text = "Connect";
-                MessageBox error = new MessageBox(Manager, MessageBoxType.Error, "Could not connect to server.", "[color:Gold]Error[/color]");
+                MessageBox error = new MessageBox(Manager, MessageBoxType.Error, message, title);
                 error.Init();
                 Manager.Add(error);
                 error.Show();

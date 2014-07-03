@@ -6,6 +6,7 @@ using System.Text;
 using Bricklayer.Client.Networking;
 using Bricklayer.Common.Data;
 using TomShane.Neoforce.Controls;
+using Color = Microsoft.Xna.Framework.Color;
 
 namespace Bricklayer.Client.Interface
 {
@@ -77,19 +78,26 @@ namespace Bricklayer.Client.Interface
 
         void NameTxt_TextChanged(object sender, TomShane.Neoforce.Controls.EventArgs e)
         {
-            SaveBtn.Enabled = Validate();
+            Validate();
         }
 
         private void AddressTxt_TextChanged(object sender, TomShane.Neoforce.Controls.EventArgs e)
         {
-            SaveBtn.Enabled = Validate();
+            Validate();
         }
 
-        private bool Validate()
+        private void Validate()
         {
             //Validate name
+            NameTxt.TextColor = MainWindow.DefaultTextColor;
+            AddressTxt.TextColor = MainWindow.DefaultTextColor;
+            SaveBtn.Enabled = true;
+
             if (string.IsNullOrWhiteSpace(NameTxt.Text))
-                return false;
+            {
+                NameTxt.TextColor = Color.Red;
+                SaveBtn.Enabled = false;
+            }
             string[] address = AddressTxt.Text.Split(separator, StringSplitOptions.RemoveEmptyEntries);
             port = 0;
             if (address.Length > 0)
@@ -98,20 +106,27 @@ namespace Bricklayer.Client.Interface
                 //Validate IP
                 IPAddress host;
                 if (!IPAddress.TryParse(IP, out host) && !IP.Equals("localhost", StringComparison.OrdinalIgnoreCase))
-                    return false;
+                {
+                    AddressTxt.TextColor = Color.Red;
+                    SaveBtn.Enabled = false;
+                }
                 //Validate port (if any)
                 if (address.Length > 1)
                 {
                     port = int.Parse(address[1]);
                     if (!(port > 0 && port < 65535))
-                        return false;
+                    {
+                        AddressTxt.TextColor = Color.Red;
+                        SaveBtn.Enabled = false;
+                    }
+
                 }
             }
             else
             {
-                return false;
+                AddressTxt.TextColor = Color.Red;
+                SaveBtn.Enabled = false;
             }
-            return true; //Passed checks
         }
 
         /// <summary>

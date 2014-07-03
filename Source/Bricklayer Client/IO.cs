@@ -105,8 +105,6 @@ namespace Bricklayer.Client
         /// </summary>
         public static void SaveSettings(Settings settings)
         {
-            if (settings.Username.Length > GlobalSettings.MaxNameLength) //Clamp name length
-                settings.Username = settings.Username.Truncate(GlobalSettings.MaxNameLength);
             try
             {
                 //If server config does not exist, create it

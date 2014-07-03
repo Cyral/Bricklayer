@@ -37,6 +37,7 @@ namespace Bricklayer.Client.Networking
 
             while ((im = NetManager.ReadMessage()) != null)
             {
+                Debug.WriteLine(im.ToString());
                 switch (im.MessageType)
                 {
                     case NetIncomingMessageType.VerboseDebugMessage:
@@ -72,8 +73,20 @@ namespace Bricklayer.Client.Networking
                                     }
                                     else
                                     {
-                                        if (MainWindow.ScreenManager.Current is LoginScreen)
-                                            (MainWindow.ScreenManager.Current as LoginScreen).Login.Disconnected();
+                                        string reason = im.ReadString();
+                                        
+                                        if (string.IsNullOrWhiteSpace(reason)) //Disconnect
+                                        {
+                                            if (MainWindow.ScreenManager.Current is LoginScreen)
+                                                (MainWindow.ScreenManager.Current as LoginScreen).Login.Disconnected("Could not connect to server.", "[color:Gold]Error[/color]");
+                                        }
+                                        else //Denied/Kicked/Server Shut Down
+                                        {
+                                            string[] reasons = reason.Split(':');
+                                            if (MainWindow.ScreenManager.Current is LoginScreen)
+                                                (MainWindow.ScreenManager.Current as LoginScreen).Login.Disconnected(reasons[0], reasons[1]);
+                                        }
+
                                     }
                                 }
                                 break;

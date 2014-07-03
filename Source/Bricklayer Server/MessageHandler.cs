@@ -1,6 +1,8 @@
 ﻿#region Usings
 using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
+using Bricklayer.Common;
 using Bricklayer.Common.Data;
 using Bricklayer.Common.Entities;
 using Bricklayer.Common.Networking;
@@ -60,13 +62,16 @@ namespace Bricklayer.Server
                                             if (!Server.Logins.ContainsKey(inc.SenderConnection.RemoteUniqueIdentifier))
                                             {
                                                 LoginMessage login = new LoginMessage(inc);
-                                                Server.Logins.Add(inc.SenderConnection.RemoteUniqueIdentifier, login);
-                                                inc.SenderConnection.Approve();
+                                                if (GlobalSettings.NameRegex.IsMatch(login.Username)) //Double check username is valid
+                                                {
+                                                    Server.Logins.Add(inc.SenderConnection.RemoteUniqueIdentifier, login);
+                                                    inc.SenderConnection.Approve();
+                                                }
+                                                else
+                                                    inc.SenderConnection.Deny("Invalid Username:Kicked");
                                             }
                                             else
-                                            {
                                                 inc.SenderConnection.Deny();
-                                            }
                                             break;
                                         }
                                 }

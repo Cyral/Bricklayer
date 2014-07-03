@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Bricklayer.Common
 {
     public static class GlobalSettings
     {
         //Player name constants
-        public const int MaxNameLength = 20;
-        public const string NameRegex = "";
+        public static readonly Regex NameRegex = new Regex("^[a-zA-Z0-9_-]{3,16}$");
 
         //Player color constants
         public const int

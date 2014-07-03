@@ -18,7 +18,7 @@ namespace Bricklayer.Client.Interface
         private Label Name, Motd, Stats, Host;
         private StatusBar Gradient;
 
-        private Color offlineColor = Color.Red, onlineColor = new Color(0, 205, 5);
+        private readonly Color offlineColor = Color.Red, onlineColor = new Color(0, 205, 5);
 
         public ServerDataControl(Manager manager, ServerPinger pinger, ServerSaveData server)
             : base(manager)

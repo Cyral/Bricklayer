@@ -40,15 +40,9 @@ namespace Bricklayer.Common.Networking.Messages
             this.Username = im.ReadString();
             this.Password = im.ReadString();
             this.Color = ColorExtensions.ColorFromHSV(im.ReadInt16(), GlobalSettings.ColorSaturation / 255f, GlobalSettings.ColorValue / 255f);
-
-            if (Username.Length > GlobalSettings.MaxNameLength) //Clamp name length
-                Username = Username.Truncate(GlobalSettings.MaxNameLength);
         }
         public void Encode(NetOutgoingMessage om)
         {
-            if (Username.Length > GlobalSettings.MaxNameLength) //Clamp name length
-                Username = Username.Truncate(GlobalSettings.MaxNameLength);
-
             om.Write(this.Username);
             om.Write(this.Password);
             om.Write((short)this.Hue);
