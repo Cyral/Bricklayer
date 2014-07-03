@@ -52,6 +52,12 @@ namespace Bricklayer.Client
                     Directory.CreateDirectory(kv.Value);
         }
 
+        private static void SaveAndApplyDefault(Game game)
+        {
+            SaveSettings(Settings.GetDefaultSettings());
+            ApplySettings(Settings.GetDefaultSettings(), game);
+        }
+
         /// <summary>
         /// Opens the settings file and loads the values
         /// </summary>
@@ -61,25 +67,28 @@ namespace Bricklayer.Client
             {
                 Settings settings;
                 //If config does not exist, create it and write the default settings
-                if (!File.Exists(configFile))
-                    SaveSettings(Settings.GetDefaultSettings());
+                if (!File.Exists(configFile)) {
+                    SaveAndApplyDefault(game);
+                    return;
+                }
                 string json = File.ReadAllText(configFile);
                 //If config is empty, regenerate it
-                if (string.IsNullOrWhiteSpace(json))
-                    SaveSettings(Settings.GetDefaultSettings());
-                json = File.ReadAllText(configFile);
+                if (string.IsNullOrWhiteSpace(json)) {
+                    SaveAndApplyDefault(game);
+                    return;
+                }
                 settings = JsonConvert.DeserializeObject<Settings>(json);
                 ApplySettings(settings, game);
             }
             catch (Exception ex)
             {
 #if DEBUG
-                throw;
+                throw ex;
 #else
                 System.Windows.Forms.MessageBox.Show(ex.Message + "\nTry deleting your config file!", game.Window.Title + " Configuration Error");
-#endif
                 //Default fallback settings
                 ApplySettings(Settings.GetDefaultSettings(), game);
+#endif
             }
         }
 
@@ -118,7 +127,7 @@ namespace Bricklayer.Client
             }
             catch (Exception ex)
             {
-                throw; //TODO: Add some form of handling
+                throw ex; //TODO: Add some form of handling
             }
         }
 
