@@ -53,10 +53,11 @@ namespace Bricklayer.Client.Networking
                     //Send the message to the connected TcpServer.
                     stream.Write(data, 0, data.Length);
 
+                    int size = (stream.ReadByte() << 8) + stream.ReadByte();
                     Debug.WriteLine("ServerPinger Sent: " + data.ToString());
 
                     //Buffer to store the response bytes.
-                    data = new byte[256];
+                    data = new byte[size];
 
                     //Read the first batch of the TcpServer response bytes
                     int bytes = stream.Read(data, 0, data.Length);

@@ -64,7 +64,6 @@ namespace Bricklayer.Server
                     client = server.AcceptTcpClient(); //Wait and accept requests
                     stream = client.GetStream(); //Get a stream object for reading and writing
                     int i;
-
                     //Loop to receive all the data sent by the client
                     while ((i = stream.Read(bytes, 0, bytes.Length)) != 0)
                     {
@@ -85,6 +84,16 @@ namespace Bricklayer.Server
                                     writer.WriteLine(pingData.Description);
                                 }
                                 byte[] msg = ms.ToArray();
+                                //(stream.ReadByte() << 8) + stream.ReadByte();
+                                if (msg.Length > 65535)
+                                {
+                                    throw new OverflowException("Please make your description smaller");
+                                }
+
+                                // Writes the size of the message, up to 65535
+                                stream.WriteByte((byte)(msg.Length >> 8));
+                                stream.WriteByte((byte)(msg.Length % 255));               
+
                                 stream.Write(msg, 0, msg.Length);
                             }
                         }
@@ -96,7 +105,12 @@ namespace Bricklayer.Server
             }
             catch (Exception e)
             {
-                Log.WriteLine(LogType.Error, "PingListener Error: {0}", e);
+                Log.WriteLine(LogType.Error, "PingListener Error: \"{0}\"", e.Message);
+            }
+            finally
+            {
+                server.Stop();
+                this.Start();
             }
         }
         #endregion
