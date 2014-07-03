@@ -68,6 +68,9 @@ namespace Bricklayer.Client.Interface
             SaveBtn.Click += SaveBtn_Click;
             SaveBtn.Enabled = false;
             BottomPanel.Add(SaveBtn);
+
+            if (Edit)
+                Validate(); //Validate existing text
         }
 
         void NameTxt_TextChanged(object sender, TomShane.Neoforce.Controls.EventArgs e)
@@ -92,7 +95,7 @@ namespace Bricklayer.Client.Interface
                 IP = address[0];
                 //Validate IP
                 IPAddress host;
-                if (!IPAddress.TryParse(IP, out host))
+                if (!IPAddress.TryParse(IP, out host) && !IP.Equals("localhost", StringComparison.OrdinalIgnoreCase))
                     return false;
                 //Validate port (if any)
                 if (address.Length > 1)
