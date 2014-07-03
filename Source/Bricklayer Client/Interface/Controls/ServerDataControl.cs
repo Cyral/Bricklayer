@@ -66,14 +66,17 @@ namespace Bricklayer.Client.Interface
             {
                 //Set the controls with the recieved data
                 Stats.Text = ping.Online + "/" + ping.MaxOnline;
-                Stats.Left = (ClientWidth - (int)Manager.Skin.Fonts["Default14"].Resource.MeasureString(Stats.Text).X) - 4 - 32;
                 Motd.Text = ping.Description;
             }
             else
             {
+                //Error text
+                Stats.Text = "Offline";
+                Stats.TextColor = Color.Red;
+
                 Motd.Text = error;
-                Motd.TextColor = Color.Gold;
             }
+            Stats.Left = (ClientWidth - (int)Manager.Skin.Fonts["Default14"].Resource.MeasureString(Stats.Text).X) - 4 - 32;
         }
         public override void DrawControl(Renderer renderer, Rectangle rect, GameTime gameTime)
         {
