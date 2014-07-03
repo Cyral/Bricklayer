@@ -33,7 +33,7 @@ namespace Bricklayer.Client.Networking
                         if (!ar.AsyncWaitHandle.WaitOne(TimeSpan.FromSeconds(Common.GlobalSettings.ConnectTimeout), false))
                         {
                             client.Close();
-                            error = "Connection timed out, could not connect.";
+                            error = "Offline (Connection Timeout)";
                             pingData.Error = true;
                             return pingData;
                         }
@@ -83,9 +83,9 @@ namespace Bricklayer.Client.Networking
                     //Provide some better error messages
                     int id = (e as SocketException).ErrorCode;
                     if (id == 10061) //No connection could be made because the target machine actively refused it
-                        error = "Target is online, however is not accessible.\n(Not running a server on that port, or blocked through a firewall)";
+                        error = "Offline (Target Online, Server Not Accessible)";
                     else if (id == 10060) //A connection attempt failed because the connected party did not properly respond after a period of time, or established connection failed because connected host has failed to respond
-                        error = "Connection timed out, could not connect.";
+                        error = "Offline (Connection Timeout)";
                 }
             }
             finally
