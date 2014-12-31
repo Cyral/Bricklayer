@@ -75,10 +75,17 @@ namespace Bricklayer.Server
 
             //Create a default map
             Maps = new List<Map>();
-            CreateMap("Main World", "A large world for anyone to play and\nbuild! [color:SkyBlue]--Join Now!--[/color]");
+            IO.LoadMaps();
+            //CreateMap("Main World", "A large world for anyone to play and\nbuild! [color:SkyBlue]--Join Now!--[/color]");
 
             Log.WriteLine(LogType.Server, "Waiting for new connections and updating world state...\n");
             MsgHandler.ProcessNetworkMessages(); //Process messages for the rest of eternity
+        }
+
+
+        public static void OnClose()
+        {
+            IO.SaveMaps();
         }
 
         /// <summary>
@@ -112,6 +119,7 @@ namespace Bricklayer.Server
         public static Map CreateMap(string name, string description)
         {
             Map map = new Map(name, description, 200, 100, Maps.Count) { Rating = 5 };
+            map.Generate();
             Maps.Add(map);
             return map;
         }
@@ -158,6 +166,5 @@ namespace Bricklayer.Server
             return 0;
         }
         #endregion
-
     }
 }

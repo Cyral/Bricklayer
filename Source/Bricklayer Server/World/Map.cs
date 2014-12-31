@@ -26,7 +26,7 @@ namespace Bricklayer.Server.World
             Description = description;
             Width = width;
             Height = height;
-            IsServer = true; //Running a client
+            IsServer = true; //Running a server
             Tiles = new Tile[Width, Height, 2];
             Players = new List<Bricklayer.Common.Entities.Player>();
             Generate();
@@ -36,7 +36,7 @@ namespace Bricklayer.Server.World
         /// <summary>
         /// Generates a simple world with borders
         /// </summary>
-        private void Generate()
+        public void Generate()
         {
             //Temporary Generation
             int[] heightMap = new int[Width];
@@ -85,7 +85,6 @@ namespace Bricklayer.Server.World
                 }
             }
         }
-
         /// <summary>
         /// Returns a player from a RemoteUniqueIdentifier (The unique player network ID)
         /// </summary>

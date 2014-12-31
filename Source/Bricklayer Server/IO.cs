@@ -2,9 +2,12 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Reflection;
 using Bricklayer.API;
+using Bricklayer.Common.World;
+using Bricklayer.Server.World;
 using Newtonsoft.Json;
 #endregion
 
@@ -26,7 +29,10 @@ namespace Bricklayer.Server
             Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
 
         //Files
+        private static int fileBufferSize = 65536;
+        private static readonly string mapSuffix = ".blmap";
         private static readonly string pluginFolder = Path.Combine(ServerDirectory, "Plugins");
+        private static readonly string mapFolder = Path.Combine(ServerDirectory, "Maps");
         private static readonly string configFile = ServerDirectory + "\\server.config";
         private static readonly JsonSerializerSettings serializationSettings = 
             new JsonSerializerSettings() { Formatting = Newtonsoft.Json.Formatting.Indented };
@@ -55,6 +61,7 @@ namespace Bricklayer.Server
                 throw; //TODO: Add some form of handling
             }
         }
+
         /// <summary>
         /// Saves server settings to the server config
         /// </summary>
@@ -76,6 +83,7 @@ namespace Bricklayer.Server
                 throw; //TODO: Add some form of handling
             }
         }
+
         /// <summary>
         /// Gets an MD5 of a given file
         /// </summary>
@@ -155,7 +163,128 @@ namespace Bricklayer.Server
                 Log.WriteLine(ex.ToString(), ConsoleColor.Red);
             }
         }
-        #endregion
 
+        public static void SaveMaps()
+        {
+            foreach (Bricklayer.Server.World.Map map in Server.Maps)
+                SaveMap(map);
+        }
+
+        public static void LoadMaps()
+        {
+            string[] mapFiles = Directory.GetFiles(mapFolder, "*" + mapSuffix);
+            foreach (string file in mapFiles)
+                Server.Maps.Add(LoadMap(Path.GetFileNameWithoutExtension(file)));
+        }
+
+        public static Bricklayer.Server.World.Map LoadMap(string name)
+        {
+            Bricklayer.Server.World.Map map;
+            using (BinaryReader binaryReader = new BinaryReader( //Create a new binary writer to write to the file
+                new BufferedStream(
+                File.Open(Path.Combine(mapFolder, name + mapSuffix), FileMode.Open))))
+            {
+                //Read general data
+                map = new Bricklayer.Server.World.Map(binaryReader.ReadString(), binaryReader.ReadString(),
+                    binaryReader.ReadInt16(), binaryReader.ReadInt16(), Server.Maps.Count) 
+                    { Rating = binaryReader.ReadDouble() };
+
+                for (int y = 0; y < map.Height; y++)
+                {
+                    for (int x = 0; x < map.Width; x++)
+                    {
+                        Tile fg;
+                        Tile bg;
+                        SaveFlags sf = (SaveFlags)binaryReader.ReadByte();
+
+                        int RLE = 0;
+                        if (sf.HasFlag(SaveFlags.RLE))
+                            RLE = binaryReader.ReadInt16();
+                        if (sf.HasFlag(SaveFlags.Foreground))
+                            fg = new Tile(BlockType.FromID(binaryReader.ReadByte()));
+                        else
+                            fg = new Tile(BlockType.Empty);
+                        if (sf.HasFlag(SaveFlags.Background))
+                            bg = new Tile(BlockType.FromID(binaryReader.ReadByte()));
+                        else
+                            bg = new Tile(BlockType.Empty);
+
+                        map.Tiles[x, y, 1] = fg;
+                        map.Tiles[x, y, 0] = bg;
+
+                        if (RLE > 0) //RLE enabled
+                        {
+                            for (int i = 1; i <= RLE; i++)
+                            {
+                                 map.Tiles[x + i, y, 1] = fg;
+                                 map.Tiles[x + i, y, 0] = bg;
+                            }
+                            x += RLE;
+                        }
+                    }
+                }
+            }
+            return map;
+        }
+
+        public static void SaveMap(Bricklayer.Server.World.Map map)
+        {
+            using (BinaryWriter binaryWriter = new BinaryWriter( //Create a new binary writer to write to the file
+                new BufferedStream(
+                File.Open(Path.Combine(mapFolder, map.Name + mapSuffix), FileMode.Create))))
+            {
+                //Write general data
+                binaryWriter.Write(map.Name);
+                binaryWriter.Write(map.Description);
+                binaryWriter.Write((short)map.Width);
+                binaryWriter.Write((short)map.Height);
+                binaryWriter.Write(map.Rating);
+
+                for (int y = 0; y < map.Height; y++)
+                {
+                    for (int x = 0; x < map.Width; x++)
+                    {
+                        BlockType fg = map.Tiles[x, y, 1].Block;
+                        BlockType bg = map.Tiles[x, y, 0].Block;
+                        SaveFlags sf = SaveFlags.None;
+
+                        //Calculate Run-Length Encoding
+                        int i = 0;
+                        while (i + 1 + x < map.Width && fg.ID == map.Tiles[x + i + 1, y, 1].Block.ID && bg.ID == map.Tiles[x + i + 1, y, 0].Block.ID)
+                            i++; //If next block is the same, record the amount of same blocks in i
+
+
+                        //Calculate flags
+                        if (i > 0)
+                            sf |= SaveFlags.RLE;
+                        if (fg.ID != BlockType.Empty.ID)
+                            sf |= SaveFlags.Foreground;
+                        if (bg.ID != BlockType.Empty.ID)
+                            sf |= SaveFlags.Background;
+                        binaryWriter.Write((byte)sf);
+
+                        //Save data
+                        if (i > 0)
+                            binaryWriter.Write((short)i);
+                        if (fg.ID != BlockType.Empty.ID)
+                            binaryWriter.Write(fg.ID);
+                        if (bg.ID != BlockType.Empty.ID)
+                            binaryWriter.Write(bg.ID);
+
+                        x += i;
+                    }
+                }
+            }
+        }
+
+        [Flags]
+        public enum SaveFlags : byte
+        {
+            None = 1, //Tile contains no flags
+            Foreground = 2,
+            Background = 4, //Tile contains background
+            RLE = 8, //Run length encoding
+        }
+        #endregion
     }
 }

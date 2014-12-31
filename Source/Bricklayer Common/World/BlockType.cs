@@ -90,10 +90,10 @@ namespace Bricklayer.Common.World
             Stone = new BlockType("Stone", Layer.All, new Rectangle(Tile.DrawWidth, 0, Tile.DrawWidth, Tile.DrawHeight), BlockCollision.Impassable);
             Dirt = new BlockType("Dirt", Layer.All, new Rectangle(Tile.DrawWidth * 2, 0, Tile.DrawWidth, Tile.DrawHeight), BlockCollision.Impassable);
             Grass = new BlockType("Grass", Layer.All, new Rectangle(Tile.DrawWidth * 3, 0, Tile.DrawWidth, Tile.DrawHeight), BlockCollision.Impassable);
-            Wood = new BlockType("Wood", Layer.All, new Rectangle(Tile.DrawWidth * 4, 0, Tile.DrawWidth, Tile.DrawHeight), BlockCollision.Impassable);
-            Brick = new BlockType("Brick", Layer.All, new Rectangle(Tile.DrawWidth * 5, 0, Tile.DrawWidth, Tile.DrawHeight), BlockCollision.Impassable);
-            Slab = new BlockType("Slab", Layer.All, new Rectangle(Tile.DrawWidth * 6, 0, Tile.DrawWidth, Tile.DrawHeight), BlockCollision.Impassable);
-            Glass = new BlockType("Glass", Layer.All, new Rectangle(Tile.DrawWidth * 7, 0, Tile.DrawWidth, Tile.DrawHeight), BlockCollision.Impassable);
+            //Wood = new BlockType("Wood", Layer.All, new Rectangle(Tile.DrawWidth * 4, 0, Tile.DrawWidth, Tile.DrawHeight), BlockCollision.Impassable);
+           // Brick = new BlockType("Brick", Layer.All, new Rectangle(Tile.DrawWidth * 5, 0, Tile.DrawWidth, Tile.DrawHeight), BlockCollision.Impassable);
+           // Slab = new BlockType("Slab", Layer.All, new Rectangle(Tile.DrawWidth * 6, 0, Tile.DrawWidth, Tile.DrawHeight), BlockCollision.Impassable);
+           // Glass = new BlockType("Glass", Layer.All, new Rectangle(Tile.DrawWidth * 7, 0, Tile.DrawWidth, Tile.DrawHeight), BlockCollision.Impassable);
             UpArrow = new BlockType("Up Arrow", Layer.Foreground, new Rectangle(Tile.DrawWidth * 8, 0, Tile.DrawWidth, Tile.DrawHeight), BlockCollision.Gravity);
             DownArrow = new BlockType("Down Arrow", Layer.Foreground, new Rectangle(Tile.DrawWidth * 10, 0, Tile.DrawWidth, Tile.DrawHeight), BlockCollision.Gravity);
             LeftArrow = new BlockType("Left Arrow", Layer.Foreground, new Rectangle(Tile.DrawWidth * 9, 0, Tile.DrawWidth, Tile.DrawHeight), BlockCollision.Gravity);

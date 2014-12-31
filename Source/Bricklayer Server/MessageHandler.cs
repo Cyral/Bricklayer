@@ -38,6 +38,9 @@ namespace Bricklayer.Server
 
             while (true) //Continously check for new messages and process them
             {
+                //Block thread until next message
+                NetworkManager.NetServer.MessageReceivedEvent.WaitOne();
+
                 if ((inc = NetManager.ReadMessage()) != null)
                 {
                     //Try and find who sent the message
@@ -132,8 +135,6 @@ namespace Bricklayer.Server
                             break;
                     }
                 }
-                //Let other programs have a bit of cpu time
-                System.Threading.Thread.Sleep(Server.Config.Sleep);
             }
         }
 
@@ -179,6 +180,7 @@ namespace Bricklayer.Server
                         RebuildIndexes(map);
                         //Send to players
                         NetManager.Broadcast(sender.Map, new PlayerLeaveMessage(sender.ID));
+                        IO.SaveMap((Bricklayer.Server.World.Map)sender.Map);
                         sender = null;
                         break;
                     }

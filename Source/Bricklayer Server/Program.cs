@@ -64,6 +64,7 @@ namespace Bricklayer.Server
         {
             if (eventType == 2)
             {
+                Server.OnClose();
                 Server.NetManager.Shutdown("Server Closed by Operator"); //Console closing
             }
             return false;

@@ -25,7 +25,9 @@ namespace Bricklayer.Client.Interface
 
         public GameScreen()
         {
+
         }
+
         public GameScreen(Action action)
         {
             Initialized = action;

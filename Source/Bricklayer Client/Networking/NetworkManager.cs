@@ -32,8 +32,7 @@ namespace Bricklayer.Client.Networking
             // Create new instance of configs. Parameter is "application Id". It has to be same on client and server.
             NetPeerConfiguration Config = new NetPeerConfiguration("Bricklayer");
 
-            Config.EnableMessageType(NetIncomingMessageType.ConnectionApproval);
-            Config.EnableMessageType(NetIncomingMessageType.Data);
+            Config.EnableMessageType(NetIncomingMessageType.ConnectionApproval | NetIncomingMessageType.Data | NetIncomingMessageType.StatusChanged | NetIncomingMessageType.UnconnectedData);
 
             // Create new client, with previously created configs
             Client = new NetClient(Config);

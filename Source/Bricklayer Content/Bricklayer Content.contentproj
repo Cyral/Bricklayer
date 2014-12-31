@@ -136,12 +136,6 @@
       <Importer>SkinImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
     </Content>
-    <Compile Include="SpriteFont1.spritefont">
-      <Name>SpriteFont1</Name>
-      <Importer>FontDescriptionImporter</Importer>
-      <Processor>FontDescriptionProcessor</Processor>
-      <SubType>Designer</SubType>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Content Packs\Default\views\" />

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -25,6 +26,7 @@ namespace TestPlugin
         public override void Load()
         {
             Console.WriteLine(string.Format("{0} by {2} - {1} (Version {3}) loaded.", Name, Description, Author, Version));
+            Console.WriteLine("It works!");
         }
 
         public override void Unload()

@@ -52,8 +52,7 @@ namespace Bricklayer.Server
             Config.Port = port;
             Config.MaximumConnections = maxconnections;
 
-            Config.EnableMessageType(NetIncomingMessageType.ConnectionApproval);
-            Config.EnableMessageType(NetIncomingMessageType.Data);
+            Config.EnableMessageType(NetIncomingMessageType.ConnectionApproval | NetIncomingMessageType.Data | NetIncomingMessageType.StatusChanged | NetIncomingMessageType.UnconnectedData);
             Config.EnableUPnP = true;
 
             NetServer = new NetServer(Config);

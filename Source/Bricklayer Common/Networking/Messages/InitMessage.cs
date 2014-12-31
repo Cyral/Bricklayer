@@ -39,13 +39,12 @@ namespace Bricklayer.Common.Networking.Messages
             {
                 for (int y = 0; y < map.Height; y++)
                 {
-                    byte[] b = im.ReadBytes(map.Width);
                     for (int x = 0; x < map.Width; x++)
                     {
                         if (z == 0)
-                            map.Tiles[x, y, 1] = new Tile(BlockType.BlockList[b[x]]);
+                            map.Tiles[x, y, 1] = new Tile(BlockType.FromID(im.ReadByte()));
                         else
-                            map.Tiles[x, y, 0] = new Tile(BlockType.BlockList[b[x]]);
+                            map.Tiles[x, y, 0] = new Tile(BlockType.FromID(im.ReadByte()));
                     }
                 }
             }
@@ -61,16 +60,13 @@ namespace Bricklayer.Common.Networking.Messages
             {
                 for (int y = 0; y < map.Height; y++)
                 {
-                    byte[] b = new byte[map.Width];
-
                     for (int x = 0; x < map.Width; x++)
                     {
                         if (z == 0)
-                            b[x] = map.Tiles[x, y,1].Block.ID;
+                            om.Write(map.Tiles[x, y, 1].Block.ID);
                         else
-                            b[x] = map.Tiles[x, y,0].Block.ID;
+                            om.Write(map.Tiles[x, y, 0].Block.ID);
                     }
-                    om.Write(b);
                 }
             }
         }
