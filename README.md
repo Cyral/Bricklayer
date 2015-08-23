@@ -1,8 +1,12 @@
 #Bricklayer
 ####Codenamed "OpenEE"
 ######An Open Source, Fully Moddable and Customizable 2D Building Game inspired by Everybody Edits and built with the community in mind. [Chat with us!](http://coldstorm.tk/#/login?channels=OpenEE)
-==========
 
+#*Update 8/23/15:*
+
+Due to a new, more involved admin team on EE, Bricklayer has shifted focus to modability, where anyone can make their own mods, and the game itself is made of mods/plugins. Check out the new [repo](https://github.com/Pyratron/Bricklayer). This repo will remain here to view the legacy code.
+
+#*Old Info:*
 ###Welcome!
 * View our [game development document](https://docs.google.com/document/d/16LQTRmb85PxAkbcXxIvNsE3m-ARGECsON1ZyprFDWMQ/edit)  for more information. _< Start here_
 
